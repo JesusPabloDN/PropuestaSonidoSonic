@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_login"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <!-- Logo de la empresa -->
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="24dp"
+        android:contentDescription="Logo Sonido Sonic"
+        android:src="@drawable/sonidosonic" />
+
+    <!-- TabLayout para Iniciar Sesión / Registrarse -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@color/card_background"
+        app:tabGravity="fill"
+        app:tabIndicatorColor="@color/tab_indicator"
+        app:tabIndicatorFullWidth="true"
+        app:tabIndicatorHeight="3dp"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="@color/tab_selected"
+        app:tabTextColor="@color/tab_unselected" />
+
+    <!-- ViewPager para los fragments de Login y SignUp -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+</LinearLayout>

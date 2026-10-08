@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Colores principales de la app (celeste/cyan) -->
+    <color name="primary">#694bb1</color>
+    <color name="primary_light">#b394ff</color>
+    <color name="primary_dark">#45248b</color>
+    <color name="background_login">#45248b</color>
+    <!-- Colores para los campos de texto -->
+    <color name="field_stroke">#61557e</color>
+    <color name="field_hint">#FF999999</color>
+    <color name="field_icon_tint">#61557e</color>
+
+    <!-- Colores para el botón -->
+    <color name="button_color">#6e1450</color>
+    <color name="button_text">#FFFFFFFF</color>
+
+    <!-- Colores para tabs -->
+    <color name="tab_selected">#45248b</color>
+    <color name="tab_unselected">#b394ff</color>
+    <color name="tab_indicator">#45248b</color>
+
+    <!-- Colores para el card -->
+    <color name="card_background">#dccdfd</color>
+</resources>

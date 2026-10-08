@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Sonido Sonic</string>
+
+    <!-- Tabs de autenticación -->
+    <string name="tab_login">Iniciar Sesión</string>
+    <string name="tab_signup">Registrarse</string>
+
+    <!-- Login -->
+    <string name="hint_usuario">Usuario</string>
+    <string name="hint_contrasena">Contraseña</string>
+    <string name="btn_iniciar_sesion">INICIAR SESIÓN</string>
+
+    <!-- Sign Up -->
+    <string name="hint_nuevo_usuario">Nuevo Usuario</string>
+    <string name="hint_confirmar_contrasena">Confirmar Contraseña</string>
+    <string name="btn_registrarse">REGISTRARSE</string>
+
+    <!-- Errores -->
+    <string name="error_campo_vacio">Este campo es obligatorio</string>
+    <string name="error_contrasenas_no_coinciden">Las contraseñas no coinciden</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_inventario">Inventario</string>
+    <string name="nav_agenda">Agenda</string>
+    <string name="nav_pedidos">Pedidos</string>
+</resources>
