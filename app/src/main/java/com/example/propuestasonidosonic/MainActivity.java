@@ -103,7 +103,33 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(bottomNavigationView, navController);
+
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (navController == null) {
+                return false;
+            }
+            int currentId = navController.getCurrentDestination() != null
+                    ? navController.getCurrentDestination().getId() : 0;
+            if (currentId == itemId) {
+                return true;
+            }
+            if (itemId == R.id.nav_dashboard) {
+                navController.popBackStack(R.id.nav_dashboard, false);
+                return true;
+            }
+
+            NavOptions navOptions = new NavOptions.Builder()
+                    .setLaunchSingleTop(true)
+                    .setPopUpTo(R.id.nav_dashboard, false)
+                    .build();
+            navController.navigate(itemId, null, navOptions);
+            return true;
+        });
+
+        bottomNavigationView.setOnItemReselectedListener(item -> {
+            // No hacer nada al reseleccionar la pestaña activa
+        });
 
         configurarNavegacionVisibilidad();
         configurarDrawer();
@@ -130,6 +156,10 @@ public class MainActivity extends AppCompatActivity {
                 toolbar.setVisibility(View.VISIBLE);
                 bottomNavigationView.setVisibility(View.VISIBLE);
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                android.view.MenuItem menuItem = bottomNavigationView.getMenu().findItem(id);
+                if (menuItem != null) {
+                    menuItem.setChecked(true);
+                }
             } else {
                 toolbar.setVisibility(View.VISIBLE);
                 bottomNavigationView.setVisibility(View.GONE);
@@ -200,11 +230,29 @@ public class MainActivity extends AppCompatActivity {
             public void handleOnBackPressed() {
                 if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
                     drawerLayout.closeDrawer(GravityCompat.START);
-                } else {
-                    setEnabled(false);
-                    getOnBackPressedDispatcher().onBackPressed();
-                    setEnabled(true);
+                    return;
                 }
+                if (navController != null) {
+                    int currentId = navController.getCurrentDestination() != null
+                            ? navController.getCurrentDestination().getId() : 0;
+                    if (currentId == R.id.nav_dashboard ||
+                        currentId == R.id.clienteHomeFragment ||
+                        currentId == R.id.tecnicoHomeFragment) {
+                        moveTaskToBack(true);
+                        return;
+                    }
+                    if (currentId == R.id.nav_inventario ||
+                        currentId == R.id.nav_agenda ||
+                        currentId == R.id.nav_pedidos ||
+                        currentId == R.id.nav_finanzas) {
+                        navController.popBackStack(R.id.nav_dashboard, false);
+                        return;
+                    }
+                    if (navController.popBackStack()) {
+                        return;
+                    }
+                }
+                moveTaskToBack(true);
             }
         });
     }

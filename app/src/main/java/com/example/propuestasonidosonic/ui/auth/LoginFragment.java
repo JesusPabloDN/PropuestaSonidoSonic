@@ -8,6 +8,7 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -25,23 +26,28 @@ import com.example.propuestasonidosonic.data.UsuarioRepository;
 import com.example.propuestasonidosonic.model.Usuario;
 import com.example.propuestasonidosonic.util.Config;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class LoginFragment extends Fragment {
 
+    private static final String KEY_ROL_SELECCIONADO = "key_rol_seleccionado";
+    private static final int TAB_INDEX_SOCIO = 0;
+    private static final int TAB_INDEX_CLIENTE = 1;
+    private static final int TAB_INDEX_TECNICO = 2;
+
+    private TabLayout tabLayoutRol;
     private TextInputLayout tilCorreo;
     private TextInputEditText etCorreo;
     private TextInputLayout tilContrasena;
     private TextInputEditText etContrasena;
-    private MaterialButton btnLoginSocio;
-    private MaterialButton btnLoginCliente;
-    private MaterialButton btnLoginTecnico;
+    private MaterialButton btnIniciarSesion;
     private TextView tvIrARegistro;
 
     private UsuarioRepository usuarioRepository;
     private SessionManager sessionManager;
+    private int rolSeleccionadoIndex = TAB_INDEX_CLIENTE; // Cliente por defecto
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,6 +55,10 @@ public class LoginFragment extends Fragment {
         AppContainer appContainer = SonidoSonicApp.getApp(requireContext()).getAppContainer();
         usuarioRepository = appContainer.getUsuarioRepository();
         sessionManager = appContainer.getSessionManager();
+
+        if (savedInstanceState != null) {
+            rolSeleccionadoIndex = savedInstanceState.getInt(KEY_ROL_SELECCIONADO, TAB_INDEX_CLIENTE);
+        }
     }
 
     @Nullable
@@ -61,31 +71,83 @@ public class LoginFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        tabLayoutRol = view.findViewById(R.id.tabLayoutRol);
         tilCorreo = view.findViewById(R.id.tilCorreo);
         etCorreo = view.findViewById(R.id.etCorreo);
         tilContrasena = view.findViewById(R.id.tilContrasena);
         etContrasena = view.findViewById(R.id.etContrasena);
-        btnLoginSocio = view.findViewById(R.id.btnLoginSocio);
-        btnLoginCliente = view.findViewById(R.id.btnLoginCliente);
-        btnLoginTecnico = view.findViewById(R.id.btnLoginTecnico);
+        btnIniciarSesion = view.findViewById(R.id.btnIniciarSesion);
         tvIrARegistro = view.findViewById(R.id.tvIrARegistro);
 
-        // Prellenar credenciales fijas de Socio para facilitar pruebas inmediatas
-        if (savedInstanceState == null) {
+        configurarTabs();
+        configurarLimpiezaErrores();
+
+        // Prellenar credenciales fijas de Socio en la primera apertura si aún no hay texto
+        if (savedInstanceState == null && (etCorreo.getText() == null || etCorreo.getText().toString().isEmpty())) {
             etCorreo.setText(Config.CUENTA_SOCIO_CORREO);
             etContrasena.setText(Config.CUENTA_SOCIO_CONTRASENA);
         }
 
-        configurarLimpiezaErrores();
+        btnIniciarSesion.setOnClickListener(v -> intentarLogin());
 
-        btnLoginSocio.setOnClickListener(v -> intentarLogin(Usuario.ROL_SOCIO));
-        btnLoginCliente.setOnClickListener(v -> intentarLogin(Usuario.ROL_CLIENTE));
-        btnLoginTecnico.setOnClickListener(v -> intentarLogin(Usuario.ROL_TECNICO));
+        // Acción Done del teclado en el campo de contraseña
+        etContrasena.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                intentarLogin();
+                return true;
+            }
+            return false;
+        });
 
         tvIrARegistro.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(v);
             navController.navigate(R.id.action_login_to_register);
         });
+    }
+
+    private void configurarTabs() {
+        tabLayoutRol.removeAllTabs();
+        tabLayoutRol.addTab(tabLayoutRol.newTab().setText(R.string.tab_socio));
+        tabLayoutRol.addTab(tabLayoutRol.newTab().setText(R.string.tab_cliente));
+        tabLayoutRol.addTab(tabLayoutRol.newTab().setText(R.string.tab_tecnico));
+
+        // Seleccionar la pestaña activa (por defecto Cliente = 1)
+        TabLayout.Tab tabActual = tabLayoutRol.getTabAt(rolSeleccionadoIndex);
+        if (tabActual != null) {
+            tabActual.select();
+        }
+        actualizarVisibilidadRegistro(rolSeleccionadoIndex);
+
+        tabLayoutRol.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                rolSeleccionadoIndex = tab.getPosition();
+                actualizarVisibilidadRegistro(rolSeleccionadoIndex);
+                // Limpiar errores sin borrar textos
+                tilCorreo.setError(null);
+                tilContrasena.setError(null);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {}
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {}
+        });
+    }
+
+    private void actualizarVisibilidadRegistro(int position) {
+        if (position == TAB_INDEX_CLIENTE) {
+            tvIrARegistro.setVisibility(View.VISIBLE);
+        } else {
+            tvIrARegistro.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(KEY_ROL_SELECCIONADO, rolSeleccionadoIndex);
     }
 
     private void configurarLimpiezaErrores() {
@@ -106,9 +168,22 @@ public class LoginFragment extends Fragment {
         etContrasena.addTextChangedListener(watcher);
     }
 
-    private void intentarLogin(String rolEsperado) {
+    private String obtenerRolEsperadoSegunTab() {
+        switch (rolSeleccionadoIndex) {
+            case TAB_INDEX_SOCIO:
+                return Usuario.ROL_SOCIO;
+            case TAB_INDEX_TECNICO:
+                return Usuario.ROL_TECNICO;
+            case TAB_INDEX_CLIENTE:
+            default:
+                return Usuario.ROL_CLIENTE;
+        }
+    }
+
+    private void intentarLogin() {
         String correo = etCorreo.getText() != null ? etCorreo.getText().toString().trim() : "";
         String contrasena = etContrasena.getText() != null ? etContrasena.getText().toString().trim() : "";
+        String rolEsperado = obtenerRolEsperadoSegunTab();
 
         boolean valido = true;
         if (TextUtils.isEmpty(correo)) {

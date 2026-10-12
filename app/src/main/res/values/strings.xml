@@ -3,11 +3,12 @@
 
     <!-- Autenticación - Login -->
     <string name="login_titulo">Iniciar Sesión</string>
+    <string name="tab_socio">Socio</string>
+    <string name="tab_cliente">Cliente</string>
+    <string name="tab_tecnico">Técnico</string>
     <string name="hint_correo">Correo electrónico</string>
     <string name="hint_contrasena">Contraseña</string>
-    <string name="btn_login_socio">Entrar como Socio</string>
-    <string name="btn_login_cliente">Entrar como Cliente</string>
-    <string name="btn_login_tecnico">Entrar como Técnico</string>
+    <string name="btn_iniciar_sesion">Iniciar sesión</string>
     <string name="link_ir_a_registro">¿No tienes cuenta? Regístrate aquí</string>
 
     <!-- Autenticación - Registro -->

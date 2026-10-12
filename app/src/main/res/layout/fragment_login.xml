@@ -26,6 +26,16 @@
             android:contentDescription="@string/desc_logo"
             android:src="@drawable/sonidosonic" />
 
+        <!-- Selector de rol por pestañas -->
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayoutRol"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_medium"
+            app:tabGravity="fill"
+            app:tabIndicatorFullWidth="true"
+            app:tabMode="fixed" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -70,42 +80,23 @@
                 android:id="@+id/etContrasena"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
                 android:inputType="textPassword"
                 android:minHeight="@dimen/touch_target_min"
                 android:textColor="?attr/colorOnSurface"
                 android:textSize="@dimen/text_body" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Botón Entrar como Socio -->
+        <!-- Botón Iniciar Sesión (Único botón) -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnLoginSocio"
+            android:id="@+id/btnIniciarSesion"
             android:layout_width="match_parent"
             android:layout_height="@dimen/button_height"
-            android:layout_marginBottom="@dimen/spacing_small"
-            android:text="@string/btn_login_socio"
+            android:layout_marginBottom="@dimen/spacing_medium"
+            android:text="@string/btn_iniciar_sesion"
             android:textSize="@dimen/text_body" />
 
-        <!-- Botón Entrar como Cliente -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnLoginCliente"
-            style="@style/Widget.Material3.Button.TonalButton"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/button_height"
-            android:layout_marginBottom="@dimen/spacing_small"
-            android:text="@string/btn_login_cliente"
-            android:textSize="@dimen/text_body" />
-
-        <!-- Botón Entrar como Técnico -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnLoginTecnico"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/button_height"
-            android:layout_marginBottom="@dimen/spacing_large"
-            android:text="@string/btn_login_tecnico"
-            android:textSize="@dimen/text_body" />
-
-        <!-- Enlace a Registro -->
+        <!-- Enlace a Registro (visible solo para Cliente) -->
         <TextView
             android:id="@+id/tvIrARegistro"
             android:layout_width="wrap_content"
