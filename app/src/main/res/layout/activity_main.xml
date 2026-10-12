@@ -121,6 +121,40 @@
 
         </LinearLayout>
 
+        <!-- Opción superior: Clientes (visible solo para Socio) -->
+        <LinearLayout
+            android:id="@+id/drawerItemClientes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:minHeight="@dimen/touch_target_min"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/spacing_large"
+            android:paddingEnd="@dimen/spacing_large"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/ivDrawerClientesIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@string/menu_clientes"
+                android:src="@drawable/ic_contacts_24"
+                app:tint="?attr/colorOnSurface" />
+
+            <TextView
+                android:id="@+id/tvDrawerClientesLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_medium"
+                android:text="@string/menu_clientes"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="@dimen/text_body" />
+
+        </LinearLayout>
+
         <!-- Espacio flexible para empujar las opciones al fondo -->
         <View
             android:layout_width="match_parent"

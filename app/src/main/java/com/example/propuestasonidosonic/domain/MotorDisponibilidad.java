@@ -310,19 +310,24 @@ public final class MotorDisponibilidad {
     }
 
     public static List<Long> horariosDisponibles(ContextoDisponibilidad ctx, Paquete paquete,
-                                                 long unMomentoDelDia, int duracionMin) {
+                                                 long unMomentoDelDia, int duracionMin, String ignorarPedidoId) {
         List<Long> result = new ArrayList<>();
         if (ctx == null || paquete == null) return result;
 
         long diaInicio = TiempoUtils.inicioDelDia(unMomentoDelDia);
         for (int min = Config.PRIMER_INICIO_MIN; min <= Config.ULTIMO_INICIO_MIN; min += Config.PASO_HORARIO_MIN) {
             long inicioMillis = TiempoUtils.sumarMinutos(diaInicio, min);
-            ResultadoDisponibilidad res = evaluar(ctx, paquete, inicioMillis, duracionMin, null);
+            ResultadoDisponibilidad res = evaluar(ctx, paquete, inicioMillis, duracionMin, ignorarPedidoId);
             if (res.isViable()) {
                 result.add(inicioMillis);
             }
         }
         return result;
+    }
+
+    public static List<Long> horariosDisponibles(ContextoDisponibilidad ctx, Paquete paquete,
+                                                 long unMomentoDelDia, int duracionMin) {
+        return horariosDisponibles(ctx, paquete, unMomentoDelDia, duracionMin, null);
     }
 
     public static Set<Integer> diasDisponibles(ContextoDisponibilidad ctx, Paquete paquete,

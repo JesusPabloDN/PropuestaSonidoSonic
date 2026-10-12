@@ -17,4 +17,13 @@ public final class BadgeUtils {
         textView.setBackground(bg);
         textView.setTextColor(colorTexto);
     }
+
+    public static int colorError(Context context) {
+        if (context == null) return 0xFFC53030;
+        android.util.TypedValue tv = new android.util.TypedValue();
+        if (context.getTheme().resolveAttribute(androidx.appcompat.R.attr.colorError, tv, true)) {
+            return tv.data;
+        }
+        return androidx.core.content.ContextCompat.getColor(context, com.example.propuestasonidosonic.R.color.status_danado);
+    }
 }

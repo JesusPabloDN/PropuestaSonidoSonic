@@ -59,6 +59,17 @@ public class InMemoryUsuarioRepository implements UsuarioRepository {
     }
 
     @Override
+    public synchronized Usuario getUsuarioPorId(String id) {
+        if (id == null) return null;
+        for (Usuario u : usuarios) {
+            if (id.equals(u.getId())) {
+                return new Usuario(u);
+            }
+        }
+        return null;
+    }
+
+    @Override
     public synchronized void getUsuarioPorId(String id, Callback<Usuario> callback) {
         if (id != null) {
             for (Usuario u : usuarios) {

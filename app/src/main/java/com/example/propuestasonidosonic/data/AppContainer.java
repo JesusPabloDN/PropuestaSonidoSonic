@@ -27,19 +27,24 @@ public class AppContainer {
         this.sessionManager = SessionManager.getInstance();
         this.usuarioRepository = new InMemoryUsuarioRepository(this.sessionManager);
         this.diaOperativoRepository = new InMemoryDiaOperativoRepository();
+        this.pagoRepository = new InMemoryPagoRepository();
+        this.eventoRepository = new InMemoryEventoRepository();
         this.pedidoRepository = new InMemoryPedidoRepository(
                 this.equipoRepository,
                 this.paqueteRepository,
                 this.usuarioRepository,
                 this.diaOperativoRepository,
+                this.pagoRepository,
+                this.eventoRepository,
                 new RelojSistema()
         );
-        this.eventoRepository = new InMemoryEventoRepository();
-        this.pagoRepository = new InMemoryPagoRepository();
         this.finanzasRepository = new InMemoryFinanzasRepository();
 
         // Enlazar EventoRepository en EquipoRepository para calcular estadoEfectivo
         this.equipoRepository.setEventoRepository(this.eventoRepository);
+
+        // Disparar recálculo de asignaciones cuando cambie el inventario
+        this.equipoRepository.setOnInventarioCambio(() -> this.pedidoRepository.reasignarUnidades(null));
     }
 
     public UsuarioRepository getUsuarioRepository() {

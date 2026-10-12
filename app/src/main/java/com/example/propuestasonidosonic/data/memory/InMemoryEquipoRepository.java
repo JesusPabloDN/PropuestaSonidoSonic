@@ -24,11 +24,22 @@ public class InMemoryEquipoRepository implements EquipoRepository {
     private final Map<String, MutableLiveData<List<BitacoraEntrada>>> bitacoraLiveDataMap = new HashMap<>();
 
     private EventoRepository eventoRepository;
+    private Runnable onInventarioCambio;
 
     public InMemoryEquipoRepository() {}
 
     public void setEventoRepository(EventoRepository eventoRepository) {
         this.eventoRepository = eventoRepository;
+    }
+
+    public void setOnInventarioCambio(Runnable onInventarioCambio) {
+        this.onInventarioCambio = onInventarioCambio;
+    }
+
+    private void dispararCambioInventario() {
+        if (onInventarioCambio != null) {
+            onInventarioCambio.run();
+        }
     }
 
     private void notificarEquipos() {
@@ -70,6 +81,7 @@ public class InMemoryEquipoRepository implements EquipoRepository {
         // FIRESTORE: aquí irá una transacción
         equipos.add(equipo);
         notificarEquipos();
+        dispararCambioInventario();
         callback.onSuccess(equipo);
     }
 
@@ -105,6 +117,7 @@ public class InMemoryEquipoRepository implements EquipoRepository {
             nuevos.add(nuevo);
         }
         notificarEquipos();
+        dispararCambioInventario();
         callback.onSuccess(nuevos);
     }
 
@@ -115,6 +128,7 @@ public class InMemoryEquipoRepository implements EquipoRepository {
             if (equipos.get(i).getId().equals(equipo.getId())) {
                 equipos.set(i, equipo);
                 notificarEquipos();
+                dispararCambioInventario();
                 callback.onSuccess(equipo);
                 return;
             }
@@ -137,6 +151,7 @@ public class InMemoryEquipoRepository implements EquipoRepository {
         boolean removed = equipos.removeIf(e -> e.getId().equals(id));
         if (removed) {
             notificarEquipos();
+            dispararCambioInventario();
             callback.onSuccess(null);
         } else {
             callback.onError("Equipo no encontrado para eliminar");
@@ -150,6 +165,7 @@ public class InMemoryEquipoRepository implements EquipoRepository {
             if (e.getId().equals(equipoId)) {
                 e.setEstadoFisico(nuevoEstado);
                 notificarEquipos();
+                dispararCambioInventario();
                 callback.onSuccess(e);
                 return;
             }
@@ -246,5 +262,15 @@ public class InMemoryEquipoRepository implements EquipoRepository {
             }
         }
         return null;
+    }
+
+    @Override
+    public synchronized List<Equipo> listarTodos() {
+        List<Equipo> copia = new ArrayList<>();
+        for (Equipo e : equipos) {
+            copia.add(new Equipo(e.getId(), e.getNombre(), e.getCategoria(), e.getNumeroUnidad(),
+                    e.getEstadoFisico(), e.getPrecioRenta(), e.getFotoUri()));
+        }
+        return copia;
     }
 }

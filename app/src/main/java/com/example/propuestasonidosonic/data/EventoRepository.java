@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import com.example.propuestasonidosonic.model.ChecklistItem;
 import com.example.propuestasonidosonic.model.Evento;
 import java.util.List;
+import java.util.Map;
 
 public interface EventoRepository {
     LiveData<List<Evento>> getEventos();
@@ -18,4 +19,5 @@ public interface EventoRepository {
     List<Evento> reservasFuturas(String unidadId, long ahoraMillis);
     List<Evento> eventosActivosParaUnidad(String unidadId);
     List<String> unidadesOcupadas(long inicioMillis, long finMillis, String ignorarEventoId);
+    void reemplazarAsignaciones(Map<String, List<String>> equipoIdsPorEventoId, Callback<Void> callback);
 }

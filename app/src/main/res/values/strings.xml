@@ -182,4 +182,215 @@
     <string name="desc_nuevo_personal">Agregar personal</string>
     <string name="btn_desactivar">Desactivar</string>
     <string name="btn_quitar">Quitar</string>
+
+    <!-- Etapa 4C: Pedidos -->
+    <string name="tab_pedidos_por_pagar">Por pagar</string>
+    <string name="tab_pedidos_confirmados">Confirmados</string>
+    <string name="tab_pedidos_historial">Historial</string>
+    <string name="empty_pedidos_por_pagar">No hay pedidos pendientes de pago</string>
+    <string name="empty_pedidos_confirmados">No hay pedidos confirmados próximos</string>
+    <string name="empty_pedidos_historial">No hay pedidos en el historial</string>
+    <string name="desc_nuevo_pedido">Nuevo pedido</string>
+    <string name="folio_formato">#%1$d</string>
+    <string name="anticipo_pendiente_formato">Anticipo pendiente: %1$s</string>
+    <string name="vence_en_formato">Vence en %1$s</string>
+    <string name="anticipo_pagado_saldo_formato">Anticipo pagado · Saldo: %1$s</string>
+
+    <!-- Badges de estado -->
+    <string name="badge_apartado">Apartado</string>
+    <string name="badge_confirmado">Confirmado</string>
+    <string name="badge_pagado">Pagado</string>
+    <string name="badge_en_revision">En revisión</string>
+    <string name="badge_completado">Completado</string>
+    <string name="badge_cancelado">Cancelado</string>
+    <string name="badge_rechazado">Rechazado</string>
+    <string name="badge_vencido">Vencido</string>
+
+    <!-- Nuevo Pedido -->
+    <string name="titulo_nuevo_pedido">Nuevo pedido</string>
+    <string name="label_paquete">Paquete</string>
+    <string name="label_duracion">Duración</string>
+    <string name="label_fecha_evento">Fecha del evento</string>
+    <string name="label_horarios_disponibles">Horarios disponibles</string>
+    <string name="label_no_horarios_disponibles">No hay horarios disponibles ese día</string>
+    <string name="label_alternativas_disponibles">Próximas fechas y horarios disponibles:</string>
+    <string name="label_aviso_sin_paquetes">Primero crea un paquete en Inventario</string>
+    <string name="label_resumen_pedido">Resumen del evento</string>
+    <string name="label_resumen_fin">Fin del evento: %1$s</string>
+    <string name="label_resumen_montaje">Montaje desde: %1$s</string>
+    <string name="label_resumen_desmontaje">Desmontaje hasta: %1$s</string>
+    <string name="label_resumen_personal">Personal asignado: %1$s</string>
+    <string name="label_resumen_total">Total: %1$s</string>
+    <string name="label_resumen_anticipo">Anticipo requerido (30%%): %1$s</string>
+    <string name="label_nombre_evento">Nombre del evento</string>
+    <string name="label_nombre_cliente">Nombre del cliente</string>
+    <string name="label_telefono_cliente">Teléfono del cliente</string>
+    <string name="label_direccion">Dirección</string>
+    <string name="label_notas_adicionales">Notas adicionales (opcional)</string>
+    <string name="label_origen_pedido">¿Cómo llegó el pedido?</string>
+    <string name="origen_llamada">Llamada</string>
+    <string name="origen_whatsapp">WhatsApp</string>
+    <string name="origen_presencial">Presencial</string>
+    <string name="origen_app">App</string>
+    <string name="label_retener_apartado">Retener el apartado por:</string>
+    <string name="horas_formato">%1$d horas</string>
+    <string name="btn_apartar">Apartar</string>
+    <string name="toast_apartado_creado">Apartado creado</string>
+
+    <!-- Detalle de Pedido -->
+    <string name="titulo_pedido_detalle">Detalle del pedido</string>
+    <string name="seccion_cliente">Cliente</string>
+    <string name="seccion_paquete_equipo">Paquete y equipo</string>
+    <string name="seccion_horario">Horario</string>
+    <string name="seccion_personal">Personal asignado</string>
+    <string name="seccion_dinero">Dinero</string>
+    <string name="seccion_cancelacion">Cancelación</string>
+    <string name="label_origen_valor">Origen: %1$s</string>
+    <string name="label_saldo_pendiente">Saldo pendiente: %1$s</string>
+    <string name="label_anticipo_cubierto">Anticipo pagado: %1$s (%2$s el %3$s)</string>
+    <string name="label_sin_anticipo">Sin anticipo registrado</string>
+    <string name="label_reembolso_simulado">Reembolso: %1$s (simulado)</string>
+    <string name="label_cancelado_por">Cancelado por: %1$s</string>
+    <string name="label_motivo">Motivo: %1$s</string>
+    <string name="btn_registrar_anticipo">Registrar anticipo</string>
+    <string name="btn_reprogramar">Reprogramar</string>
+    <string name="btn_cancelar_apartado">Cancelar apartado</string>
+    <string name="btn_cancelar_pedido">Cancelar pedido</string>
+
+    <!-- Diálogo Registrar Anticipo -->
+    <string name="dialog_anticipo_titulo">Registrar anticipo</string>
+    <string name="label_monto_anticipo">Monto a recibir</string>
+    <string name="label_metodo_pago">Método de pago</string>
+    <string name="metodo_efectivo">Efectivo</string>
+    <string name="metodo_transferencia">Transferencia</string>
+    <string name="metodo_tarjeta">Tarjeta</string>
+    <string name="btn_confirmar_anticipo">Confirmar anticipo</string>
+
+    <!-- Diálogo Reprogramar -->
+    <string name="dialog_reprogramar_titulo">Reprogramar pedido</string>
+    <string name="btn_confirmar_reprogramacion">Guardar nueva fecha</string>
+    <string name="toast_reprogramado_exito">Pedido reprogramado correctamente</string>
+
+    <!-- Diálogo Cancelar -->
+    <string name="dialog_cancelar_titulo">¿Cancelar reserva?</string>
+    <string name="label_quien_cancela">¿Quién cancela?</string>
+    <string name="quien_cancela_cliente">Cliente</string>
+    <string name="quien_cancela_socios">Nosotros, los Socios</string>
+    <string name="label_motivo_cancelacion">Motivo de cancelación (opcional)</string>
+    <string name="label_reembolso_calculado">Reembolso a realizar: %1$s</string>
+    <string name="label_sin_reembolso">Sin reembolso</string>
+    <string name="btn_confirmar_cancelacion">Confirmar cancelación</string>
+    <string name="toast_cancelado_exito">Reserva cancelada</string>
+
+    <!-- Validaciones -->
+    <string name="err_nombre_evento_invalido">El nombre del evento es obligatorio (máximo 80 caracteres)</string>
+    <string name="err_nombre_cliente_invalido">El nombre del cliente es obligatorio</string>
+    <string name="err_telefono_invalido">El teléfono debe tener al menos 10 dígitos</string>
+    <string name="err_direccion_corta">La dirección debe tener al menos 10 caracteres</string>
+    <string name="err_horario_no_seleccionado">Debes seleccionar un horario disponible</string>
+    <string name="err_monto_invalido">Ingresa un monto válido</string>
+    <string name="err_campo_requerido">Este campo es obligatorio</string>
+    <string name="label_horario_evento">Evento: %1$s (%2$s)</string>
+
+    <!-- Agenda -->
+    <string name="vista_dia">Día</string>
+    <string name="vista_mes">Mes</string>
+    <string name="btn_hoy">Hoy</string>
+    <string name="empty_agenda_dia">No hay eventos para esta fecha</string>
+    <string name="empty_agenda_mes">No hay eventos este mes</string>
+    <string name="titulo_agenda_mes_formato">%1$s · %2$s</string>
+    <string name="cd_mes_anterior">Mes anterior</string>
+    <string name="cd_mes_siguiente">Mes siguiente</string>
+    <string name="cd_celda_sin_eventos">%1$s, sin eventos</string>
+    <string name="cd_celda_con_eventos">%1$s, %2$s</string>
+    <string name="cd_celda_con_ambos">%1$s, %2$s y %3$s</string>
+    <string name="dia_lunes_letra">L</string>
+    <string name="dia_martes_letra">M</string>
+    <string name="dia_miercoles_letra">M</string>
+    <string name="dia_jueves_letra">J</string>
+    <string name="dia_viernes_letra">V</string>
+    <string name="dia_sabado_letra">S</string>
+    <string name="dia_domingo_letra">D</string>
+
+    <plurals name="contador_eventos">
+        <item quantity="one">%1$d evento</item>
+        <item quantity="other">%1$d eventos</item>
+    </plurals>
+
+    <plurals name="contador_apartados">
+        <item quantity="one">%1$d apartado</item>
+        <item quantity="other">%1$d apartados</item>
+    </plurals>
+
+    <!-- Etapa 4E: Equipo asignado en detalle de pedido -->
+    <string name="seccion_equipo_asignado">Equipo asignado</string>
+    <string name="aviso_asignacion_incompleta">Faltan unidades por asignar. Revisa el inventario antes del evento.</string>
+    <string name="unidad_eliminada">unidad eliminada</string>
+    <string name="formato_modelo_unidades">%1$s · unidades %2$s</string>
+    <string name="formato_modelo_unidad_singular">%1$s · unidad %2$s</string>
+
+    <!-- ETAPA 4F: Finanzas, Recibos y Dashboard -->
+    <string name="badge_liquidado">Liquidado</string>
+    <string name="btn_cobrar_saldo">Cobrar saldo</string>
+    <string name="dialog_cobrar_saldo_titulo">Cobrar saldo</string>
+    <string name="label_monto_cobro">Monto a cobrar</string>
+    <string name="btn_confirmar_cobro">Confirmar cobro</string>
+    <string name="seccion_historial_pagos">Historial de pagos</string>
+    <string name="sin_pagos_registrados">Sin pagos registrados</string>
+    <string name="btn_recibo">Recibo</string>
+    <string name="msg_pago_registrado">Pago registrado</string>
+    <string name="err_generar_recibo">No se pudo generar el recibo</string>
+    <string name="err_monto_mayor_saldo">El monto no puede ser mayor al saldo pendiente</string>
+    <string name="err_monto_minimo">El monto debe ser mayor a 0</string>
+
+    <!-- Finanzas -->
+    <string name="titulo_finanzas">Finanzas</string>
+    <string name="kpi_cobrado">Cobrado</string>
+    <string name="kpi_reembolsos">Reembolsos</string>
+    <string name="kpi_neto">Neto</string>
+    <string name="kpi_por_cobrar">Por cobrar</string>
+    <string name="filtro_todos">Todos</string>
+    <string name="filtro_ingresos">Ingresos</string>
+    <string name="filtro_reembolsos">Reembolsos</string>
+    <string name="sin_movimientos_mes">Sin movimientos este mes</string>
+    <string name="btn_mes_actual">Mes actual</string>
+
+    <!-- Dashboard -->
+    <string name="titulo_dashboard">Dashboard</string>
+    <string name="seccion_este_mes">Este mes</string>
+    <string name="seccion_operacion">Operación</string>
+    <string name="kpi_eventos_hoy">Eventos hoy</string>
+    <string name="kpi_proximos_7_dias">Próximos 7 días</string>
+    <string name="kpi_apartados_por_pagar">Apartados por pagar</string>
+    <string name="kpi_equipos_por_asignar">Equipos por asignar</string>
+
+    <!-- ETAPA 4G: Clientes y Revisión -->
+    <string name="motivo_revision_urgente">Evento con menos de 48 horas de anticipación</string>
+    <string name="titulo_clientes">Clientes</string>
+    <string name="titulo_cliente_detalle">Detalle del cliente</string>
+    <string name="menu_clientes">Clientes</string>
+    <string name="titulo_requiere_revision">Requiere tu revisión</string>
+    <string name="btn_aprobar">Aprobar</string>
+    <string name="btn_rechazar">Rechazar</string>
+    <string name="dialog_aprobar_pedido_titulo">¿Aprobar pedido?</string>
+    <string name="dialog_aprobar_pedido_mensaje">El pedido pasará a estado Confirmado y el evento quedará programado.</string>
+    <string name="snackbar_pedido_aprobado">Pedido aprobado</string>
+    <string name="dialog_rechazar_pedido_titulo">Rechazar pedido</string>
+    <string name="label_motivo_rechazo">Motivo del rechazo</string>
+    <string name="err_motivo_minimo_3">Escribe un motivo de al menos 3 caracteres</string>
+    <string name="aviso_reembolso_rechazo">Se reembolsará %1$s (100%% de lo pagado)</string>
+    <string name="snackbar_pedido_rechazado">Pedido rechazado</string>
+    <string name="kpi_por_revisar">Por revisar</string>
+    <string name="empty_clientes">Aún no hay clientes</string>
+    <string name="empty_clientes_busqueda">Sin resultados</string>
+    <string name="hint_buscar_cliente">Buscar por nombre o teléfono...</string>
+    <string name="label_pedidos_cliente">Pedidos</string>
+    <string name="label_pagado_cliente">Pagado</string>
+    <string name="label_saldo_cliente">Saldo pendiente</string>
+    <string name="btn_llamar">Llamar</string>
+    <string name="btn_whatsapp">WhatsApp</string>
+    <string name="msg_no_app">No se pudo abrir</string>
+    <string name="formato_cliente_pedidos_pagado">%1$d pedidos · Pagado %2$s</string>
+    <string name="formato_cliente_saldo">Saldo %1$s</string>
+    <string name="label_motivo_rechazo_detalle">Motivo del rechazo: %1$s</string>
 </resources>

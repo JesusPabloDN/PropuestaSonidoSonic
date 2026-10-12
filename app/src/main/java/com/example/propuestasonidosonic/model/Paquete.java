@@ -98,6 +98,14 @@ public class Paquete {
         this.precio = precio;
     }
 
+    public double getPrecioBase() {
+        return precio;
+    }
+
+    public void setPrecioBase(double precioBase) {
+        this.precio = precioBase;
+    }
+
     public int getDuracionBaseHoras() {
         return duracionBaseHoras;
     }

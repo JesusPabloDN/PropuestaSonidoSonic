@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface UsuarioRepository {
     LiveData<List<Usuario>> getUsuarios();
+    Usuario getUsuarioPorId(String id);
     void getUsuarioPorId(String id, Callback<Usuario> callback);
     void getUsuarioPorCorreo(String correo, Callback<Usuario> callback);
     void registrarUsuario(Usuario usuario, Callback<Usuario> callback);

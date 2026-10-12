@@ -79,25 +79,88 @@
             android:id="@+id/nav_agenda"
             android:name="com.example.propuestasonidosonic.ui.socio.AgendaFragment"
             android:label="@string/nav_agenda"
-            tools:layout="@layout/fragment_agenda" />
+            tools:layout="@layout/fragment_agenda">
+            <action
+                android:id="@+id/action_agenda_to_detalle"
+                app:destination="@id/pedidoDetalleFragment" />
+        </fragment>
 
         <fragment
             android:id="@+id/nav_pedidos"
             android:name="com.example.propuestasonidosonic.ui.socio.PedidosFragment"
             android:label="@string/nav_pedidos"
-            tools:layout="@layout/fragment_pedidos" />
+            tools:layout="@layout/fragment_pedidos">
+            <action
+                android:id="@+id/action_pedidos_to_nuevoPedido"
+                app:destination="@id/nuevoPedidoFragment" />
+            <action
+                android:id="@+id/action_pedidos_to_detalle"
+                app:destination="@id/pedidoDetalleFragment" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/nuevoPedidoFragment"
+            android:name="com.example.propuestasonidosonic.ui.socio.NuevoPedidoFragment"
+            android:label="@string/titulo_nuevo_pedido"
+            tools:layout="@layout/fragment_nuevo_pedido">
+            <action
+                android:id="@+id/action_nuevoPedido_to_detalle"
+                app:destination="@id/pedidoDetalleFragment"
+                app:popUpTo="@id/nuevoPedidoFragment"
+                app:popUpToInclusive="true" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/pedidoDetalleFragment"
+            android:name="com.example.propuestasonidosonic.ui.socio.PedidoDetalleFragment"
+            android:label="@string/titulo_pedido_detalle"
+            tools:layout="@layout/fragment_pedido_detalle">
+            <argument
+                android:name="pedidoId"
+                app:argType="string" />
+            <action
+                android:id="@+id/action_detalle_to_cliente"
+                app:destination="@id/clienteDetalleFragment" />
+        </fragment>
 
         <fragment
             android:id="@+id/nav_finanzas"
             android:name="com.example.propuestasonidosonic.ui.socio.FinanzasFragment"
             android:label="@string/nav_finanzas"
-            tools:layout="@layout/fragment_finanzas" />
+            tools:layout="@layout/fragment_finanzas">
+            <action
+                android:id="@+id/action_finanzas_to_detalle"
+                app:destination="@id/pedidoDetalleFragment" />
+        </fragment>
 
         <fragment
             android:id="@+id/usuariosFragment"
             android:name="com.example.propuestasonidosonic.ui.socio.UsuariosFragment"
             android:label="@string/titulo_equipo_trabajo"
             tools:layout="@layout/fragment_usuarios" />
+
+        <fragment
+            android:id="@+id/clientesFragment"
+            android:name="com.example.propuestasonidosonic.ui.socio.ClientesFragment"
+            android:label="@string/titulo_clientes"
+            tools:layout="@layout/fragment_clientes">
+            <action
+                android:id="@+id/action_clientes_to_cliente"
+                app:destination="@id/clienteDetalleFragment" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/clienteDetalleFragment"
+            android:name="com.example.propuestasonidosonic.ui.socio.ClienteDetalleFragment"
+            android:label="@string/titulo_cliente_detalle"
+            tools:layout="@layout/fragment_cliente_detalle">
+            <argument
+                android:name="clienteKey"
+                app:argType="string" />
+            <action
+                android:id="@+id/action_cliente_to_pedido"
+                app:destination="@id/pedidoDetalleFragment" />
+        </fragment>
 
     </navigation>
 

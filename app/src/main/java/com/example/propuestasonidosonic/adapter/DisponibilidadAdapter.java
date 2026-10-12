@@ -86,33 +86,36 @@ public class DisponibilidadAdapter extends RecyclerView.Adapter<DisponibilidadAd
     static class DisponibilidadViewHolder extends RecyclerView.ViewHolder {
         private final TextView tvNombre;
         private final TextView tvRolBadge;
+        private final TextView tvDisponibilidadLabel;
         private final MaterialSwitch switchDisponibilidad;
 
         public DisponibilidadViewHolder(@NonNull View itemView) {
             super(itemView);
             tvNombre = itemView.findViewById(R.id.tvNombre);
             tvRolBadge = itemView.findViewById(R.id.tvRolBadge);
+            tvDisponibilidadLabel = itemView.findViewById(R.id.tvDisponibilidadLabel);
             switchDisponibilidad = itemView.findViewById(R.id.switchDisponibilidad);
         }
 
         public void bind(Usuario usuario, DiaOperativo diaOp, boolean esDiaPasado, OnDisponibilidadToggleListener listener) {
             tvNombre.setText(usuario.getNombre());
 
-            // Badge Rol
+            // Badge Rol y Texto descriptivo
             boolean esSocio = Usuario.ROL_SOCIO.equals(usuario.getRol());
             if (esSocio) {
                 tvRolBadge.setText(R.string.badge_rol_socio);
                 int txtColor = MaterialColors.getColor(tvRolBadge, com.google.android.material.R.attr.colorOnPrimaryContainer);
                 int bgCol = MaterialColors.getColor(tvRolBadge, com.google.android.material.R.attr.colorPrimaryContainer);
                 BadgeUtils.pintar(tvRolBadge, txtColor, bgCol);
-                switchDisponibilidad.setText(R.string.label_disponible_este_dia);
+                tvDisponibilidadLabel.setText(R.string.label_disponible_este_dia);
             } else {
                 tvRolBadge.setText(R.string.badge_rol_asistente);
                 int txtColor = MaterialColors.getColor(tvRolBadge, com.google.android.material.R.attr.colorOnSecondaryContainer);
                 int bgCol = MaterialColors.getColor(tvRolBadge, com.google.android.material.R.attr.colorSecondaryContainer);
                 BadgeUtils.pintar(tvRolBadge, txtColor, bgCol);
-                switchDisponibilidad.setText(R.string.label_trabaja_este_dia);
+                tvDisponibilidadLabel.setText(R.string.label_trabaja_este_dia);
             }
+            switchDisponibilidad.setText(null);
 
             // Determinar si está activo para el día
             Set<String> sociosNoDisp = (diaOp != null && diaOp.getSociosNoDisponiblesIds() != null)

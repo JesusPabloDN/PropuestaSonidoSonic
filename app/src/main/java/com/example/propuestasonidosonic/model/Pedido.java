@@ -1,5 +1,7 @@
 package com.example.propuestasonidosonic.model;
 
+import com.example.propuestasonidosonic.domain.MoneyUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -24,6 +26,15 @@ public class Pedido {
 
     // Motivos de revision
     public static final String MOTIVO_URGENTE = "URGENTE";
+
+    // Metodos de pago de anticipo
+    public static final String METODO_EFECTIVO = "EFECTIVO";
+    public static final String METODO_TRANSFERENCIA = "TRANSFERENCIA";
+    public static final String METODO_TARJETA = "TARJETA";
+
+    // Cancelado por
+    public static final String CANCELA_CLIENTE = "CLIENTE";
+    public static final String CANCELA_SOCIO = "SOCIO";
 
     // Identidad y folio
     private String id;
@@ -57,6 +68,15 @@ public class Pedido {
     private double anticipoRequerido;
     private double anticipoPagado;
 
+    // Anticipo y cancelación
+    private String metodoAnticipo;
+    private long fechaAnticipo;
+    private String canceladoPor;
+    private String motivoCancelacion;
+    private String motivoRechazo;
+    private double reembolsoMonto;
+    private int reprogramaciones;
+
     // Ciclo de vida y revisión
     private String estado;
     private long vencimientoApartadoMillis;
@@ -72,6 +92,7 @@ public class Pedido {
     private List<String> equipoIds;
     private boolean cobrado;
     private long fechaCobro;
+    private boolean asignacionIncompleta;
 
     public Pedido() {
         this.id = UUID.randomUUID().toString();
@@ -85,6 +106,7 @@ public class Pedido {
         this.fechaCreacion = System.currentTimeMillis();
         this.fechaActualizacion = System.currentTimeMillis();
         this.cobrado = false;
+        this.asignacionIncompleta = false;
     }
 
     public Pedido(Pedido otro) {
@@ -135,12 +157,21 @@ public class Pedido {
         this.fechaCreacion = otro.fechaCreacion;
         this.fechaActualizacion = otro.fechaActualizacion;
 
+        this.metodoAnticipo = otro.metodoAnticipo;
+        this.fechaAnticipo = otro.fechaAnticipo;
+        this.canceladoPor = otro.canceladoPor;
+        this.motivoCancelacion = otro.motivoCancelacion;
+        this.motivoRechazo = otro.motivoRechazo;
+        this.reembolsoMonto = otro.reembolsoMonto;
+        this.reprogramaciones = otro.reprogramaciones;
+
         this.eventoId = otro.eventoId;
         this.nombreEvento = otro.nombreEvento;
         this.partidas = otro.partidas != null ? new ArrayList<>(otro.partidas) : new ArrayList<>();
         this.equipoIds = otro.equipoIds != null ? new ArrayList<>(otro.equipoIds) : new ArrayList<>();
         this.cobrado = otro.cobrado;
         this.fechaCobro = otro.fechaCobro;
+        this.asignacionIncompleta = otro.asignacionIncompleta;
     }
 
     public String getId() {
@@ -303,6 +334,14 @@ public class Pedido {
         this.anticipoPagado = anticipoPagado;
     }
 
+    public double getSaldoPendiente() {
+        return MoneyUtils.redondear2(Math.max(0.0, total - anticipoPagado));
+    }
+
+    public boolean estaLiquidado() {
+        return MoneyUtils.iguales(getSaldoPendiente(), 0.0);
+    }
+
     public String getEstado() {
         return estado;
     }
@@ -397,6 +436,70 @@ public class Pedido {
 
     public void setFechaCobro(long fechaCobro) {
         this.fechaCobro = fechaCobro;
+    }
+
+    public String getMetodoAnticipo() {
+        return metodoAnticipo;
+    }
+
+    public void setMetodoAnticipo(String metodoAnticipo) {
+        this.metodoAnticipo = metodoAnticipo;
+    }
+
+    public long getFechaAnticipo() {
+        return fechaAnticipo;
+    }
+
+    public void setFechaAnticipo(long fechaAnticipo) {
+        this.fechaAnticipo = fechaAnticipo;
+    }
+
+    public String getCanceladoPor() {
+        return canceladoPor;
+    }
+
+    public void setCanceladoPor(String canceladoPor) {
+        this.canceladoPor = canceladoPor;
+    }
+
+    public String getMotivoCancelacion() {
+        return motivoCancelacion;
+    }
+
+    public void setMotivoCancelacion(String motivoCancelacion) {
+        this.motivoCancelacion = motivoCancelacion;
+    }
+
+    public String getMotivoRechazo() {
+        return motivoRechazo;
+    }
+
+    public void setMotivoRechazo(String motivoRechazo) {
+        this.motivoRechazo = motivoRechazo;
+    }
+
+    public double getReembolsoMonto() {
+        return reembolsoMonto;
+    }
+
+    public void setReembolsoMonto(double reembolsoMonto) {
+        this.reembolsoMonto = reembolsoMonto;
+    }
+
+    public int getReprogramaciones() {
+        return reprogramaciones;
+    }
+
+    public void setReprogramaciones(int reprogramaciones) {
+        this.reprogramaciones = reprogramaciones;
+    }
+
+    public boolean isAsignacionIncompleta() {
+        return asignacionIncompleta;
+    }
+
+    public void setAsignacionIncompleta(boolean asignacionIncompleta) {
+        this.asignacionIncompleta = asignacionIncompleta;
     }
 
     @Override

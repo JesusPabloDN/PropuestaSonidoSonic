@@ -5,10 +5,13 @@ import java.util.UUID;
 
 public class Pago {
     public static final String TIPO_ANTICIPO = "ANTICIPO";
+    public static final String TIPO_ABONO = "ABONO";
     public static final String TIPO_TOTAL = "TOTAL";
+    public static final String TIPO_REEMBOLSO = "REEMBOLSO";
 
     public static final String METODO_EFECTIVO = "EFECTIVO";
     public static final String METODO_TRANSFERENCIA = "TRANSFERENCIA";
+    public static final String METODO_TARJETA = "TARJETA";
 
     private String id;
     private String pedidoId;
@@ -17,6 +20,7 @@ public class Pago {
     private String tipo;
     private String metodo;
     private long fecha;
+    private String folio;
 
     public Pago() {
         this.id = UUID.randomUUID().toString();
@@ -26,6 +30,10 @@ public class Pago {
     }
 
     public Pago(String id, String pedidoId, String clienteId, double monto, String tipo, String metodo, long fecha) {
+        this(id, pedidoId, clienteId, monto, tipo, metodo, fecha, null);
+    }
+
+    public Pago(String id, String pedidoId, String clienteId, double monto, String tipo, String metodo, long fecha, String folio) {
         this.id = id != null ? id : UUID.randomUUID().toString();
         this.pedidoId = pedidoId;
         this.clienteId = clienteId;
@@ -33,6 +41,20 @@ public class Pago {
         this.tipo = tipo != null ? tipo : TIPO_ANTICIPO;
         this.metodo = metodo != null ? metodo : METODO_EFECTIVO;
         this.fecha = fecha;
+        this.folio = folio;
+    }
+
+    public Pago(Pago otro) {
+        if (otro != null) {
+            this.id = otro.id;
+            this.pedidoId = otro.pedidoId;
+            this.clienteId = otro.clienteId;
+            this.monto = otro.monto;
+            this.tipo = otro.tipo;
+            this.metodo = otro.metodo;
+            this.fecha = otro.fecha;
+            this.folio = otro.folio;
+        }
     }
 
     public String getId() {
@@ -89,6 +111,14 @@ public class Pago {
 
     public void setFecha(long fecha) {
         this.fecha = fecha;
+    }
+
+    public String getFolio() {
+        return folio;
+    }
+
+    public void setFolio(String folio) {
+        this.folio = folio;
     }
 
     @Override

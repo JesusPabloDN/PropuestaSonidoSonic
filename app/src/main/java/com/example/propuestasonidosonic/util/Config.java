@@ -51,5 +51,16 @@ public final class Config {
     public static final boolean PREFERIR_ASISTENTES = true;
     // valor provisional, validar con los socios
     public static final int DIAS_BUSQUEDA_MAX = 60;
+
+    // Política de reembolso y apartados
+    // valor provisional, validar con los socios
+    public static final int REEMBOLSO_TOTAL_DIAS = 7;
+    // valor provisional, validar con los socios
+    public static final int REEMBOLSO_PARCIAL_HORAS = 72;
+    // valor provisional, validar con los socios
+    public static final double REEMBOLSO_PARCIAL_PORCENTAJE = 0.5;
+    // valor provisional, validar con los socios
+    public static final int[] APARTADO_MANUAL_OPCIONES_HORAS = {2, 6, 12, 24, 48};
 }
+
 

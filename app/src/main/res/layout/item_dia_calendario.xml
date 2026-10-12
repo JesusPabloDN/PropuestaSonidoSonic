@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootCeldaDia"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="48dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?attr/selectableItemBackground">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="2dp"
+        android:paddingBottom="4dp">
+
+        <FrameLayout
+            android:id="@+id/frameIndicadorDia"
+            android:layout_width="34dp"
+            android:layout_height="34dp">
+
+            <TextView
+                android:id="@+id/tvNumeroDia"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="15sp"
+                android:fontFamily="sans-serif-medium"
+                android:text="1" />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutPuntosMarcador"
+            android:layout_width="wrap_content"
+            android:layout_height="8dp"
+            android:layout_marginTop="1dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <View
+                android:id="@+id/dotConfirmados"
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:layout_marginEnd="3dp"
+                android:background="@drawable/dot_marcador_verde"
+                android:visibility="gone" />
+
+            <View
+                android:id="@+id/dotApartados"
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:background="@drawable/dot_marcador_ambar"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

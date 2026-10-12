@@ -11,6 +11,7 @@ import com.example.propuestasonidosonic.model.Evento;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 public class InMemoryEventoRepository implements EventoRepository {
     private final List<Evento> eventos = new ArrayList<>();
@@ -20,6 +21,16 @@ public class InMemoryEventoRepository implements EventoRepository {
 
     private void notificarCambios() {
         eventosLiveData.setValue(new ArrayList<>(eventos));
+    }
+
+    private long desde(Evento ev) {
+        if (ev == null) return 0L;
+        return ev.getBloqueoInicioMillis() > 0 ? ev.getBloqueoInicioMillis() : ev.getInicioMillis();
+    }
+
+    private long hasta(Evento ev) {
+        if (ev == null) return 0L;
+        return ev.getBloqueoFinMillis() > 0 ? ev.getBloqueoFinMillis() : ev.getFinMillis();
     }
 
     @Override
@@ -43,17 +54,17 @@ public class InMemoryEventoRepository implements EventoRepository {
         // FIRESTORE: aquí irá una transacción
         // Verificación básica de traslape
         if (evento.getEquipoIds() != null && !evento.getEquipoIds().isEmpty()) {
-            List<String> ocupadas = unidadesOcupadas(evento.getInicioMillis(), evento.getFinMillis(), null);
+            List<String> ocupadas = unidadesOcupadas(desde(evento), hasta(evento), null);
             for (String eqId : evento.getEquipoIds()) {
                 if (ocupadas.contains(eqId)) {
-                    callback.onError("El equipo ya se encuentra ocupado en ese horario");
+                    if (callback != null) callback.onError("El equipo ya se encuentra ocupado en ese horario");
                     return;
                 }
             }
         }
         eventos.add(evento);
         notificarCambios();
-        callback.onSuccess(evento);
+        if (callback != null) callback.onSuccess(evento);
     }
 
     @Override
@@ -63,11 +74,11 @@ public class InMemoryEventoRepository implements EventoRepository {
             if (eventos.get(i).getId().equals(evento.getId())) {
                 eventos.set(i, evento);
                 notificarCambios();
-                callback.onSuccess(evento);
+                if (callback != null) callback.onSuccess(evento);
                 return;
             }
         }
-        callback.onError("Evento no encontrado para actualizar");
+        if (callback != null) callback.onError("Evento no encontrado para actualizar");
     }
 
     @Override
@@ -77,11 +88,11 @@ public class InMemoryEventoRepository implements EventoRepository {
             if (ev.getId().equals(id)) {
                 ev.setEstado(Evento.ESTADO_CANCELADO);
                 notificarCambios();
-                callback.onSuccess(ev);
+                if (callback != null) callback.onSuccess(ev);
                 return;
             }
         }
-        callback.onError("Evento no encontrado");
+        if (callback != null) callback.onError("Evento no encontrado");
     }
 
     @Override
@@ -91,11 +102,11 @@ public class InMemoryEventoRepository implements EventoRepository {
             if (ev.getId().equals(id)) {
                 ev.setEstado(Evento.ESTADO_FINALIZADO);
                 notificarCambios();
-                callback.onSuccess(ev);
+                if (callback != null) callback.onSuccess(ev);
                 return;
             }
         }
-        callback.onError("Evento no encontrado");
+        if (callback != null) callback.onError("Evento no encontrado");
     }
 
     @Override
@@ -135,8 +146,8 @@ public class InMemoryEventoRepository implements EventoRepository {
     public synchronized List<Evento> reservasVigentes(long ahoraMillis) {
         List<Evento> activas = new ArrayList<>();
         for (Evento ev : eventos) {
-            if (!Evento.ESTADO_CANCELADO.equals(ev.getEstado())) {
-                if (ev.getInicioMillis() <= ahoraMillis && ahoraMillis <= ev.getFinMillis()) {
+            if (!Evento.ESTADO_CANCELADO.equals(ev.getEstado()) && !Evento.ESTADO_FINALIZADO.equals(ev.getEstado())) {
+                if (desde(ev) <= ahoraMillis && ahoraMillis <= hasta(ev)) {
                     activas.add(ev);
                 }
             }
@@ -148,16 +159,16 @@ public class InMemoryEventoRepository implements EventoRepository {
     public synchronized List<Evento> reservasFuturas(String unidadId, long ahoraMillis) {
         List<Evento> futuras = new ArrayList<>();
         for (Evento ev : eventos) {
-            if (!Evento.ESTADO_CANCELADO.equals(ev.getEstado())) {
-                // Evento que inicia después de ahora
-                if (ev.getInicioMillis() > ahoraMillis) {
+            if (!Evento.ESTADO_CANCELADO.equals(ev.getEstado()) && !Evento.ESTADO_FINALIZADO.equals(ev.getEstado())) {
+                // Evento cuya ventana de reserva/bloqueo inicia después de ahora
+                if (desde(ev) > ahoraMillis) {
                     if (ev.getEquipoIds() != null && ev.getEquipoIds().contains(unidadId)) {
                         futuras.add(ev);
                     }
                 }
             }
         }
-        futuras.sort((e1, e2) -> Long.compare(e1.getInicioMillis(), e2.getInicioMillis()));
+        futuras.sort((e1, e2) -> Long.compare(desde(e1), desde(e2)));
         return futuras;
     }
 
@@ -165,7 +176,7 @@ public class InMemoryEventoRepository implements EventoRepository {
     public synchronized List<Evento> eventosActivosParaUnidad(String unidadId) {
         List<Evento> activos = new ArrayList<>();
         for (Evento ev : eventos) {
-            if (!Evento.ESTADO_CANCELADO.equals(ev.getEstado())) {
+            if (!Evento.ESTADO_CANCELADO.equals(ev.getEstado()) && !Evento.ESTADO_FINALIZADO.equals(ev.getEstado())) {
                 if (ev.getEquipoIds() != null && ev.getEquipoIds().contains(unidadId)) {
                     activos.add(ev);
                 }
@@ -181,11 +192,11 @@ public class InMemoryEventoRepository implements EventoRepository {
             if (ignorarEventoId != null && ignorarEventoId.equals(ev.getId())) {
                 continue;
             }
-            if (Evento.ESTADO_CANCELADO.equals(ev.getEstado())) {
+            if (Evento.ESTADO_CANCELADO.equals(ev.getEstado()) || Evento.ESTADO_FINALIZADO.equals(ev.getEstado())) {
                 continue;
             }
-            // Traslape: inicioA < finB && inicioB < finA
-            if (ev.getInicioMillis() < finMillis && inicioMillis < ev.getFinMillis()) {
+            // Traslape sobre la ventana de bloqueo/evento: desde(ev) < finMillis && inicioMillis < hasta(ev)
+            if (desde(ev) < finMillis && inicioMillis < hasta(ev)) {
                 if (ev.getEquipoIds() != null) {
                     for (String eqId : ev.getEquipoIds()) {
                         if (!ocupadas.contains(eqId)) {
@@ -196,5 +207,25 @@ public class InMemoryEventoRepository implements EventoRepository {
             }
         }
         return ocupadas;
+    }
+
+    @Override
+    public synchronized void reemplazarAsignaciones(Map<String, List<String>> equipoIdsPorEventoId, Callback<Void> callback) {
+        // FIRESTORE: transacción
+        if (equipoIdsPorEventoId != null) {
+            for (Evento ev : eventos) {
+                if (Evento.ESTADO_CANCELADO.equals(ev.getEstado()) || Evento.ESTADO_FINALIZADO.equals(ev.getEstado())) {
+                    continue;
+                }
+                if (equipoIdsPorEventoId.containsKey(ev.getId())) {
+                    List<String> nuevosIds = equipoIdsPorEventoId.get(ev.getId());
+                    ev.setEquipoIds(nuevosIds != null ? new ArrayList<>(nuevosIds) : new ArrayList<String>());
+                }
+            }
+            notificarCambios();
+        }
+        if (callback != null) {
+            callback.onSuccess(null);
+        }
     }
 }

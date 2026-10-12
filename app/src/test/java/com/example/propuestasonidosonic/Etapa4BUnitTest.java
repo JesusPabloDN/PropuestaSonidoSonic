@@ -569,7 +569,7 @@ public class Etapa4BUnitTest {
         // Cancelar la tercera reserva
         List<Pedido> pedidos = pedidoRepo.obtenerTodos();
         Pedido ultimo = pedidos.get(pedidos.size() - 1);
-        pedidoRepo.cancelarReserva(ultimo.getId(), "Test", noop());
+        pedidoRepo.cancelarReserva(ultimo.getId(), Pedido.CANCELA_SOCIO, "Test", noop());
 
         // Quitar al Asistente de los disponibles ese día
         DiaOperativo diaOpSinAsist = new DiaOperativo(fechaClave,

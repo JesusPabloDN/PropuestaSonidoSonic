@@ -20,4 +20,5 @@ public interface EquipoRepository {
     com.example.propuestasonidosonic.model.Evento proximaReserva(String equipoId, long ahoraMillis);
     List<com.example.propuestasonidosonic.model.ModeloInventario> obtenerModelos();
     com.example.propuestasonidosonic.model.ModeloInventario obtenerModelo(String clave);
+    List<Equipo> listarTodos();
 }

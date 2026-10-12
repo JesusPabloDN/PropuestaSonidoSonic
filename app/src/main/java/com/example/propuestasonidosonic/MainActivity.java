@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvDrawerUserName;
     private TextView tvDrawerUserRole;
     private LinearLayout drawerItemEquipo;
+    private LinearLayout drawerItemClientes;
     private LinearLayout drawerItemTheme;
     private ImageView ivDrawerThemeIcon;
     private TextView tvDrawerThemeLabel;
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         tvDrawerUserName = findViewById(R.id.tvDrawerUserName);
         tvDrawerUserRole = findViewById(R.id.tvDrawerUserRole);
         drawerItemEquipo = findViewById(R.id.drawerItemEquipo);
+        drawerItemClientes = findViewById(R.id.drawerItemClientes);
         drawerItemTheme = findViewById(R.id.drawerItemTheme);
         ivDrawerThemeIcon = findViewById(R.id.ivDrawerThemeIcon);
         tvDrawerThemeLabel = findViewById(R.id.tvDrawerThemeLabel);
@@ -188,10 +190,12 @@ public class MainActivity extends AppCompatActivity {
                 tvDrawerUserRole.setText(rolTexto);
                 boolean esSocio = Usuario.ROL_SOCIO.equals(usuario.getRol());
                 drawerItemEquipo.setVisibility(esSocio ? View.VISIBLE : View.GONE);
+                drawerItemClientes.setVisibility(esSocio ? View.VISIBLE : View.GONE);
             } else {
                 tvDrawerUserName.setText("");
                 tvDrawerUserRole.setText("");
                 drawerItemEquipo.setVisibility(View.GONE);
+                drawerItemClientes.setVisibility(View.GONE);
             }
         });
 
@@ -205,6 +209,20 @@ public class MainActivity extends AppCompatActivity {
                             .setLaunchSingleTop(true)
                             .build();
                     navController.navigate(R.id.usuariosFragment, null, navOptions);
+                }
+            }
+        });
+
+        drawerItemClientes.setOnClickListener(v -> {
+            drawerLayout.closeDrawer(GravityCompat.START);
+            if (navController != null) {
+                int currentId = navController.getCurrentDestination() != null
+                        ? navController.getCurrentDestination().getId() : 0;
+                if (currentId != R.id.clientesFragment) {
+                    NavOptions navOptions = new NavOptions.Builder()
+                            .setLaunchSingleTop(true)
+                            .build();
+                    navController.navigate(R.id.clientesFragment, null, navOptions);
                 }
             }
         });

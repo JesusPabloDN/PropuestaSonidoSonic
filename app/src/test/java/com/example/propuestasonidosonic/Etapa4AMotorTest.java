@@ -757,7 +757,7 @@ public class Etapa4AMotorTest {
 
         // Cancelar reserva 1
         AtomicBoolean cancelado = new AtomicBoolean(false);
-        repo.cancelarReserva(id1, "Cambio de planes", new Callback<Pedido>() {
+        repo.cancelarReserva(id1, Pedido.CANCELA_CLIENTE, "Cambio de planes", new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) { cancelado.set(true); }
             @Override public void onError(String mensaje) {}
         });
@@ -808,7 +808,7 @@ public class Etapa4AMotorTest {
 
         // Cancelar una reserva vencida debe dar error
         AtomicReference<String> errorCancel = new AtomicReference<>();
-        repo.cancelarReserva(id, "Tarde", new Callback<Pedido>() {
+        repo.cancelarReserva(id, Pedido.CANCELA_CLIENTE, "Tarde", new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) {}
             @Override public void onError(String mensaje) { errorCancel.set(mensaje); }
         });

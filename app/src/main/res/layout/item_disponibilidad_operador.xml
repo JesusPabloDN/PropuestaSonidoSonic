@@ -28,26 +28,47 @@
 
             <TextView
                 android:id="@+id/tvNombre"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:textColor="?attr/colorOnSurface"
                 android:textSize="@dimen/text_title"
                 android:textStyle="bold"
                 tools:text="Ana López" />
 
-            <!-- Insignia Rol -->
-            <TextView
-                android:id="@+id/tvRolBadge"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_tiny"
-                android:paddingStart="@dimen/spacing_small"
-                android:paddingTop="2dp"
-                android:paddingEnd="@dimen/spacing_small"
-                android:paddingBottom="2dp"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                tools:text="Asistente" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <!-- Insignia Rol -->
+                <TextView
+                    android:id="@+id/tvRolBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/spacing_small"
+                    android:paddingTop="2dp"
+                    android:paddingEnd="@dimen/spacing_small"
+                    android:paddingBottom="2dp"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    tools:text="Asistente" />
+
+                <!-- Texto explicativo de disponibilidad -->
+                <TextView
+                    android:id="@+id/tvDisponibilidadLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_small"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="12sp"
+                    tools:text="Disponible este día" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -56,9 +77,8 @@
             android:id="@+id/switchDisponibilidad"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="@dimen/touch_target_min"
-            android:textSize="@dimen/text_body"
-            tools:text="Trabaja este día" />
+            android:layout_marginStart="@dimen/spacing_small"
+            android:minHeight="@dimen/touch_target_min" />
 
     </LinearLayout>
 

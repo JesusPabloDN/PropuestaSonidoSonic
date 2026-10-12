@@ -14,6 +14,8 @@ public class Evento {
     private String nombre;
     private long inicioMillis;
     private long finMillis;
+    private long bloqueoInicioMillis;
+    private long bloqueoFinMillis;
     private String direccion;
     private String socioResponsableId;
     private String asistenteId; // nullable
@@ -78,6 +80,22 @@ public class Evento {
 
     public void setFinMillis(long finMillis) {
         this.finMillis = finMillis;
+    }
+
+    public long getBloqueoInicioMillis() {
+        return bloqueoInicioMillis;
+    }
+
+    public void setBloqueoInicioMillis(long bloqueoInicioMillis) {
+        this.bloqueoInicioMillis = bloqueoInicioMillis;
+    }
+
+    public long getBloqueoFinMillis() {
+        return bloqueoFinMillis;
+    }
+
+    public void setBloqueoFinMillis(long bloqueoFinMillis) {
+        this.bloqueoFinMillis = bloqueoFinMillis;
     }
 
     public String getDireccion() {
