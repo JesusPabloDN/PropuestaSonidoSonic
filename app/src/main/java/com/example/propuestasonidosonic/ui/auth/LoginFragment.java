@@ -35,7 +35,7 @@ public class LoginFragment extends Fragment {
     private static final String KEY_ROL_SELECCIONADO = "key_rol_seleccionado";
     private static final int TAB_INDEX_SOCIO = 0;
     private static final int TAB_INDEX_CLIENTE = 1;
-    private static final int TAB_INDEX_TECNICO = 2;
+    private static final int TAB_INDEX_ASISTENTE = 2;
 
     private TabLayout tabLayoutRol;
     private TextInputLayout tilCorreo;
@@ -109,7 +109,7 @@ public class LoginFragment extends Fragment {
         tabLayoutRol.removeAllTabs();
         tabLayoutRol.addTab(tabLayoutRol.newTab().setText(R.string.tab_socio));
         tabLayoutRol.addTab(tabLayoutRol.newTab().setText(R.string.tab_cliente));
-        tabLayoutRol.addTab(tabLayoutRol.newTab().setText(R.string.tab_tecnico));
+        tabLayoutRol.addTab(tabLayoutRol.newTab().setText(R.string.tab_asistente));
 
         // Seleccionar la pestaña activa (por defecto Cliente = 1)
         TabLayout.Tab tabActual = tabLayoutRol.getTabAt(rolSeleccionadoIndex);
@@ -172,8 +172,8 @@ public class LoginFragment extends Fragment {
         switch (rolSeleccionadoIndex) {
             case TAB_INDEX_SOCIO:
                 return Usuario.ROL_SOCIO;
-            case TAB_INDEX_TECNICO:
-                return Usuario.ROL_TECNICO;
+            case TAB_INDEX_ASISTENTE:
+                return Usuario.ROL_ASISTENTE;
             case TAB_INDEX_CLIENTE:
             default:
                 return Usuario.ROL_CLIENTE;
@@ -217,7 +217,7 @@ public class LoginFragment extends Fragment {
                     } else if (Usuario.ROL_CLIENTE.equals(rolEsperado)) {
                         tilCorreo.setError(getString(R.string.error_rol_no_coincide_cliente));
                     } else {
-                        tilCorreo.setError(getString(R.string.error_rol_no_coincide_tecnico));
+                        tilCorreo.setError(getString(R.string.error_rol_no_coincide_asistente));
                     }
                     return;
                 }
@@ -231,7 +231,7 @@ public class LoginFragment extends Fragment {
                     } else if (Usuario.ROL_CLIENTE.equals(usuario.getRol())) {
                         navController.navigate(R.id.action_login_to_cliente_graph);
                     } else {
-                        navController.navigate(R.id.action_login_to_tecnico_graph);
+                        navController.navigate(R.id.action_login_to_asistente_graph);
                     }
                 }
             }

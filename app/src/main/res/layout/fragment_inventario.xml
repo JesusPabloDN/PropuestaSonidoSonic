@@ -11,7 +11,15 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Barra fija de búsqueda y filtro de categoría -->
+        <!-- Selector de pestañas: Equipo | Paquetes -->
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabsInventario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabMode="fixed"
+            app:tabGravity="fill" />
+
+        <!-- Barra fija de búsqueda y filtro de categoría (pestaña Equipo) -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardBarraBusqueda"
             android:layout_width="match_parent"
@@ -76,8 +84,9 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Contenedor con lista y estados vacíos -->
+        <!-- Contenedor con lista de equipos y estados vacíos -->
         <FrameLayout
+            android:id="@+id/frameListaEquipos"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
@@ -124,9 +133,59 @@
 
         </FrameLayout>
 
+        <!-- Contenedor con lista de paquetes y estados vacíos -->
+        <FrameLayout
+            android:id="@+id/frameListaPaquetes"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="gone">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPaquetes"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingBottom="96dp"
+                android:paddingTop="@dimen/spacing_tiny"
+                tools:listitem="@layout/item_paquete" />
+
+            <LinearLayout
+                android:id="@+id/layoutEmptyPaquetes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_large"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:id="@+id/ivEmptyPaquetesIcon"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:src="@drawable/ic_equipo_generico"
+                    app:tint="?attr/colorOutline"
+                    android:contentDescription="@null" />
+
+                <TextView
+                    android:id="@+id/tvEmptyPaquetes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_medium"
+                    android:gravity="center"
+                    android:text="@string/empty_paquetes"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="@dimen/text_body" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+
     </LinearLayout>
 
-    <!-- FAB con padding adecuado que no tapa elementos -->
+    <!-- FAB compartido para nuevo equipo o nuevo paquete -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabNuevoEquipo"
         android:layout_width="wrap_content"

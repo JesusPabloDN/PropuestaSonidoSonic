@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="?attr/android:colorBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_medium">
+
+        <!-- 1. Nombre del paquete -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilNombrePaquete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_nombre_paquete"
+            app:counterEnabled="true"
+            app:counterMaxLength="60"
+            app:boxBackgroundMode="outline"
+            android:layout_marginBottom="@dimen/spacing_small">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etNombrePaquete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapWords"
+                android:maxLength="60"
+                android:textSize="@dimen/text_body" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 2. Descripción opcional -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilDescripcionPaquete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_descripcion_paquete"
+            app:boxBackgroundMode="outline"
+            android:layout_marginBottom="@dimen/spacing_medium">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etDescripcionPaquete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine|textCapSentences"
+                android:maxLines="3"
+                android:textSize="@dimen/text_body" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 3. Sección: Equipo incluido -->
+        <TextView
+            android:id="@+id/tvLabelEquipoIncluido"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_equipo_incluido"
+            android:textSize="@dimen/text_title"
+            android:textStyle="bold"
+            android:textColor="?attr/colorOnSurface"
+            android:layout_marginBottom="@dimen/spacing_small" />
+
+        <!-- 4. Lista de componentes y estado vacío -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvComponentes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            tools:listitem="@layout/item_componente_paquete" />
+
+        <TextView
+            android:id="@+id/tvEmptyComponentes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/empty_componentes"
+            android:textSize="@dimen/text_caption"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:paddingTop="@dimen/spacing_small"
+            android:paddingBottom="@dimen/spacing_small" />
+
+        <TextView
+            android:id="@+id/tvErrorComponentes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_caption"
+            android:textColor="@color/status_danado"
+            android:visibility="gone"
+            tools:visibility="visible"
+            tools:text="@string/error_sin_componentes" />
+
+        <!-- 5. Botón Agregar equipo -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAgregarEquipo"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_agregar_equipo"
+            android:textSize="@dimen/text_caption"
+            app:icon="@drawable/ic_add_24"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:layout_marginBottom="@dimen/spacing_small" />
+
+        <!-- 6. Precio sugerido -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="@dimen/spacing_small">
+
+            <TextView
+                android:id="@+id/tvPrecioSugerido"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/text_caption"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                tools:text="Suma de las piezas: $3,500.00" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnUsarPrecioSugerido"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_usar_precio_sugerido"
+                android:textSize="@dimen/text_caption" />
+
+        </LinearLayout>
+
+        <!-- 7. Precio del paquete -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilPrecioPaquete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_precio_paquete"
+            app:prefixText="$"
+            app:boxBackgroundMode="outline"
+            android:layout_marginBottom="@dimen/spacing_small">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPrecioPaquete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:textSize="@dimen/text_body" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 8. Duración base en horas -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilDuracionBase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_duracion_base"
+            app:boxBackgroundMode="outline"
+            android:layout_marginBottom="@dimen/spacing_small">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etDuracionBase"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textSize="@dimen/text_body" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 9. Precio por hora extra -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilPrecioHoraExtra"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_precio_hora_extra"
+            app:prefixText="$"
+            app:boxBackgroundMode="outline"
+            android:layout_marginBottom="@dimen/spacing_medium">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPrecioHoraExtra"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:textSize="@dimen/text_body" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 10. Personal requerido -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_operadores_requeridos"
+            android:textSize="@dimen/text_caption"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:layout_marginBottom="@dimen/spacing_tiny" />
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggleOperadores"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:singleSelection="true"
+            app:selectionRequired="true"
+            android:layout_marginBottom="@dimen/spacing_medium">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnOperadores1"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/operadores_uno"
+                android:textSize="@dimen/text_body" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnOperadores2"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/operadores_dos"
+                android:textSize="@dimen/text_body" />
+
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        <!-- 11. Buffer montaje -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilBufferMontaje"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_buffer_montaje"
+            app:boxBackgroundMode="outline"
+            android:layout_marginBottom="@dimen/spacing_small">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etBufferMontaje"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textSize="@dimen/text_body" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 12. Buffer desmontaje -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilBufferDesmontaje"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_buffer_desmontaje"
+            app:boxBackgroundMode="outline"
+            android:layout_marginBottom="@dimen/spacing_medium">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etBufferDesmontaje"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textSize="@dimen/text_body" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 13. Switch Activo -->
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/swActivo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_paquete_activo"
+            android:textSize="@dimen/text_body"
+            android:checked="true"
+            android:layout_marginBottom="@dimen/spacing_large" />
+
+        <!-- 14. Guardar paquete -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGuardarPaquete"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:text="@string/btn_guardar"
+            android:textSize="@dimen/text_body"
+            app:cornerRadius="@dimen/card_corner_radius"
+            android:layout_marginBottom="@dimen/spacing_small" />
+
+        <!-- 15. Eliminar paquete -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEliminarPaquete"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:text="@string/btn_eliminar"
+            android:textColor="@color/status_danado"
+            app:strokeColor="@color/status_danado"
+            android:textSize="@dimen/text_body"
+            app:cornerRadius="@dimen/card_corner_radius"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:layout_marginBottom="@dimen/spacing_xlarge" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

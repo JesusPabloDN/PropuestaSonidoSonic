@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface PaqueteRepository {
     LiveData<List<Paquete>> getPaquetes();
-    void getPaquetePorId(String id, Callback<Paquete> callback);
+    Paquete getPaquetePorId(String id);
     void guardarPaquete(Paquete paquete, Callback<Paquete> callback);
     void eliminarPaquete(String id, Callback<Void> callback);
 }

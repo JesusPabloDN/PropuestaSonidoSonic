@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         topLevelDestinations.add(R.id.nav_pedidos);
         topLevelDestinations.add(R.id.nav_finanzas);
         topLevelDestinations.add(R.id.clienteHomeFragment);
-        topLevelDestinations.add(R.id.tecnicoHomeFragment);
+        topLevelDestinations.add(R.id.asistenteHomeFragment);
 
         appBarConfiguration = new AppBarConfiguration.Builder(topLevelDestinations)
                 .setOpenableLayout(drawerLayout)
@@ -178,8 +178,10 @@ public class MainActivity extends AppCompatActivity {
                     rolTexto = getString(R.string.drawer_header_rol_socio);
                 } else if (Usuario.ROL_CLIENTE.equals(usuario.getRol())) {
                     rolTexto = getString(R.string.drawer_header_rol_cliente);
+                } else if (Usuario.ROL_ASISTENTE.equals(usuario.getRol())) {
+                    rolTexto = getString(R.string.drawer_header_rol_asistente);
                 } else {
-                    rolTexto = getString(R.string.drawer_header_rol_tecnico);
+                    rolTexto = usuario.getRol();
                 }
                 tvDrawerUserRole.setText(rolTexto);
             } else {
@@ -237,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
                             ? navController.getCurrentDestination().getId() : 0;
                     if (currentId == R.id.nav_dashboard ||
                         currentId == R.id.clienteHomeFragment ||
-                        currentId == R.id.tecnicoHomeFragment) {
+                        currentId == R.id.asistenteHomeFragment) {
                         moveTaskToBack(true);
                         return;
                     }

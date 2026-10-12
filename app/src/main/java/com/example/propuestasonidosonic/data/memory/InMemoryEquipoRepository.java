@@ -205,4 +205,46 @@ public class InMemoryEquipoRepository implements EquipoRepository {
         }
         return null;
     }
+
+    @Override
+    public synchronized List<com.example.propuestasonidosonic.model.ModeloInventario> obtenerModelos() {
+        java.util.Map<String, com.example.propuestasonidosonic.model.ModeloInventario> modelosMap = new java.util.LinkedHashMap<>();
+        for (Equipo e : equipos) {
+            String clave = com.example.propuestasonidosonic.util.ModeloUtils.clave(e.getCategoria(), e.getNombre());
+            com.example.propuestasonidosonic.model.ModeloInventario mod = modelosMap.get(clave);
+            if (mod == null) {
+                mod = new com.example.propuestasonidosonic.model.ModeloInventario();
+                mod.setClave(clave);
+                mod.setNombreModelo(com.example.propuestasonidosonic.util.ModeloUtils.nombreBase(e.getNombre()));
+                mod.setCategoria(e.getCategoria());
+                mod.setPrecioUnitario(e.getPrecioRenta());
+                mod.setTotalUnidades(0);
+                mod.setUnidadesDisponibles(0);
+                modelosMap.put(clave, mod);
+            }
+            mod.setTotalUnidades(mod.getTotalUnidades() + 1);
+            if (Equipo.ESTADO_DISPONIBLE.equals(e.getEstadoFisico())) {
+                mod.setUnidadesDisponibles(mod.getUnidadesDisponibles() + 1);
+            }
+        }
+
+        List<com.example.propuestasonidosonic.model.ModeloInventario> lista = new ArrayList<>(modelosMap.values());
+        lista.sort((m1, m2) -> {
+            int comp = m1.getCategoria().compareToIgnoreCase(m2.getCategoria());
+            if (comp != 0) return comp;
+            return m1.getNombreModelo().compareToIgnoreCase(m2.getNombreModelo());
+        });
+        return lista;
+    }
+
+    @Override
+    public synchronized com.example.propuestasonidosonic.model.ModeloInventario obtenerModelo(String clave) {
+        if (clave == null) return null;
+        for (com.example.propuestasonidosonic.model.ModeloInventario mod : obtenerModelos()) {
+            if (clave.equals(mod.getClave())) {
+                return mod;
+            }
+        }
+        return null;
+    }
 }

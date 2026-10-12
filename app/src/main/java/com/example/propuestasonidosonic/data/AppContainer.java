@@ -21,7 +21,7 @@ public class AppContainer {
     public AppContainer() {
         this.usuarioRepository = new InMemoryUsuarioRepository();
         this.equipoRepository = new InMemoryEquipoRepository();
-        this.paqueteRepository = new InMemoryPaqueteRepository();
+        this.paqueteRepository = new InMemoryPaqueteRepository(this.equipoRepository);
         this.eventoRepository = new InMemoryEventoRepository();
         this.pedidoRepository = new InMemoryPedidoRepository();
         this.pagoRepository = new InMemoryPagoRepository();

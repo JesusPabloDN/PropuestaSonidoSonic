@@ -187,13 +187,7 @@ public class EquipoAdapter extends RecyclerView.Adapter<EquipoAdapter.EquipoView
             }
 
             tvEstadoBadge.setText(texto);
-            tvEstadoBadge.setTextColor(textColor);
-
-            float radiusPx = 8 * context.getResources().getDisplayMetrics().density;
-            GradientDrawable bg = new GradientDrawable();
-            bg.setCornerRadius(radiusPx);
-            bg.setColor(containerColor);
-            tvEstadoBadge.setBackground(bg);
+            com.example.propuestasonidosonic.util.BadgeUtils.pintar(tvEstadoBadge, textColor, containerColor);
         }
     }
 }

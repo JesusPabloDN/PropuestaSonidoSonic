@@ -16,7 +16,7 @@ public class Evento {
     private long finMillis;
     private String direccion;
     private String socioResponsableId;
-    private String tecnicoId; // nullable
+    private String asistenteId; // nullable
     private List<String> equipoIds;
     private String pedidoId; // nullable
     private String estado;
@@ -32,7 +32,7 @@ public class Evento {
     }
 
     public Evento(String id, String nombre, long inicioMillis, long finMillis, String direccion,
-                  String socioResponsableId, String tecnicoId, List<String> equipoIds,
+                  String socioResponsableId, String asistenteId, List<String> equipoIds,
                   String pedidoId, String estado, String notas, List<ChecklistItem> checklist) {
         this.id = id != null ? id : UUID.randomUUID().toString();
         this.nombre = nombre;
@@ -40,7 +40,7 @@ public class Evento {
         this.finMillis = finMillis;
         this.direccion = direccion;
         this.socioResponsableId = socioResponsableId;
-        this.tecnicoId = tecnicoId;
+        this.asistenteId = asistenteId;
         this.equipoIds = equipoIds != null ? equipoIds : new ArrayList<>();
         this.pedidoId = pedidoId;
         this.estado = estado != null ? estado : ESTADO_PROGRAMADO;
@@ -96,12 +96,12 @@ public class Evento {
         this.socioResponsableId = socioResponsableId;
     }
 
-    public String getTecnicoId() {
-        return tecnicoId;
+    public String getAsistenteId() {
+        return asistenteId;
     }
 
-    public void setTecnicoId(String tecnicoId) {
-        this.tecnicoId = tecnicoId;
+    public void setAsistenteId(String asistenteId) {
+        this.asistenteId = asistenteId;
     }
 
     public List<String> getEquipoIds() {

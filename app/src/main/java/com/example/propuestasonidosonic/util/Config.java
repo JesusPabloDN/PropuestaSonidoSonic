@@ -11,4 +11,16 @@ public final class Config {
     public static final String CUENTA_SOCIO_CONTRASENA = "Socio#2026";
     public static final String CUENTA_SOCIO_NOMBRE = "Socio Principal";
     public static final String CUENTA_SOCIO_TELEFONO = "5551234567";
+
+    // Constantes operativas de paquetes
+    // valor provisional, validar con los socios
+    public static final int DURACION_BASE_HORAS_DEFAULT = 4;
+    // valor provisional, validar con los socios
+    public static final int BUFFER_MONTAJE_MIN_DEFAULT = 90;
+    // valor provisional, validar con los socios
+    public static final int BUFFER_DESMONTAJE_MIN_DEFAULT = 120;
+    // valor provisional, validar con los socios
+    public static final int OPERADORES_POR_PAQUETE_MAX = 2;
+    // valor provisional, validar con los socios
+    public static final int MAX_EVENTOS_SIMULTANEOS = 3;
 }

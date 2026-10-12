@@ -172,4 +172,16 @@ public class Etapa1UnitTest {
         assertNotNull(container.getFinanzasRepository());
         assertNotNull(container.getSessionManager());
     }
+
+    @Test
+    public void testRolAsistenteConstanteYSesion() {
+        assertEquals("ASISTENTE", Usuario.ROL_ASISTENTE);
+        Usuario asistente = new Usuario();
+        asistente.setNombre("Asistente Prueba");
+        asistente.setRol(Usuario.ROL_ASISTENTE);
+
+        SessionManager sm = new SessionManager();
+        sm.iniciarSesion(asistente);
+        assertEquals(Usuario.ROL_ASISTENTE, sm.getUsuarioActual().getRol());
+    }
 }

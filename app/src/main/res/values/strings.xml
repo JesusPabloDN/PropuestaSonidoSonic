@@ -5,7 +5,7 @@
     <string name="login_titulo">Iniciar Sesión</string>
     <string name="tab_socio">Socio</string>
     <string name="tab_cliente">Cliente</string>
-    <string name="tab_tecnico">Técnico</string>
+    <string name="tab_asistente">Asistente</string>
     <string name="hint_correo">Correo electrónico</string>
     <string name="hint_contrasena">Contraseña</string>
     <string name="btn_iniciar_sesion">Iniciar sesión</string>
@@ -30,14 +30,14 @@
     <string name="error_credenciales_invalidas">Correo o contraseña incorrectos</string>
     <string name="error_rol_no_coincide_socio">Esta cuenta no tiene el rol de Socio</string>
     <string name="error_rol_no_coincide_cliente">Esta cuenta no tiene el rol de Cliente</string>
-    <string name="error_rol_no_coincide_tecnico">Esta cuenta no tiene el rol de Técnico</string>
+    <string name="error_rol_no_coincide_asistente">Esta cuenta no tiene el rol de Asistente</string>
     <string name="error_cuenta_inactiva">Esta cuenta se encuentra desactivada</string>
     <string name="error_correo_ya_registrado">Este correo ya está registrado</string>
 
     <!-- Drawer Lateral -->
     <string name="drawer_header_rol_socio">Socio Administrador</string>
     <string name="drawer_header_rol_cliente">Cliente</string>
-    <string name="drawer_header_rol_tecnico">Técnico</string>
+    <string name="drawer_header_rol_asistente">Asistente</string>
     <string name="menu_modo_oscuro">Modo oscuro</string>
     <string name="menu_modo_claro">Modo claro</string>
     <string name="menu_cerrar_sesion">Cerrar sesión</string>
@@ -88,9 +88,59 @@
     <string name="error_precio_invalido">Ingresa un precio válido mayor o igual a 0</string>
     <string name="error_cantidad_invalida">La cantidad debe ser entre 1 y 50</string>
 
-    <!-- Placeholders para Cliente y Técnico -->
+    <!-- Pestañas Inventario -->
+    <string name="tab_inventario_equipo">Equipo</string>
+    <string name="tab_inventario_paquetes">Paquetes</string>
+    <string name="empty_paquetes">Aún no hay paquetes. Toca + para crear el primero</string>
+
+    <!-- Formulario de Paquetes -->
+    <string name="paquete_form_titulo_nuevo">Nuevo paquete</string>
+    <string name="paquete_form_titulo_editar">Editar paquete</string>
+    <string name="hint_nombre_paquete">Nombre del paquete</string>
+    <string name="hint_descripcion_paquete">Descripción (opcional)</string>
+    <string name="label_equipo_incluido">Equipo incluido</string>
+    <string name="btn_agregar_equipo">Agregar equipo</string>
+    <string name="empty_componentes">Aún no has agregado equipo a este paquete</string>
+    <string name="dialog_agregar_equipo_titulo">Elige un modelo</string>
+    <string name="dialog_sin_modelos">Primero registra equipo en Inventario</string>
+    <string name="componente_stock_formato">%1$s · Hay %2$d en inventario</string>
+    <string name="modelo_opcion_formato">%1$s · %2$s · Disponibles %3$d de %4$d</string>
+    <string name="hint_precio_paquete">Precio del paquete por evento ($)</string>
+    <string name="precio_sugerido_formato">Suma de las piezas: %1$s</string>
+    <string name="btn_usar_precio_sugerido">Usar este precio</string>
+    <string name="hint_duracion_base">Horas incluidas (1 a 24)</string>
+    <string name="hint_precio_hora_extra">Precio por hora extra ($, 0 si no cobran)</string>
+    <string name="label_operadores_requeridos">Personal requerido</string>
+    <string name="operadores_uno">1 persona</string>
+    <string name="operadores_dos">2 personas</string>
+    <string name="hint_buffer_montaje">Montaje antes del evento (min)</string>
+    <string name="hint_buffer_desmontaje">Desmontaje y regreso después (min)</string>
+    <string name="label_paquete_activo">Paquete activo (visible para clientes)</string>
+    <string name="paquete_resumen_formato">%1$d piezas · %2$d tipos de equipo</string>
+    <string name="paquete_precio_formato">%1$s por evento</string>
+    <string name="paquete_detalle_formato">%1$d h incluidas · %2$s</string>
+    <string name="operadores_n_formato">%1$d persona(s)</string>
+    <string name="badge_paquete_activo">Activo</string>
+    <string name="badge_paquete_inactivo">Inactivo</string>
+    <string name="badge_stock_insuficiente">Stock insuficiente</string>
+    <string name="alerta_stock_insuficiente_formato">Stock insuficiente: falta %1$s</string>
+    <string name="dialog_eliminar_paquete_titulo">¿Eliminar paquete?</string>
+    <string name="dialog_eliminar_paquete_mensaje">Esta acción no se puede deshacer.</string>
+    <string name="msg_paquete_guardado">Paquete guardado</string>
+    <string name="msg_paquete_eliminado">Paquete eliminado</string>
+    <string name="error_nombre_paquete_requerido">El nombre del paquete es obligatorio</string>
+    <string name="error_sin_componentes">Agrega al menos un componente al paquete</string>
+    <string name="error_precio_paquete_invalido">El precio debe ser mayor a 0</string>
+    <string name="error_duracion_invalida">La duración debe ser entre 1 y 24 horas</string>
+    <string name="error_precio_hora_extra_invalido">El precio por hora extra debe ser mayor o igual a 0</string>
+    <string name="error_buffer_invalido">El tiempo debe ser entre 0 y 480 minutos</string>
+    <string name="desc_disminuir_cantidad">Disminuir cantidad</string>
+    <string name="desc_aumentar_cantidad">Aumentar cantidad</string>
+    <string name="desc_quitar_componente">Quitar componente</string>
+
+    <!-- Placeholders para Cliente y Asistente -->
     <string name="placeholder_cliente_titulo">Módulo de Cliente</string>
-    <string name="placeholder_tecnico_titulo">Módulo de Técnico</string>
+    <string name="placeholder_asistente_titulo">Módulo de Asistente</string>
     <string name="placeholder_proximamente">Próximamente</string>
 
     <!-- Descripciones de accesibilidad -->

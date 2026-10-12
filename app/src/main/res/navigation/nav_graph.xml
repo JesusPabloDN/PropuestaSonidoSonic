@@ -29,8 +29,8 @@
             app:popUpToInclusive="true" />
 
         <action
-            android:id="@+id/action_login_to_tecnico_graph"
-            app:destination="@id/tecnico_graph"
+            android:id="@+id/action_login_to_asistente_graph"
+            app:destination="@id/asistente_graph"
             app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="true" />
     </fragment>
@@ -57,7 +57,23 @@
             android:id="@+id/nav_inventario"
             android:name="com.example.propuestasonidosonic.ui.socio.InventarioFragment"
             android:label="@string/nav_inventario"
-            tools:layout="@layout/fragment_inventario" />
+            tools:layout="@layout/fragment_inventario">
+            <action
+                android:id="@+id/action_inventario_to_paqueteForm"
+                app:destination="@id/paqueteFormFragment" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/paqueteFormFragment"
+            android:name="com.example.propuestasonidosonic.ui.socio.PaqueteFormFragment"
+            android:label="@string/paquete_form_titulo_nuevo"
+            tools:layout="@layout/fragment_paquete_form">
+            <argument
+                android:name="paqueteId"
+                app:argType="string"
+                app:nullable="true"
+                android:defaultValue="@null" />
+        </fragment>
 
         <fragment
             android:id="@+id/nav_agenda"
@@ -92,16 +108,16 @@
 
     </navigation>
 
-    <!-- Grafo de Técnico -->
+    <!-- Grafo de Asistente -->
     <navigation
-        android:id="@+id/tecnico_graph"
-        app:startDestination="@id/tecnicoHomeFragment">
+        android:id="@+id/asistente_graph"
+        app:startDestination="@id/asistenteHomeFragment">
 
         <fragment
-            android:id="@+id/tecnicoHomeFragment"
-            android:name="com.example.propuestasonidosonic.ui.tecnico.TecnicoHomeFragment"
-            android:label="@string/placeholder_tecnico_titulo"
-            tools:layout="@layout/fragment_tecnico_home" />
+            android:id="@+id/asistenteHomeFragment"
+            android:name="com.example.propuestasonidosonic.ui.asistente.AsistenteHomeFragment"
+            android:label="@string/placeholder_asistente_titulo"
+            tools:layout="@layout/fragment_asistente_home" />
 
     </navigation>
 

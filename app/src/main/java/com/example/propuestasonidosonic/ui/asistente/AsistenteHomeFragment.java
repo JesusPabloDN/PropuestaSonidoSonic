@@ -1,4 +1,4 @@
-package com.example.propuestasonidosonic.ui.tecnico;
+package com.example.propuestasonidosonic.ui.asistente;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,11 +11,11 @@ import androidx.fragment.app.Fragment;
 
 import com.example.propuestasonidosonic.R;
 
-public class TecnicoHomeFragment extends Fragment {
+public class AsistenteHomeFragment extends Fragment {
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_tecnico_home, container, false);
+        return inflater.inflate(R.layout.fragment_asistente_home, container, false);
     }
 }

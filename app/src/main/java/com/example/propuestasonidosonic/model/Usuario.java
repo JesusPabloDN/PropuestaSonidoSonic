@@ -6,7 +6,7 @@ import java.util.UUID;
 public class Usuario {
     public static final String ROL_SOCIO = "SOCIO";
     public static final String ROL_CLIENTE = "CLIENTE";
-    public static final String ROL_TECNICO = "TECNICO";
+    public static final String ROL_ASISTENTE = "ASISTENTE";
 
     private String id;
     private String nombre;

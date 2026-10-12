@@ -18,4 +18,6 @@ public interface EquipoRepository {
     LiveData<List<BitacoraEntrada>> obtenerBitacora(String equipoId);
     String estadoEfectivo(Equipo equipo, long ahoraMillis);
     com.example.propuestasonidosonic.model.Evento proximaReserva(String equipoId, long ahoraMillis);
+    List<com.example.propuestasonidosonic.model.ModeloInventario> obtenerModelos();
+    com.example.propuestasonidosonic.model.ModeloInventario obtenerModelo(String clave);
 }
