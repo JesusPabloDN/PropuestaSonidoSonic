@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Paleta base neutra Material 3 -->
+    <color name="md_theme_light_primary">#2B5B84</color>
+    <color name="md_theme_light_onPrimary">#FFFFFF</color>
+    <color name="md_theme_light_primaryContainer">#CCE5FF</color>
+    <color name="md_theme_light_onPrimaryContainer">#001D33</color>
+    <color name="md_theme_light_secondary">#52606F</color>
+    <color name="md_theme_light_onSecondary">#FFFFFF</color>
+    <color name="md_theme_light_surface">#FDFCFF</color>
+    <color name="md_theme_light_onSurface">#1A1C1E</color>
+    <color name="md_theme_light_surfaceVariant">#DEE3EB</color>
+    <color name="md_theme_light_onSurfaceVariant">#42474E</color>
+    <color name="md_theme_light_outline">#72777F</color>
+    <color name="md_theme_light_background">#FDFCFF</color>
+    <color name="md_theme_light_onBackground">#1A1C1E</color>
 
-    <!-- Colores principales de la app (celeste/cyan) -->
-    <color name="primary">#694bb1</color>
-    <color name="primary_light">#b394ff</color>
-    <color name="primary_dark">#45248b</color>
-    <color name="background_login">#45248b</color>
-    <!-- Colores para los campos de texto -->
-    <color name="field_stroke">#61557e</color>
-    <color name="field_hint">#FF999999</color>
-    <color name="field_icon_tint">#61557e</color>
-
-    <!-- Colores para el botón -->
-    <color name="button_color">#6e1450</color>
-    <color name="button_text">#FFFFFFFF</color>
-
-    <!-- Colores para tabs -->
-    <color name="tab_selected">#45248b</color>
-    <color name="tab_unselected">#b394ff</color>
-    <color name="tab_indicator">#45248b</color>
-
-    <!-- Colores para el card -->
-    <color name="card_background">#dccdfd</color>
+    <!-- Estados de equipo y pedidos (con texto siempre) -->
+    <!-- Verde = disponible / confirmado -->
+    <color name="status_disponible">#1E824C</color>
+    <color name="status_disponible_container">#D4EFDF</color>
+    <!-- Amarillo/Ámbar = en reparación / pendiente -->
+    <color name="status_pendiente">#B7791F</color>
+    <color name="status_pendiente_container">#FEFCBF</color>
+    <!-- Rojo = dañado / cancelado -->
+    <color name="status_danado">#C53030</color>
+    <color name="status_danado_container">#FED7D7</color>
+    <!-- Azul/Cyan = rentado / entregado -->
+    <color name="status_rentado">#2B6CB0</color>
+    <color name="status_rentado_container">#BEE3F8</color>
 </resources>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <!-- Pantalla de Login (Inicio) -->
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.propuestasonidosonic.ui.auth.LoginFragment"
+        android:label="@string/login_titulo"
+        tools:layout="@layout/fragment_login">
+
+        <action
+            android:id="@+id/action_login_to_register"
+            app:destination="@id/registerFragment" />
+
+        <action
+            android:id="@+id/action_login_to_socio_graph"
+            app:destination="@id/socio_graph"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/action_login_to_cliente_graph"
+            app:destination="@id/cliente_graph"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/action_login_to_tecnico_graph"
+            app:destination="@id/tecnico_graph"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- Pantalla de Registro -->
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.example.propuestasonidosonic.ui.auth.RegisterFragment"
+        android:label="@string/registro_titulo"
+        tools:layout="@layout/fragment_register" />
+
+    <!-- Grafo de Socio -->
+    <navigation
+        android:id="@+id/socio_graph"
+        app:startDestination="@id/nav_dashboard">
+
+        <fragment
+            android:id="@+id/nav_dashboard"
+            android:name="com.example.propuestasonidosonic.ui.socio.DashboardFragment"
+            android:label="@string/nav_dashboard"
+            tools:layout="@layout/fragment_dashboard" />
+
+        <fragment
+            android:id="@+id/nav_inventario"
+            android:name="com.example.propuestasonidosonic.ui.socio.InventarioFragment"
+            android:label="@string/nav_inventario"
+            tools:layout="@layout/fragment_inventario" />
+
+        <fragment
+            android:id="@+id/nav_agenda"
+            android:name="com.example.propuestasonidosonic.ui.socio.AgendaFragment"
+            android:label="@string/nav_agenda"
+            tools:layout="@layout/fragment_agenda" />
+
+        <fragment
+            android:id="@+id/nav_pedidos"
+            android:name="com.example.propuestasonidosonic.ui.socio.PedidosFragment"
+            android:label="@string/nav_pedidos"
+            tools:layout="@layout/fragment_pedidos" />
+
+        <fragment
+            android:id="@+id/nav_finanzas"
+            android:name="com.example.propuestasonidosonic.ui.socio.FinanzasFragment"
+            android:label="@string/nav_finanzas"
+            tools:layout="@layout/fragment_finanzas" />
+
+    </navigation>
+
+    <!-- Grafo de Cliente -->
+    <navigation
+        android:id="@+id/cliente_graph"
+        app:startDestination="@id/clienteHomeFragment">
+
+        <fragment
+            android:id="@+id/clienteHomeFragment"
+            android:name="com.example.propuestasonidosonic.ui.cliente.ClienteHomeFragment"
+            android:label="@string/placeholder_cliente_titulo"
+            tools:layout="@layout/fragment_cliente_home" />
+
+    </navigation>
+
+    <!-- Grafo de Técnico -->
+    <navigation
+        android:id="@+id/tecnico_graph"
+        app:startDestination="@id/tecnicoHomeFragment">
+
+        <fragment
+            android:id="@+id/tecnicoHomeFragment"
+            android:name="com.example.propuestasonidosonic.ui.tecnico.TecnicoHomeFragment"
+            android:label="@string/placeholder_tecnico_titulo"
+            tools:layout="@layout/fragment_tecnico_home" />
+
+    </navigation>
+
+</navigation>

@@ -1,24 +1,52 @@
 package com.example.propuestasonidosonic;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
+import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.viewpager2.widget.ViewPager2;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
+import com.example.propuestasonidosonic.data.AppContainer;
+import com.example.propuestasonidosonic.data.SessionManager;
+import com.example.propuestasonidosonic.model.Usuario;
+import com.example.propuestasonidosonic.util.ThemeHelper;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TabLayout tabLayout;
-    private ViewPager2 viewPager;
+    private DrawerLayout drawerLayout;
+    private MaterialToolbar toolbar;
+    private BottomNavigationView bottomNavigationView;
+    private NavController navController;
+    private AppBarConfiguration appBarConfiguration;
 
-    // Títulos de las pestañas
-    private final String[] tabTitles = new String[]{"Iniciar Sesión", "Registrarse"};
+    private TextView tvDrawerUserName;
+    private TextView tvDrawerUserRole;
+    private LinearLayout drawerItemTheme;
+    private ImageView ivDrawerThemeIcon;
+    private TextView tvDrawerThemeLabel;
+    private LinearLayout drawerItemLogout;
+
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,22 +54,164 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.drawerLayout), (v, windowInsets) -> {
+            Insets systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            findViewById(R.id.main_content).setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+            findViewById(R.id.bottomNavigationView).setPadding(0, 0, 0, systemBars.bottom);
+
+            // Bajar el encabezado del drawer para que no quede pegado a la barra de estado
+            int extraTopSpacing = getResources().getDimensionPixelSize(R.dimen.spacing_xlarge);
+            int extraBottomSpacing = getResources().getDimensionPixelSize(R.dimen.spacing_medium);
+            findViewById(R.id.drawerView).setPadding(0, systemBars.top + extraTopSpacing, 0, systemBars.bottom + extraBottomSpacing);
+            return windowInsets;
         });
 
-        tabLayout = findViewById(R.id.tabLayout);
-        viewPager = findViewById(R.id.viewPager);
+        AppContainer appContainer = SonidoSonicApp.getApp(this).getAppContainer();
+        sessionManager = appContainer.getSessionManager();
 
-        // Configurar el adaptador del ViewPager
-        LoginPagerAdapter adapter = new LoginPagerAdapter(this);
-        viewPager.setAdapter(adapter);
+        drawerLayout = findViewById(R.id.drawerLayout);
+        toolbar = findViewById(R.id.toolbar);
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
 
-        // Vincular TabLayout con ViewPager2
-        new TabLayoutMediator(tabLayout, viewPager,
-                (tab, position) -> tab.setText(tabTitles[position])
-        ).attach();
+        tvDrawerUserName = findViewById(R.id.tvDrawerUserName);
+        tvDrawerUserRole = findViewById(R.id.tvDrawerUserRole);
+        drawerItemTheme = findViewById(R.id.drawerItemTheme);
+        ivDrawerThemeIcon = findViewById(R.id.ivDrawerThemeIcon);
+        tvDrawerThemeLabel = findViewById(R.id.tvDrawerThemeLabel);
+        drawerItemLogout = findViewById(R.id.drawerItemLogout);
+
+        setSupportActionBar(toolbar);
+
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+        if (navHostFragment != null) {
+            navController = navHostFragment.getNavController();
+        }
+
+        // Definir destinos de nivel superior (con ícono hamburguesa que abre el drawer)
+        Set<Integer> topLevelDestinations = new HashSet<>();
+        topLevelDestinations.add(R.id.nav_dashboard);
+        topLevelDestinations.add(R.id.nav_inventario);
+        topLevelDestinations.add(R.id.nav_agenda);
+        topLevelDestinations.add(R.id.nav_pedidos);
+        topLevelDestinations.add(R.id.nav_finanzas);
+        topLevelDestinations.add(R.id.clienteHomeFragment);
+        topLevelDestinations.add(R.id.tecnicoHomeFragment);
+
+        appBarConfiguration = new AppBarConfiguration.Builder(topLevelDestinations)
+                .setOpenableLayout(drawerLayout)
+                .build();
+
+        NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(bottomNavigationView, navController);
+
+        configurarNavegacionVisibilidad();
+        configurarDrawer();
+        configurarBackPressed();
+    }
+
+    private void configurarNavegacionVisibilidad() {
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            int id = destination.getId();
+
+            if (id == R.id.loginFragment) {
+                toolbar.setVisibility(View.GONE);
+                bottomNavigationView.setVisibility(View.GONE);
+                drawerLayout.closeDrawer(GravityCompat.START);
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            } else if (id == R.id.registerFragment) {
+                toolbar.setVisibility(View.VISIBLE);
+                bottomNavigationView.setVisibility(View.GONE);
+                drawerLayout.closeDrawer(GravityCompat.START);
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            } else if (id == R.id.nav_dashboard || id == R.id.nav_inventario ||
+                       id == R.id.nav_agenda || id == R.id.nav_pedidos ||
+                       id == R.id.nav_finanzas) {
+                toolbar.setVisibility(View.VISIBLE);
+                bottomNavigationView.setVisibility(View.VISIBLE);
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            } else {
+                toolbar.setVisibility(View.VISIBLE);
+                bottomNavigationView.setVisibility(View.GONE);
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            }
+        });
+    }
+
+    private void configurarDrawer() {
+        // Observar sesión para datos del usuario en encabezado del drawer
+        sessionManager.getUsuarioActualLiveData().observe(this, usuario -> {
+            if (usuario != null) {
+                tvDrawerUserName.setText(usuario.getNombre());
+                String rolTexto;
+                if (Usuario.ROL_SOCIO.equals(usuario.getRol())) {
+                    rolTexto = getString(R.string.drawer_header_rol_socio);
+                } else if (Usuario.ROL_CLIENTE.equals(usuario.getRol())) {
+                    rolTexto = getString(R.string.drawer_header_rol_cliente);
+                } else {
+                    rolTexto = getString(R.string.drawer_header_rol_tecnico);
+                }
+                tvDrawerUserRole.setText(rolTexto);
+            } else {
+                tvDrawerUserName.setText("");
+                tvDrawerUserRole.setText("");
+            }
+        });
+
+        // Configurar estado actual de tema en el drawer
+        actualizarVistaTema();
+
+        drawerItemTheme.setOnClickListener(v -> {
+            boolean darkModeActual = ThemeHelper.isDarkMode(this);
+            ThemeHelper.setDarkMode(this, !darkModeActual);
+        });
+
+        drawerItemLogout.setOnClickListener(v -> {
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle(R.string.dialog_cerrar_sesion_titulo)
+                    .setMessage(R.string.dialog_cerrar_sesion_mensaje)
+                    .setNegativeButton(R.string.dialog_cancelar, null)
+                    .setPositiveButton(R.string.dialog_confirmar, (dialog, which) -> {
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        sessionManager.cerrarSesion();
+                        NavOptions navOptions = new NavOptions.Builder()
+                                .setPopUpTo(R.id.nav_graph, true)
+                                .build();
+                        navController.navigate(R.id.loginFragment, null, navOptions);
+                    })
+                    .show();
+        });
+    }
+
+    private void actualizarVistaTema() {
+        boolean darkMode = ThemeHelper.isDarkMode(this);
+        if (darkMode) {
+            ivDrawerThemeIcon.setImageResource(R.drawable.ic_light_mode_24);
+            tvDrawerThemeLabel.setText(R.string.menu_modo_claro);
+        } else {
+            ivDrawerThemeIcon.setImageResource(R.drawable.ic_dark_mode_24);
+            tvDrawerThemeLabel.setText(R.string.menu_modo_oscuro);
+        }
+    }
+
+    private void configurarBackPressed() {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                } else {
+                    setEnabled(false);
+                    getOnBackPressedDispatcher().onBackPressed();
+                    setEnabled(true);
+                }
+            }
+        });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        return NavigationUI.navigateUp(navController, appBarConfiguration)
+                || super.onSupportNavigateUp();
     }
 }

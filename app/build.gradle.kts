@@ -31,6 +31,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    testOptions {
+        unitTests {
+            isReturnDefaultValues = true
+        }
+    }
 }
 
 dependencies {
@@ -39,7 +44,13 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.material)
     implementation(libs.viewpager2)
+    implementation(libs.navigation.fragment)
+    implementation(libs.navigation.ui)
+    implementation(libs.recyclerview)
+    implementation(libs.lifecycle.livedata)
+    implementation(libs.lifecycle.viewmodel)
     testImplementation(libs.junit)
+    testImplementation(libs.core.testing)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)
 }

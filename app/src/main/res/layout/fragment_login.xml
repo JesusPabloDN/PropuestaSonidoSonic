@@ -1,129 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/background_login"
     android:fillViewport="true"
-    tools:context=".LoginTabFragment">
+    android:background="?attr/android:colorBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="32dp">
+        android:paddingStart="@dimen/spacing_large"
+        android:paddingTop="@dimen/spacing_xlarge"
+        android:paddingEnd="@dimen/spacing_large"
+        android:paddingBottom="@dimen/spacing_xlarge">
 
-        <!-- Card contenedor del formulario -->
-        <LinearLayout
+        <!-- Logo -->
+        <ImageView
+            android:id="@+id/imgLogo"
+            android:layout_width="@dimen/logo_size"
+            android:layout_height="@dimen/logo_size"
+            android:layout_marginBottom="@dimen/spacing_medium"
+            android:contentDescription="@string/desc_logo"
+            android:src="@drawable/sonidosonic" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_large"
+            android:text="@string/login_titulo"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="@dimen/text_headline"
+            android:textStyle="bold" />
+
+        <!-- Campo Correo -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilCorreo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:background="@drawable/bg_card_rounded"
-            android:elevation="4dp"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:paddingLeft="24dp"
-            android:paddingTop="32dp"
-            android:paddingRight="24dp"
-            android:paddingBottom="32dp">
+            android:layout_marginBottom="@dimen/spacing_medium"
+            android:hint="@string/hint_correo"
+            app:boxBackgroundMode="outline"
+            app:errorEnabled="true">
 
-            <!-- Ícono de login -->
-            <ImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="24dp"
-                android:contentDescription="Ícono de inicio de sesión"
-                android:src="@drawable/baseline_login_24"
-                app:tint="@color/field_icon_tint"
-                xmlns:app="http://schemas.android.com/apk/res-auto" />
-
-            <!-- Campo de Usuario -->
-            <LinearLayout
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etCorreo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/bg_edittext_rounded"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingLeft="16dp"
-                android:paddingRight="8dp">
+                android:inputType="textEmailAddress"
+                android:minHeight="@dimen/touch_target_min"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="@dimen/text_body" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:contentDescription="Ícono usuario"
-                    android:src="@drawable/baseline_login_24"
-                    app:tint="@color/field_icon_tint"
-                    xmlns:app="http://schemas.android.com/apk/res-auto" />
+        <!-- Campo Contraseña -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilContrasena"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_large"
+            android:hint="@string/hint_contrasena"
+            app:boxBackgroundMode="outline"
+            app:endIconMode="password_toggle"
+            app:errorEnabled="true">
 
-                <EditText
-                    android:id="@+id/etUsuario"
-                    android:layout_width="0dp"
-                    android:layout_height="52dp"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:hint="@string/hint_usuario"
-                    android:importantForAutofill="no"
-                    android:inputType="text"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/field_hint"
-                    android:textSize="16sp" />
-            </LinearLayout>
-
-            <!-- Campo de Contraseña -->
-            <LinearLayout
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etContrasena"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:background="@drawable/bg_edittext_rounded"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingLeft="16dp"
-                android:paddingRight="8dp">
+                android:inputType="textPassword"
+                android:minHeight="@dimen/touch_target_min"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="@dimen/text_body" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:contentDescription="Ícono contraseña"
-                    android:src="@drawable/baseline_password_24"
-                    app:tint="@color/field_icon_tint"
-                    xmlns:app="http://schemas.android.com/apk/res-auto" />
+        <!-- Botón Entrar como Socio -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLoginSocio"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginBottom="@dimen/spacing_small"
+            android:text="@string/btn_login_socio"
+            android:textSize="@dimen/text_body" />
 
-                <EditText
-                    android:id="@+id/etContrasena"
-                    android:layout_width="0dp"
-                    android:layout_height="52dp"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:hint="@string/hint_contrasena"
-                    android:importantForAutofill="no"
-                    android:inputType="textPassword"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/field_hint"
-                    android:textSize="16sp" />
-            </LinearLayout>
+        <!-- Botón Entrar como Cliente -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLoginCliente"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginBottom="@dimen/spacing_small"
+            android:text="@string/btn_login_cliente"
+            android:textSize="@dimen/text_body" />
 
-            <!-- Botón Iniciar Sesión -->
-            <Button
-                android:id="@+id/btnIniciarSesion"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:background="@drawable/bg_button_rounded"
-                app:backgroundTint="@color/button_color"
-                android:text="@string/btn_iniciar_sesion"
-                android:textColor="@color/button_text"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+        <!-- Botón Entrar como Técnico -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLoginTecnico"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginBottom="@dimen/spacing_large"
+            android:text="@string/btn_login_tecnico"
+            android:textSize="@dimen/text_body" />
 
-        </LinearLayout>
+        <!-- Enlace a Registro -->
+        <TextView
+            android:id="@+id/tvIrARegistro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/touch_target_min"
+            android:gravity="center"
+            android:padding="@dimen/spacing_small"
+            android:text="@string/link_ir_a_registro"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="@dimen/text_body" />
 
     </LinearLayout>
 
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

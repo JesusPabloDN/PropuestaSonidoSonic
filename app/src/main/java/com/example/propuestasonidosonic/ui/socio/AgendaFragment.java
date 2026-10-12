@@ -1,4 +1,4 @@
-package com.example.propuestasonidosonic;
+package com.example.propuestasonidosonic.ui.socio;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,16 +9,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-public class AgendaFragment extends Fragment {
+import com.example.propuestasonidosonic.R;
 
-    public AgendaFragment() {
-        // Constructor vacío requerido
-    }
+public class AgendaFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_agenda, container, false);
     }
 }

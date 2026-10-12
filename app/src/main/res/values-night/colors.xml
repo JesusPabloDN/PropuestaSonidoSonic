@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Paleta base neutra Material 3 noche -->
+    <color name="md_theme_dark_primary">#93CCFF</color>
+    <color name="md_theme_dark_onPrimary">#003355</color>
+    <color name="md_theme_dark_primaryContainer">#094970</color>
+    <color name="md_theme_dark_onPrimaryContainer">#CCE5FF</color>
+    <color name="md_theme_dark_secondary">#B9C8DA</color>
+    <color name="md_theme_dark_onSecondary">#243240</color>
+    <color name="md_theme_dark_surface">#1A1C1E</color>
+    <color name="md_theme_dark_onSurface">#E2E2E6</color>
+    <color name="md_theme_dark_surfaceVariant">#42474E</color>
+    <color name="md_theme_dark_onSurfaceVariant">#C2C7CF</color>
+    <color name="md_theme_dark_outline">#8C9199</color>
+    <color name="md_theme_dark_background">#111315</color>
+    <color name="md_theme_dark_onBackground">#E2E2E6</color>
+
+    <!-- Estados de equipo y pedidos (versión oscura) -->
+    <!-- Verde = disponible / confirmado -->
+    <color name="status_disponible">#48BB78</color>
+    <color name="status_disponible_container">#1C4532</color>
+    <!-- Amarillo/Ámbar = en reparación / pendiente -->
+    <color name="status_pendiente">#ECC94B</color>
+    <color name="status_pendiente_container">#5F370E</color>
+    <!-- Rojo = dañado / cancelado -->
+    <color name="status_danado">#FC8181</color>
+    <color name="status_danado_container">#63171B</color>
+    <!-- Azul = rentado / entregado -->
+    <color name="status_rentado">#63B3ED</color>
+    <color name="status_rentado_container">#2A4365</color>
+</resources>

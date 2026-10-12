@@ -21,4 +21,9 @@
         android:icon="@drawable/ic_pedidos_placeholder"
         android:title="@string/nav_pedidos" />
 
+    <item
+        android:id="@+id/nav_finanzas"
+        android:icon="@drawable/ic_finanzas_placeholder"
+        android:title="@string/nav_finanzas" />
+
 </menu>

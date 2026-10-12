@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="?attr/android:colorBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/spacing_large"
+        android:paddingTop="@dimen/spacing_large"
+        android:paddingEnd="@dimen/spacing_large"
+        android:paddingBottom="@dimen/spacing_xlarge">
+
+        <!-- Logo -->
+        <ImageView
+            android:id="@+id/imgLogoRegistro"
+            android:layout_width="@dimen/logo_size"
+            android:layout_height="@dimen/logo_size"
+            android:layout_marginBottom="@dimen/spacing_small"
+            android:contentDescription="@string/desc_logo"
+            android:src="@drawable/sonidosonic" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_medium"
+            android:text="@string/registro_titulo"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="@dimen/text_headline"
+            android:textStyle="bold" />
+
+        <!-- Nombre Completo -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilNombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_small"
+            android:hint="@string/hint_nombre_completo"
+            app:boxBackgroundMode="outline"
+            app:errorEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etNombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName|textCapWords"
+                android:minHeight="@dimen/touch_target_min"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="@dimen/text_body" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Correo Electrónico -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilCorreo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_small"
+            android:hint="@string/hint_correo"
+            app:boxBackgroundMode="outline"
+            app:errorEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etCorreo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:minHeight="@dimen/touch_target_min"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="@dimen/text_body" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Teléfono -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilTelefono"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_small"
+            android:hint="@string/hint_telefono"
+            app:boxBackgroundMode="outline"
+            app:errorEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etTelefono"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="phone"
+                android:minHeight="@dimen/touch_target_min"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="@dimen/text_body" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Contraseña con helper visible de RN-14 -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilContrasena"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_small"
+            android:hint="@string/hint_contrasena"
+            app:boxBackgroundMode="outline"
+            app:endIconMode="password_toggle"
+            app:errorEnabled="true"
+            app:helperText="@string/helper_contrasena"
+            app:helperTextEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etContrasena"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:minHeight="@dimen/touch_target_min"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="@dimen/text_body" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Confirmar Contraseña -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilConfirmarContrasena"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_large"
+            android:hint="@string/hint_confirmar_contrasena"
+            app:boxBackgroundMode="outline"
+            app:endIconMode="password_toggle"
+            app:errorEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etConfirmarContrasena"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:minHeight="@dimen/touch_target_min"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="@dimen/text_body" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Botón Registrarse -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRegistrarse"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginBottom="@dimen/spacing_medium"
+            android:text="@string/btn_registrarse"
+            android:textSize="@dimen/text_body" />
+
+        <!-- Enlace a Login -->
+        <TextView
+            android:id="@+id/tvIrALogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/touch_target_min"
+            android:gravity="center"
+            android:padding="@dimen/spacing_small"
+            android:text="@string/link_ir_a_login"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="@dimen/text_body" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

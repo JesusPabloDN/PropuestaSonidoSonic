@@ -1,27 +1,72 @@
 <resources>
     <string name="app_name">Sonido Sonic</string>
 
-    <!-- Tabs de autenticación -->
-    <string name="tab_login">Iniciar Sesión</string>
-    <string name="tab_signup">Registrarse</string>
-
-    <!-- Login -->
-    <string name="hint_usuario">Usuario</string>
+    <!-- Autenticación - Login -->
+    <string name="login_titulo">Iniciar Sesión</string>
+    <string name="hint_correo">Correo electrónico</string>
     <string name="hint_contrasena">Contraseña</string>
-    <string name="btn_iniciar_sesion">INICIAR SESIÓN</string>
+    <string name="btn_login_socio">Entrar como Socio</string>
+    <string name="btn_login_cliente">Entrar como Cliente</string>
+    <string name="btn_login_tecnico">Entrar como Técnico</string>
+    <string name="link_ir_a_registro">¿No tienes cuenta? Regístrate aquí</string>
 
-    <!-- Sign Up -->
-    <string name="hint_nuevo_usuario">Nuevo Usuario</string>
-    <string name="hint_confirmar_contrasena">Confirmar Contraseña</string>
-    <string name="btn_registrarse">REGISTRARSE</string>
+    <!-- Autenticación - Registro -->
+    <string name="registro_titulo">Registro de Cliente</string>
+    <string name="hint_nombre_completo">Nombre completo</string>
+    <string name="hint_telefono">Teléfono</string>
+    <string name="hint_confirmar_contrasena">Confirmar contraseña</string>
+    <string name="helper_contrasena">Mínimo 8 caracteres, al menos una mayúscula, un número y un carácter especial</string>
+    <string name="btn_registrarse">Registrarse</string>
+    <string name="link_ir_a_login">¿Ya tienes cuenta? Inicia sesión</string>
+    <string name="registro_exitoso">Cuenta creada exitosamente. Inicia sesión.</string>
 
-    <!-- Errores -->
-    <string name="error_campo_vacio">Este campo es obligatorio</string>
+    <!-- Validaciones y Errores -->
+    <string name="error_campo_obligatorio">Este campo es obligatorio</string>
+    <string name="error_correo_invalido">Ingresa un correo electrónico válido</string>
+    <string name="error_telefono_invalido">Ingresa un número telefónico válido</string>
+    <string name="error_contrasena_invalida">La contraseña debe tener mínimo 8 caracteres, una mayúscula, un número y un carácter especial</string>
     <string name="error_contrasenas_no_coinciden">Las contraseñas no coinciden</string>
+    <string name="error_credenciales_invalidas">Correo o contraseña incorrectos</string>
+    <string name="error_rol_no_coincide_socio">Esta cuenta no tiene el rol de Socio</string>
+    <string name="error_rol_no_coincide_cliente">Esta cuenta no tiene el rol de Cliente</string>
+    <string name="error_rol_no_coincide_tecnico">Esta cuenta no tiene el rol de Técnico</string>
+    <string name="error_cuenta_inactiva">Esta cuenta se encuentra desactivada</string>
+    <string name="error_correo_ya_registrado">Este correo ya está registrado</string>
 
-    <!-- Bottom Navigation -->
+    <!-- Drawer Lateral -->
+    <string name="drawer_header_rol_socio">Socio Administrador</string>
+    <string name="drawer_header_rol_cliente">Cliente</string>
+    <string name="drawer_header_rol_tecnico">Técnico</string>
+    <string name="menu_modo_oscuro">Modo oscuro</string>
+    <string name="menu_modo_claro">Modo claro</string>
+    <string name="menu_cerrar_sesion">Cerrar sesión</string>
+    <string name="dialog_cerrar_sesion_titulo">Cerrar sesión</string>
+    <string name="dialog_cerrar_sesion_mensaje">¿Estás seguro de que deseas cerrar sesión?</string>
+    <string name="dialog_cancelar">Cancelar</string>
+    <string name="dialog_confirmar">Cerrar sesión</string>
+
+    <!-- Bottom Navigation (Socio) -->
     <string name="nav_dashboard">Dashboard</string>
     <string name="nav_inventario">Inventario</string>
     <string name="nav_agenda">Agenda</string>
     <string name="nav_pedidos">Pedidos</string>
+    <string name="nav_finanzas">Finanzas</string>
+
+    <!-- Estados Vacíos -->
+    <string name="empty_dashboard">Aún no hay datos disponibles en el Dashboard.</string>
+    <string name="empty_inventario">Aún no hay equipo registrado. Toca + para agregar.</string>
+    <string name="empty_agenda">No hay eventos programados para esta fecha.</string>
+    <string name="empty_pedidos">Aún no hay pedidos registrados.</string>
+    <string name="empty_finanzas">Aún no hay movimientos financieros registrados.</string>
+
+    <!-- Placeholders para Cliente y Técnico -->
+    <string name="placeholder_cliente_titulo">Módulo de Cliente</string>
+    <string name="placeholder_tecnico_titulo">Módulo de Técnico</string>
+    <string name="placeholder_proximamente">Próximamente</string>
+
+    <!-- Descripciones de accesibilidad -->
+    <string name="desc_logo">Logotipo de Sonido Sonic</string>
+    <string name="desc_icono_drawer">Menú de navegación</string>
+    <string name="desc_toggle_tema">Cambiar tema visual</string>
+    <string name="desc_cerrar_sesion">Cerrar sesión actual</string>
 </resources>

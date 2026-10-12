@@ -3,16 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_login"
-    tools:context=".DashboardFragment">
+    android:padding="@dimen/spacing_large"
+    android:background="?attr/android:colorBackground">
 
     <TextView
+        android:id="@+id/tvEmptyDashboard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Dashboard"
-        android:textSize="24sp"
-        android:textColor="@color/white"
-        android:textStyle="bold" />
+        android:gravity="center"
+        android:text="@string/empty_dashboard"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="@dimen/text_body" />
 
 </FrameLayout>
