@@ -55,10 +55,38 @@
 
     <!-- Estados Vacíos -->
     <string name="empty_dashboard">Aún no hay datos disponibles en el Dashboard.</string>
-    <string name="empty_inventario">Aún no hay equipo registrado. Toca + para agregar.</string>
+    <string name="empty_inventario">Aún no hay equipo registrado. Toca + para agregar</string>
+    <string name="empty_inventario_sin_resultados">Sin resultados para tu búsqueda</string>
     <string name="empty_agenda">No hay eventos programados para esta fecha.</string>
     <string name="empty_pedidos">Aún no hay pedidos registrados.</string>
     <string name="empty_finanzas">Aún no hay movimientos financieros registrados.</string>
+
+    <!-- Inventario -->
+    <string name="hint_buscar_por_nombre">Buscar por nombre</string>
+    <string name="categoria_todas">Todas</string>
+    <string name="estado_disponible">Disponible</string>
+    <string name="estado_rentado">Rentado</string>
+    <string name="estado_en_reparacion">En reparación</string>
+    <string name="estado_danado">Dañado</string>
+    <string name="proxima_reserva_formato">Próxima reserva: %1$s · %2$s</string>
+    <string name="dialog_nuevo_equipo_titulo">Nuevo equipo</string>
+    <string name="dialog_editar_equipo_titulo">Editar equipo</string>
+    <string name="hint_nombre_modelo">Nombre o modelo</string>
+    <string name="label_categoria">Categoría</string>
+    <string name="hint_precio_renta">Precio de renta por evento ($)</string>
+    <string name="label_estado_fisico">Estado físico</string>
+    <string name="hint_cantidad_unidades">Cantidad de unidades (1 a 50)</string>
+    <string name="btn_elegir_foto">Elegir foto</string>
+    <string name="btn_quitar_foto">Quitar foto</string>
+    <string name="btn_guardar">Guardar</string>
+    <string name="btn_eliminar">Eliminar</string>
+    <string name="dialog_eliminar_equipo_titulo">¿Eliminar unidad?</string>
+    <string name="dialog_eliminar_equipo_mensaje">¿Estás seguro de que deseas eliminar esta unidad de equipo?</string>
+    <string name="dialog_advertencia_reservas_titulo">Reservas futuras</string>
+    <string name="dialog_advertencia_reservas_mensaje">Esta unidad tiene reservas en los siguientes eventos futuros:\n\n%1$s\n\n¿Deseas cambiar el estado físico a %2$s de todas formas?</string>
+    <string name="error_nombre_requerido">El nombre o modelo es obligatorio</string>
+    <string name="error_precio_invalido">Ingresa un precio válido mayor o igual a 0</string>
+    <string name="error_cantidad_invalida">La cantidad debe ser entre 1 y 50</string>
 
     <!-- Placeholders para Cliente y Técnico -->
     <string name="placeholder_cliente_titulo">Módulo de Cliente</string>

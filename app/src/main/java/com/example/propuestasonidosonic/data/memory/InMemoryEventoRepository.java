@@ -145,6 +145,36 @@ public class InMemoryEventoRepository implements EventoRepository {
     }
 
     @Override
+    public synchronized List<Evento> reservasFuturas(String unidadId, long ahoraMillis) {
+        List<Evento> futuras = new ArrayList<>();
+        for (Evento ev : eventos) {
+            if (!Evento.ESTADO_CANCELADO.equals(ev.getEstado())) {
+                // Evento que inicia después de ahora
+                if (ev.getInicioMillis() > ahoraMillis) {
+                    if (ev.getEquipoIds() != null && ev.getEquipoIds().contains(unidadId)) {
+                        futuras.add(ev);
+                    }
+                }
+            }
+        }
+        futuras.sort((e1, e2) -> Long.compare(e1.getInicioMillis(), e2.getInicioMillis()));
+        return futuras;
+    }
+
+    @Override
+    public synchronized List<Evento> eventosActivosParaUnidad(String unidadId) {
+        List<Evento> activos = new ArrayList<>();
+        for (Evento ev : eventos) {
+            if (!Evento.ESTADO_CANCELADO.equals(ev.getEstado())) {
+                if (ev.getEquipoIds() != null && ev.getEquipoIds().contains(unidadId)) {
+                    activos.add(ev);
+                }
+            }
+        }
+        return activos;
+    }
+
+    @Override
     public synchronized List<String> unidadesOcupadas(long inicioMillis, long finMillis, String ignorarEventoId) {
         List<String> ocupadas = new ArrayList<>();
         for (Evento ev : eventos) {

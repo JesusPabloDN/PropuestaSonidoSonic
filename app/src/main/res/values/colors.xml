@@ -22,6 +22,8 @@
     <!-- Amarillo/Ámbar = en reparación / pendiente -->
     <color name="status_pendiente">#B7791F</color>
     <color name="status_pendiente_container">#FEFCBF</color>
+    <color name="status_en_reparacion">#B7791F</color>
+    <color name="status_en_reparacion_container">#FEFCBF</color>
     <!-- Rojo = dañado / cancelado -->
     <color name="status_danado">#C53030</color>
     <color name="status_danado_container">#FED7D7</color>

@@ -15,5 +15,7 @@ public interface EventoRepository {
     void actualizarChecklist(String eventoId, List<ChecklistItem> checklist, Callback<Void> callback);
     LiveData<List<Evento>> eventosDelDia(long fechaMillis);
     List<Evento> reservasVigentes(long ahoraMillis);
+    List<Evento> reservasFuturas(String unidadId, long ahoraMillis);
+    List<Evento> eventosActivosParaUnidad(String unidadId);
     List<String> unidadesOcupadas(long inicioMillis, long finMillis, String ignorarEventoId);
 }

@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/colorSurface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_large">
+
+        <!-- Barra de arrastre visual del BottomSheet -->
+        <View
+            android:layout_width="40dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/spacing_medium"
+            android:background="?attr/colorSurfaceVariant" />
+
+        <TextView
+            android:id="@+id/tvTituloDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_nuevo_equipo_titulo"
+            android:textSize="@dimen/text_headline"
+            android:textStyle="bold"
+            android:textColor="?attr/colorOnSurface"
+            android:layout_marginBottom="@dimen/spacing_medium" />
+
+        <!-- Sección de Foto -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="@dimen/spacing_medium">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivFotoPreview"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:scaleType="centerCrop"
+                app:shapeAppearanceOverlay="@style/RoundedImageView72"
+                android:contentDescription="@string/nav_inventario"
+                tools:src="@drawable/bocinajbl" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/spacing_medium"
+                android:orientation="vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnElegirFoto"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/btn_elegir_foto"
+                    android:textSize="@dimen/text_caption"
+                    android:minHeight="@dimen/touch_target_min" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnQuitarFoto"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/btn_quitar_foto"
+                    android:textSize="@dimen/text_caption"
+                    android:minHeight="@dimen/touch_target_min"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Campo: Nombre o modelo -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilNombreEquipo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_small"
+            android:hint="@string/hint_nombre_modelo"
+            app:boxBackgroundMode="outline">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etNombreEquipo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapWords"
+                android:textSize="@dimen/text_body" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Campo: Categoría (Spinner con label) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_categoria"
+            android:textSize="@dimen/text_caption"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:layout_marginTop="@dimen/spacing_tiny"
+            android:layout_marginBottom="@dimen/spacing_tiny" />
+
+        <Spinner
+            android:id="@+id/spCategoriaDialog"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/touch_target_min"
+            android:layout_marginBottom="@dimen/spacing_small"
+            android:spinnerMode="dropdown" />
+
+        <!-- Campo: Precio de renta -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilPrecioRenta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_small"
+            android:hint="@string/hint_precio_renta"
+            app:prefixText="$"
+            app:boxBackgroundMode="outline">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPrecioRenta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:textSize="@dimen/text_body" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Campo: Estado físico -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_estado_fisico"
+            android:textSize="@dimen/text_caption"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:layout_marginTop="@dimen/spacing_tiny"
+            android:layout_marginBottom="@dimen/spacing_tiny" />
+
+        <Spinner
+            android:id="@+id/spEstadoFisicoDialog"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/touch_target_min"
+            android:layout_marginBottom="@dimen/spacing_small"
+            android:spinnerMode="dropdown" />
+
+        <!-- Campo: Cantidad de unidades (solo en creación) -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilCantidad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_medium"
+            android:hint="@string/hint_cantidad_unidades"
+            app:boxBackgroundMode="outline">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etCantidad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:text="1"
+                android:textSize="@dimen/text_body" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Botones de Acción -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGuardarEquipo"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:text="@string/btn_guardar"
+            android:textSize="@dimen/text_body"
+            app:cornerRadius="@dimen/card_corner_radius"
+            android:layout_marginBottom="@dimen/spacing_small" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEliminarEquipo"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:text="@string/btn_eliminar"
+            android:textColor="@color/status_danado"
+            app:strokeColor="@color/status_danado"
+            android:textSize="@dimen/text_body"
+            app:cornerRadius="@dimen/card_corner_radius"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:layout_marginBottom="@dimen/spacing_small" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancelarEquipo"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:text="@string/dialog_cancelar"
+            android:textSize="@dimen/text_body" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

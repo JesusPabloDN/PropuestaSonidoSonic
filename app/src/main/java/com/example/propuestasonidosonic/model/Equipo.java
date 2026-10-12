@@ -16,6 +16,7 @@ public class Equipo {
     private int numeroUnidad;
     private String estadoFisico;
     private double precioRenta;
+    private String fotoUri;
 
     public Equipo() {
         this.id = UUID.randomUUID().toString();
@@ -23,12 +24,17 @@ public class Equipo {
     }
 
     public Equipo(String id, String nombre, String categoria, int numeroUnidad, String estadoFisico, double precioRenta) {
+        this(id, nombre, categoria, numeroUnidad, estadoFisico, precioRenta, null);
+    }
+
+    public Equipo(String id, String nombre, String categoria, int numeroUnidad, String estadoFisico, double precioRenta, String fotoUri) {
         this.id = id != null ? id : UUID.randomUUID().toString();
         this.nombre = nombre;
         this.categoria = categoria;
         this.numeroUnidad = numeroUnidad;
         this.estadoFisico = estadoFisico != null ? estadoFisico : ESTADO_DISPONIBLE;
         this.precioRenta = precioRenta;
+        this.fotoUri = fotoUri;
     }
 
     public String getId() {
@@ -77,6 +83,14 @@ public class Equipo {
 
     public void setPrecioRenta(double precioRenta) {
         this.precioRenta = precioRenta;
+    }
+
+    public String getFotoUri() {
+        return fotoUri;
+    }
+
+    public void setFotoUri(String fotoUri) {
+        this.fotoUri = fotoUri;
     }
 
     @Override

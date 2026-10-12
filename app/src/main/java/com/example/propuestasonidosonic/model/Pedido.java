@@ -32,13 +32,21 @@ public class Pedido {
     private long fechaCreacion;
     private long fechaActualizacion;
 
+    // Campos acordados v2
+    private String nombreEvento;
+    private List<String> equipoIds;
+    private boolean cobrado;
+    private long fechaCobro;
+
     public Pedido() {
         this.id = UUID.randomUUID().toString();
         this.canalOrigen = CANAL_WHATSAPP;
         this.partidas = new ArrayList<>();
+        this.equipoIds = new ArrayList<>();
         this.estado = ESTADO_PENDIENTE;
         this.fechaCreacion = System.currentTimeMillis();
         this.fechaActualizacion = System.currentTimeMillis();
+        this.cobrado = false;
     }
 
     public Pedido(String id, long numero, String clienteId, String clienteNombre, String clienteTelefono,
@@ -180,6 +188,38 @@ public class Pedido {
 
     public void setFechaActualizacion(long fechaActualizacion) {
         this.fechaActualizacion = fechaActualizacion;
+    }
+
+    public String getNombreEvento() {
+        return nombreEvento;
+    }
+
+    public void setNombreEvento(String nombreEvento) {
+        this.nombreEvento = nombreEvento;
+    }
+
+    public List<String> getEquipoIds() {
+        return equipoIds;
+    }
+
+    public void setEquipoIds(List<String> equipoIds) {
+        this.equipoIds = equipoIds != null ? equipoIds : new ArrayList<>();
+    }
+
+    public boolean isCobrado() {
+        return cobrado;
+    }
+
+    public void setCobrado(boolean cobrado) {
+        this.cobrado = cobrado;
+    }
+
+    public long getFechaCobro() {
+        return fechaCobro;
+    }
+
+    public void setFechaCobro(long fechaCobro) {
+        this.fechaCobro = fechaCobro;
     }
 
     @Override

@@ -76,6 +76,12 @@ public class InMemoryEquipoRepository implements EquipoRepository {
     @Override
     public synchronized void agregarUnidades(String nombre, String categoria, double precioRenta,
                                             String estadoFisico, int cantidad, Callback<List<Equipo>> callback) {
+        agregarUnidades(nombre, categoria, precioRenta, estadoFisico, cantidad, null, callback);
+    }
+
+    @Override
+    public synchronized void agregarUnidades(String nombre, String categoria, double precioRenta,
+                                            String estadoFisico, int cantidad, String fotoUri, Callback<List<Equipo>> callback) {
         // FIRESTORE: aquí irá una transacción
         int maxNumero = 0;
         for (Equipo e : equipos) {
@@ -94,6 +100,7 @@ public class InMemoryEquipoRepository implements EquipoRepository {
             nuevo.setPrecioRenta(precioRenta);
             nuevo.setEstadoFisico(estadoFisico);
             nuevo.setNumeroUnidad(maxNumero + i);
+            nuevo.setFotoUri(fotoUri);
             equipos.add(nuevo);
             nuevos.add(nuevo);
         }
@@ -113,6 +120,27 @@ public class InMemoryEquipoRepository implements EquipoRepository {
             }
         }
         callback.onError("Equipo no encontrado");
+    }
+
+    @Override
+    public synchronized void eliminar(String id, Callback<Void> callback) {
+        // Verificar si la unidad está en un evento no cancelado
+        if (eventoRepository != null) {
+            List<Evento> activos = eventoRepository.eventosActivosParaUnidad(id);
+            if (!activos.isEmpty()) {
+                Evento ev = activos.get(0);
+                callback.onError("No se puede eliminar la unidad porque está reservada en el evento «" + ev.getNombre() + "»");
+                return;
+            }
+        }
+
+        boolean removed = equipos.removeIf(e -> e.getId().equals(id));
+        if (removed) {
+            notificarEquipos();
+            callback.onSuccess(null);
+        } else {
+            callback.onError("Equipo no encontrado para eliminar");
+        }
     }
 
     @Override
@@ -165,5 +193,16 @@ public class InMemoryEquipoRepository implements EquipoRepository {
             }
         }
         return Equipo.ESTADO_DISPONIBLE;
+    }
+
+    @Override
+    public synchronized Evento proximaReserva(String equipoId, long ahoraMillis) {
+        if (eventoRepository != null) {
+            List<Evento> futuras = eventoRepository.reservasFuturas(equipoId, ahoraMillis);
+            if (!futuras.isEmpty()) {
+                return futuras.get(0);
+            }
+        }
+        return null;
     }
 }

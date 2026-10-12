@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.recyclerview)
     implementation(libs.lifecycle.livedata)
     implementation(libs.lifecycle.viewmodel)
+    implementation(libs.glide)
     testImplementation(libs.junit)
     testImplementation(libs.core.testing)
     androidTestImplementation(libs.espresso.core)
