@@ -12,4 +12,10 @@ public interface UsuarioRepository {
     void actualizarUsuario(Usuario usuario, Callback<Usuario> callback);
     void eliminarUsuario(String id, Callback<Void> callback);
     void autenticar(String correo, String contrasena, Callback<Usuario> callback);
+    List<Usuario> obtenerActivosPorRol(String rol);
+    void crearPersonal(Usuario nuevo, String contrasena, Callback<Usuario> callback);
+    void actualizarPersonal(String actorId, String usuarioId, String nombre, String telefono,
+                            Boolean cuentaActiva, String nuevaContrasena, Callback<Usuario> callback);
 }
+
+

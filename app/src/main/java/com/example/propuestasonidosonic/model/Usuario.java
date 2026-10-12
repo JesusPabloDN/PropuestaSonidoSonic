@@ -13,6 +13,7 @@ public class Usuario {
     private String correo;
     private String telefono;
     private String rol;
+    // FIREBASE: la contraseña la manejará Firebase Auth; este campo desaparece
     private String contrasena;
     private boolean cuentaActiva;
     private long fechaAlta;
@@ -32,6 +33,23 @@ public class Usuario {
         this.contrasena = contrasena;
         this.cuentaActiva = cuentaActiva;
         this.fechaAlta = fechaAlta;
+    }
+
+    public Usuario(Usuario otro) {
+        if (otro != null) {
+            this.id = otro.id;
+            this.nombre = otro.nombre;
+            this.correo = otro.correo;
+            this.telefono = otro.telefono;
+            this.rol = otro.rol;
+            this.contrasena = otro.contrasena;
+            this.cuentaActiva = otro.cuentaActiva;
+            this.fechaAlta = otro.fechaAlta;
+        } else {
+            this.id = UUID.randomUUID().toString();
+            this.cuentaActiva = true;
+            this.fechaAlta = System.currentTimeMillis();
+        }
     }
 
     public String getId() {

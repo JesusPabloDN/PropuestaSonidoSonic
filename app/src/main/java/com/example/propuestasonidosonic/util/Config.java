@@ -23,4 +23,33 @@ public final class Config {
     public static final int OPERADORES_POR_PAQUETE_MAX = 2;
     // valor provisional, validar con los socios
     public static final int MAX_EVENTOS_SIMULTANEOS = 3;
+
+    // Motor de disponibilidad y reservas
+    // valor provisional, validar con los socios
+    public static final String ZONA_HORARIA = "America/Mexico_City";
+    // valor provisional, validar con los socios
+    public static final int PRIMER_INICIO_MIN = 540;
+    // valor provisional, validar con los socios
+    public static final int ULTIMO_INICIO_MIN = 1320;
+    // valor provisional, validar con los socios
+    public static final int PASO_HORARIO_MIN = 30;
+    // valor provisional, validar con los socios
+    public static final int DURACION_MIN_MIN = 60;
+    // valor provisional, validar con los socios
+    public static final int DURACION_MAX_MIN = 720;
+    // valor provisional, validar con los socios
+    public static final int PASO_DURACION_MIN = 30;
+    // valor provisional, validar con los socios
+    public static final int APARTADO_APP_MIN = 30;
+    // valor provisional, validar con los socios
+    public static final int APARTADO_MANUAL_HORAS = 24;
+    // valor provisional, validar con los socios
+    public static final int ANTICIPACION_REVISION_HORAS = 48;
+    // valor provisional, validar con los socios
+    public static final double ANTICIPO_PORCENTAJE = 0.30;
+    // valor provisional, validar con los socios
+    public static final boolean PREFERIR_ASISTENTES = true;
+    // valor provisional, validar con los socios
+    public static final int DIAS_BUSQUEDA_MAX = 60;
 }
+

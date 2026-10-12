@@ -25,6 +25,15 @@ public class SessionManager {
         usuarioActualLiveData.setValue(null);
     }
 
+    public void refrescarUsuario(Usuario usuario) {
+        if (usuario != null) {
+            Usuario actual = usuarioActualLiveData.getValue();
+            if (actual != null && actual.getId().equals(usuario.getId())) {
+                usuarioActualLiveData.setValue(new Usuario(usuario));
+            }
+        }
+    }
+
     public Usuario getUsuarioActual() {
         return usuarioActualLiveData.getValue();
     }

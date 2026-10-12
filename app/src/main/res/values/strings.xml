@@ -148,4 +148,38 @@
     <string name="desc_icono_drawer">Menú de navegación</string>
     <string name="desc_toggle_tema">Cambiar tema visual</string>
     <string name="desc_cerrar_sesion">Cerrar sesión actual</string>
+
+    <!-- ETAPA 4B: Equipo de trabajo y disponibilidad -->
+    <string name="menu_equipo_trabajo">Equipo de trabajo</string>
+    <string name="titulo_equipo_trabajo">Equipo de trabajo</string>
+    <string name="tab_personal">Personal</string>
+    <string name="tab_disponibilidad">Disponibilidad</string>
+    <string name="badge_rol_socio">Socio</string>
+    <string name="badge_rol_asistente">Asistente</string>
+    <string name="badge_cuenta_activa">Activa</string>
+    <string name="badge_cuenta_inactiva">Inactiva</string>
+    <string name="dialog_nuevo_personal_titulo">Nueva cuenta</string>
+    <string name="dialog_editar_personal_titulo">Editar cuenta</string>
+    <string name="label_rol_cuenta">Tipo de cuenta</string>
+    <string name="hint_nueva_contrasena_opcional">Nueva contraseña (opcional)</string>
+    <string name="hint_contrasena_temporal">Contraseña temporal</string>
+    <string name="label_cuenta_activa">Cuenta activa</string>
+    <string name="aviso_correo_no_editable">El correo y el tipo de cuenta no se pueden cambiar</string>
+    <string name="msg_personal_creado">Cuenta creada. Comparte el correo y la contraseña temporal con la persona.</string>
+    <string name="msg_personal_actualizado">Cambios guardados</string>
+    <string name="dialog_desactivar_titulo">¿Desactivar cuenta?</string>
+    <string name="dialog_desactivar_con_reservas_formato">%1$s aparece en %2$d reserva(s) futura(s). Seguirán asignadas a esta persona hasta que las reasignes. ¿Desactivar de todas formas?</string>
+    <string name="dialog_desactivar_sin_reservas">Esta persona ya no podrá iniciar sesión ni se le asignarán eventos nuevos.</string>
+    <string name="empty_disponibilidad_sin_asistentes">Aún no hay Asistentes. Crea uno en la pestaña Personal.</string>
+    <string name="label_trabaja_este_dia">Trabaja este día</string>
+    <string name="label_disponible_este_dia">Disponible este día</string>
+    <string name="resumen_personal_dia_formato">Personal disponible ese día: %1$d</string>
+    <string name="aviso_dia_pasado">Este día ya pasó. No se puede modificar.</string>
+    <string name="dialog_quitar_dia_con_reservas_formato">%1$s tiene %2$d reserva(s) ese día. Seguirán asignadas a esta persona hasta que las reasignes. ¿Quitarla de todas formas?</string>
+    <string name="btn_elegir_fecha">Elegir fecha</string>
+    <string name="desc_dia_anterior">Día anterior</string>
+    <string name="desc_dia_siguiente">Día siguiente</string>
+    <string name="desc_nuevo_personal">Agregar personal</string>
+    <string name="btn_desactivar">Desactivar</string>
+    <string name="btn_quitar">Quitar</string>
 </resources>

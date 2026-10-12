@@ -27,6 +27,12 @@ public final class FormatUtils {
         return sdf.format(new Date(millis));
     }
 
+    public static String fechaLarga(long millis) {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE d 'de' MMMM 'de' yyyy", LOCALE_MX);
+        sdf.setTimeZone(java.util.TimeZone.getTimeZone(Config.ZONA_HORARIA));
+        return sdf.format(new Date(millis));
+    }
+
     public static String quitarAcentos(String texto) {
         if (texto == null) return "";
         String normalizado = Normalizer.normalize(texto, Normalizer.Form.NFD);

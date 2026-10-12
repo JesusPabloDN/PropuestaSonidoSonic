@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface"
+    android:orientation="vertical">
+
+    <!-- Pestañas Personal / Disponibilidad -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabsUsuarios"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        app:tabGravity="fill"
+        app:tabIndicatorAnimationMode="elastic"
+        app:tabIndicatorColor="?attr/colorPrimary"
+        app:tabIndicatorFullWidth="false"
+        app:tabIndicatorHeight="3dp"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="?attr/colorPrimary"
+        app:tabTextColor="?attr/colorOnSurfaceVariant">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tab_personal" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tab_disponibilidad" />
+
+    </com.google.android.material.tabs.TabLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- Contenedor 1: Personal -->
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/framePersonal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPersonal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingTop="@dimen/spacing_small"
+                android:paddingBottom="96dp"
+                tools:listitem="@layout/item_personal" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabNuevoPersonal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="@dimen/spacing_large"
+                android:contentDescription="@string/desc_nuevo_personal"
+                android:src="@drawable/ic_add_24"
+                app:backgroundTint="?attr/colorPrimary"
+                app:tint="?attr/colorOnPrimary" />
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        <!-- Contenedor 2: Disponibilidad -->
+        <LinearLayout
+            android:id="@+id/frameDisponibilidad"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <!-- Fila del Selector de Fecha -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/spacing_medium"
+                android:paddingTop="@dimen/spacing_small"
+                android:paddingEnd="@dimen/spacing_medium"
+                android:paddingBottom="@dimen/spacing_small">
+
+                <ImageButton
+                    android:id="@+id/btnDiaAnterior"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/desc_dia_anterior"
+                    android:src="@drawable/ic_chevron_left_24"
+                    app:tint="?attr/colorOnSurface" />
+
+                <TextView
+                    android:id="@+id/tvFechaSeleccionada"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:minHeight="@dimen/touch_target_min"
+                    android:padding="@dimen/spacing_small"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="@dimen/text_body"
+                    android:textStyle="bold"
+                    tools:text="sábado 14 de noviembre de 2026" />
+
+                <ImageButton
+                    android:id="@+id/btnDiaSiguiente"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/desc_dia_siguiente"
+                    android:src="@drawable/ic_chevron_right_24"
+                    app:tint="?attr/colorOnSurface" />
+
+            </LinearLayout>
+
+            <!-- Aviso de Día Pasado -->
+            <TextView
+                android:id="@+id/tvAvisoDiaPasado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_medium"
+                android:layout_marginEnd="@dimen/spacing_medium"
+                android:layout_marginBottom="@dimen/spacing_tiny"
+                android:background="?attr/colorSurfaceVariant"
+                android:padding="@dimen/spacing_small"
+                android:text="@string/aviso_dia_pasado"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="@dimen/text_caption"
+                android:visibility="gone" />
+
+            <!-- Resumen de Personal Disponible -->
+            <TextView
+                android:id="@+id/tvResumenPersonalDia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_medium"
+                android:layout_marginTop="@dimen/spacing_tiny"
+                android:layout_marginEnd="@dimen/spacing_medium"
+                android:layout_marginBottom="@dimen/spacing_small"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="@dimen/text_body"
+                android:textStyle="bold"
+                tools:text="Personal disponible ese día: 2" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvDisponibilidad"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:clipToPadding="false"
+                android:paddingBottom="96dp"
+                tools:listitem="@layout/item_disponibilidad_operador" />
+
+            <!-- Mensaje vacío si no hay asistentes -->
+            <TextView
+                android:id="@+id/tvEmptyDisponibilidad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/spacing_large"
+                android:gravity="center"
+                android:text="@string/empty_disponibilidad_sin_asistentes"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="@dimen/text_body"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</LinearLayout>
