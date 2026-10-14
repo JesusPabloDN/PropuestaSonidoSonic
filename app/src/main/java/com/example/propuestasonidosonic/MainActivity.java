@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
         topLevelDestinations.add(R.id.nav_pedidos);
         topLevelDestinations.add(R.id.nav_finanzas);
         topLevelDestinations.add(R.id.clienteHomeFragment);
+        topLevelDestinations.add(R.id.nav_cliente_pedidos);
         topLevelDestinations.add(R.id.asistenteHomeFragment);
 
         appBarConfiguration = new AppBarConfiguration.Builder(topLevelDestinations)
@@ -118,17 +119,33 @@ public class MainActivity extends AppCompatActivity {
             if (currentId == itemId) {
                 return true;
             }
-            if (itemId == R.id.nav_dashboard) {
-                navController.popBackStack(R.id.nav_dashboard, false);
+
+            Usuario usuario = sessionManager.getUsuarioActual();
+            String rol = usuario != null ? usuario.getRol() : null;
+
+            if (Usuario.ROL_CLIENTE.equals(rol)) {
+                if (itemId == R.id.clienteHomeFragment) {
+                    navController.popBackStack(R.id.clienteHomeFragment, false);
+                    return true;
+                }
+                NavOptions navOptions = new NavOptions.Builder()
+                        .setLaunchSingleTop(true)
+                        .setPopUpTo(R.id.clienteHomeFragment, false)
+                        .build();
+                navController.navigate(itemId, null, navOptions);
+                return true;
+            } else {
+                if (itemId == R.id.nav_dashboard) {
+                    navController.popBackStack(R.id.nav_dashboard, false);
+                    return true;
+                }
+                NavOptions navOptions = new NavOptions.Builder()
+                        .setLaunchSingleTop(true)
+                        .setPopUpTo(R.id.nav_dashboard, false)
+                        .build();
+                navController.navigate(itemId, null, navOptions);
                 return true;
             }
-
-            NavOptions navOptions = new NavOptions.Builder()
-                    .setLaunchSingleTop(true)
-                    .setPopUpTo(R.id.nav_dashboard, false)
-                    .build();
-            navController.navigate(itemId, null, navOptions);
-            return true;
         });
 
         bottomNavigationView.setOnItemReselectedListener(item -> {
@@ -142,38 +159,60 @@ public class MainActivity extends AppCompatActivity {
 
     private void configurarNavegacionVisibilidad() {
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-            int id = destination.getId();
+            actualizarVisibilidadNavegacion(destination.getId());
+        });
+    }
 
-            if (id == R.id.loginFragment) {
-                toolbar.setVisibility(View.GONE);
-                bottomNavigationView.setVisibility(View.GONE);
-                drawerLayout.closeDrawer(GravityCompat.START);
-                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            } else if (id == R.id.registerFragment) {
-                toolbar.setVisibility(View.VISIBLE);
-                bottomNavigationView.setVisibility(View.GONE);
-                drawerLayout.closeDrawer(GravityCompat.START);
-                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            } else if (id == R.id.nav_dashboard || id == R.id.nav_inventario ||
-                       id == R.id.nav_agenda || id == R.id.nav_pedidos ||
-                       id == R.id.nav_finanzas) {
-                toolbar.setVisibility(View.VISIBLE);
+    private void actualizarVisibilidadNavegacion(int destinationId) {
+        if (destinationId == R.id.loginFragment) {
+            toolbar.setVisibility(View.GONE);
+            bottomNavigationView.setVisibility(View.GONE);
+            drawerLayout.closeDrawer(GravityCompat.START);
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            return;
+        } else if (destinationId == R.id.registerFragment) {
+            toolbar.setVisibility(View.VISIBLE);
+            bottomNavigationView.setVisibility(View.GONE);
+            drawerLayout.closeDrawer(GravityCompat.START);
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            return;
+        }
+
+        toolbar.setVisibility(View.VISIBLE);
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+
+        Usuario usuario = sessionManager.getUsuarioActual();
+        String rol = usuario != null ? usuario.getRol() : null;
+
+        if (Usuario.ROL_SOCIO.equals(rol)) {
+            if (destinationId == R.id.nav_dashboard || destinationId == R.id.nav_inventario ||
+                destinationId == R.id.nav_agenda || destinationId == R.id.nav_pedidos ||
+                destinationId == R.id.nav_finanzas) {
                 bottomNavigationView.setVisibility(View.VISIBLE);
-                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-                android.view.MenuItem menuItem = bottomNavigationView.getMenu().findItem(id);
+                android.view.MenuItem menuItem = bottomNavigationView.getMenu().findItem(destinationId);
                 if (menuItem != null) {
                     menuItem.setChecked(true);
                 }
             } else {
-                toolbar.setVisibility(View.VISIBLE);
                 bottomNavigationView.setVisibility(View.GONE);
-                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
             }
-        });
+        } else if (Usuario.ROL_CLIENTE.equals(rol)) {
+            if (destinationId == R.id.clienteHomeFragment || destinationId == R.id.nav_cliente_pedidos) {
+                bottomNavigationView.setVisibility(View.VISIBLE);
+                android.view.MenuItem menuItem = bottomNavigationView.getMenu().findItem(destinationId);
+                if (menuItem != null) {
+                    menuItem.setChecked(true);
+                }
+            } else {
+                bottomNavigationView.setVisibility(View.GONE);
+            }
+        } else {
+            bottomNavigationView.setVisibility(View.GONE);
+        }
     }
 
     private void configurarDrawer() {
-        // Observar sesión para datos del usuario en encabezado del drawer
+        // Observar sesión para datos del usuario en encabezado del drawer y menú por rol
         sessionManager.getUsuarioActualLiveData().observe(this, usuario -> {
             if (usuario != null) {
                 tvDrawerUserName.setText(usuario.getNombre());
@@ -191,11 +230,23 @@ public class MainActivity extends AppCompatActivity {
                 boolean esSocio = Usuario.ROL_SOCIO.equals(usuario.getRol());
                 drawerItemEquipo.setVisibility(esSocio ? View.VISIBLE : View.GONE);
                 drawerItemClientes.setVisibility(esSocio ? View.VISIBLE : View.GONE);
+
+                bottomNavigationView.getMenu().clear();
+                if (Usuario.ROL_SOCIO.equals(usuario.getRol())) {
+                    bottomNavigationView.inflateMenu(R.menu.bottom_menu);
+                } else if (Usuario.ROL_CLIENTE.equals(usuario.getRol())) {
+                    bottomNavigationView.inflateMenu(R.menu.bottom_menu_cliente);
+                }
             } else {
                 tvDrawerUserName.setText("");
                 tvDrawerUserRole.setText("");
                 drawerItemEquipo.setVisibility(View.GONE);
                 drawerItemClientes.setVisibility(View.GONE);
+                bottomNavigationView.getMenu().clear();
+            }
+
+            if (navController != null && navController.getCurrentDestination() != null) {
+                actualizarVisibilidadNavegacion(navController.getCurrentDestination().getId());
             }
         });
 
@@ -274,6 +325,26 @@ public class MainActivity extends AppCompatActivity {
                 if (navController != null) {
                     int currentId = navController.getCurrentDestination() != null
                             ? navController.getCurrentDestination().getId() : 0;
+
+                    Usuario usuario = sessionManager.getUsuarioActual();
+                    String rol = usuario != null ? usuario.getRol() : null;
+
+                    if (Usuario.ROL_CLIENTE.equals(rol)) {
+                        if (currentId == R.id.clienteHomeFragment) {
+                            moveTaskToBack(true);
+                            return;
+                        }
+                        if (currentId == R.id.nav_cliente_pedidos) {
+                            navController.popBackStack(R.id.clienteHomeFragment, false);
+                            return;
+                        }
+                        if (navController.popBackStack()) {
+                            return;
+                        }
+                        moveTaskToBack(true);
+                        return;
+                    }
+
                     if (currentId == R.id.nav_dashboard ||
                         currentId == R.id.clienteHomeFragment ||
                         currentId == R.id.asistenteHomeFragment) {

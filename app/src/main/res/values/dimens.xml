@@ -11,6 +11,7 @@
     <dimen name="touch_target_min">48dp</dimen>
     <dimen name="button_height">52dp</dimen>
     <dimen name="card_corner_radius">12dp</dimen>
+    <dimen name="button_corner_radius">12dp</dimen>
     <dimen name="drawer_width">300dp</dimen>
     <dimen name="logo_size">140dp</dimen>
 

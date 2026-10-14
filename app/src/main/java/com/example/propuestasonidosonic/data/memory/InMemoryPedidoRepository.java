@@ -218,6 +218,18 @@ public class InMemoryPedidoRepository implements PedidoRepository {
                 if (callback != null) callback.onError("El identificador del cliente es obligatorio para pedidos desde la app");
                 return;
             }
+
+            long ahora = reloj.ahora();
+            for (Pedido p : pedidos) {
+                if (solicitud.getClienteId().equals(p.getClienteId())
+                        && Pedido.ESTADO_APARTADO.equals(p.getEstado())
+                        && p.getVencimientoApartadoMillis() > ahora) {
+                    if (callback != null) {
+                        callback.onError("Ya tienes una reserva pendiente de pago. Págala o espera a que venza.");
+                    }
+                    return;
+                }
+            }
         }
 
         if (paqueteRepository == null) {

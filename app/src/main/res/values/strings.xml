@@ -393,4 +393,55 @@
     <string name="formato_cliente_pedidos_pagado">%1$d pedidos · Pagado %2$s</string>
     <string name="formato_cliente_saldo">Saldo %1$s</string>
     <string name="label_motivo_rechazo_detalle">Motivo del rechazo: %1$s</string>
+
+    <!-- ETAPA 5A: App del Cliente -->
+    <string name="nav_catalogo">Catálogo</string>
+    <string name="nav_mis_pedidos">Mis pedidos</string>
+    <string name="placeholder_cliente_pedidos">Próximamente: tus pedidos</string>
+    <string name="saludo_cliente">Hola, %1$s</string>
+    <string name="empty_catalogo">Aún no hay paquetes disponibles</string>
+    <string name="paquete_precio_desde_formato">Desde %1$s · %2$d h incluidas</string>
+    <string name="paquete_equipos_incluidos_formato">%1$d equipos incluidos</string>
+    <string name="paquete_detalle_incluye_titulo">Incluye</string>
+    <string name="paquete_detalle_duracion_formato">%1$d horas de servicio incluidas</string>
+    <string name="paquete_detalle_hora_extra_formato">+%1$s por hora extra</string>
+    <string name="paquete_detalle_anticipo_formato">Anticipo: 30%% (%1$s)</string>
+    <string name="paquete_detalle_cancelaciones_titulo">Cancelaciones</string>
+    <string name="cancelacion_politica_100">Reembolso del 100%% si cancelas con 7 días o más de anticipación.</string>
+    <string name="cancelacion_politica_50">Reembolso del 50%% si cancelas entre 72 horas y 7 días de anticipación.</string>
+    <string name="cancelacion_politica_0">Sin reembolso si cancelas con menos de 72 horas de anticipación.</string>
+    <string name="btn_reservar">Reservar</string>
+
+    <string name="titulo_reservar">Reservar paquete</string>
+    <string name="hint_nombre_evento">Ej. Boda de Ana y Luis</string>
+    <string name="label_fecha_horario">Fecha y horario</string>
+    <string name="sin_horarios_dia">Sin horarios ese día, prueba otra fecha</string>
+    <string name="label_duracion_evento">Duración del evento</string>
+    <string name="label_telefono_contacto">Teléfono de contacto</string>
+    <string name="label_direccion_evento">Dirección del evento</string>
+    <string name="hint_direccion_evento">Calle, número, colonia, referencias...</string>
+    <string name="aviso_apartado_30min">Apartamos tu reserva 30 minutos mientras pagas</string>
+    <string name="aviso_evento_urgente_revision">Tu evento es en menos de 48 horas. Nuestro equipo debe confirmarlo; si no se aprueba, te reembolsamos el 100%.</string>
+    <string name="btn_apartar_y_pagar">Apartar y pagar</string>
+
+    <string name="titulo_pago_anticipo">Pago de anticipo</string>
+    <string name="label_anticipo_a_pagar">Anticipo a pagar: %1$s</string>
+    <string name="formato_cuenta_regresiva">Tu reserva vence en %1$s</string>
+    <string name="label_titular_tarjeta">Nombre del titular</string>
+    <string name="hint_titular_tarjeta">Como aparece en la tarjeta</string>
+    <string name="label_numero_tarjeta">Número de tarjeta</string>
+    <string name="hint_numero_tarjeta">0000 0000 0000 0000</string>
+    <string name="label_vencimiento_tarjeta">Vencimiento (MM/AA)</string>
+    <string name="hint_vencimiento_tarjeta">MM/AA</string>
+    <string name="label_cvv">CVV</string>
+    <string name="hint_cvv">123</string>
+    <string name="nota_pago_prueba">Pago de prueba: usa 4242 4242 4242 4242. 4000 0000 0000 0002 simula una tarjeta rechazada.</string>
+    <string name="btn_pagar_formato">Pagar %1$s</string>
+    <string name="titulo_reserva_confirmada">¡Reserva confirmada!</string>
+    <string name="formato_pedido_numero">Pedido #%1$d</string>
+    <string name="formato_saldo_pendiente_aviso">El saldo restante de %1$s se paga el día del evento</string>
+    <string name="titulo_pago_recibido_revision">Recibimos tu pago</string>
+    <string name="aviso_revision_urgente_cliente">Como tu evento es en menos de 48 horas, el equipo debe confirmarlo. Si no se aprueba, te reembolsamos el 100%.</string>
+    <string name="btn_volver_catalogo">Volver al catálogo</string>
+    <string name="reserva_no_disponible">Esta reserva ya no está disponible</string>
 </resources>

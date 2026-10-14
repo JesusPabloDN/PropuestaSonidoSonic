@@ -1,29 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
-    android:padding="@dimen/spacing_large"
     android:background="?attr/android:colorBackground">
 
-    <TextView
-        android:id="@+id/tvTituloCliente"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/spacing_small"
-        android:text="@string/placeholder_cliente_titulo"
-        android:textColor="?attr/colorOnSurface"
-        android:textSize="@dimen/text_headline"
-        android:textStyle="bold" />
+        android:orientation="vertical"
+        android:paddingStart="@dimen/spacing_medium"
+        android:paddingEnd="@dimen/spacing_medium"
+        android:paddingTop="@dimen/spacing_medium"
+        android:paddingBottom="@dimen/spacing_small">
 
-    <TextView
-        android:id="@+id/tvSubtituloCliente"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/placeholder_proximamente"
-        android:textColor="?attr/colorOnSurfaceVariant"
-        android:textSize="@dimen/text_body" />
+        <TextView
+            android:id="@+id/tvSaludoCliente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            tools:text="Hola, Juan" />
+
+        <TextView
+            android:id="@+id/tvSubtituloCatalogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Elige el paquete ideal para tu evento"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="@dimen/text_body" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvPaquetesCliente"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="@dimen/spacing_small"
+            android:paddingBottom="@dimen/spacing_large"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_paquete_cliente" />
+
+        <LinearLayout
+            android:id="@+id/layoutEmptyCatalogo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_large"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <TextView
+                android:id="@+id/tvEmptyCatalogo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/empty_catalogo"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="@dimen/text_headline"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </FrameLayout>
 
 </LinearLayout>

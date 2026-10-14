@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/android:colorBackground">
+
+    <!-- 1. Formulario de Pago -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/layoutFormularioPago"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/spacing_xlarge"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_medium">
+
+            <!-- Card Resumen y Cuenta Regresiva -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="@dimen/card_corner_radius"
+                app:cardElevation="2dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/colorSurfaceVariant">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_medium">
+
+                    <TextView
+                        android:id="@+id/tvResumenPagoEvento"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        tools:text="Boda de Ana y Luis" />
+
+                    <TextView
+                        android:id="@+id/tvResumenPagoFechaHorario"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="@dimen/text_body"
+                        tools:text="Viernes 20 de Noviembre · 16:00" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/spacing_small"
+                        android:layout_marginBottom="@dimen/spacing_small"
+                        android:background="?attr/colorSurfaceVariant" />
+
+                    <TextView
+                        android:id="@+id/tvResumenPagoTotal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="@dimen/text_body"
+                        tools:text="Total del pedido: $3,500.00" />
+
+                    <TextView
+                        android:id="@+id/tvResumenPagoAnticipo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textColor="?attr/colorPrimary"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        tools:text="Anticipo a pagar: $1,050.00" />
+
+                    <TextView
+                        android:id="@+id/tvCuentaRegresiva"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:background="?attr/colorSurfaceVariant"
+                        android:padding="8dp"
+                        android:textAlignment="center"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:text="Tu reserva vence en 27:41" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Datos de Tarjeta -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_large"
+                android:text="Datos de la tarjeta"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilTitular"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:hint="@string/label_titular_tarjeta">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etTitular"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapCharacters|textPersonName" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilNumeroTarjeta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:hint="@string/label_numero_tarjeta"
+                app:helperText=" "
+                app:helperTextEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etNumeroTarjeta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLength="19" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilVencimiento"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="@dimen/spacing_small"
+                    android:hint="@string/label_vencimiento_tarjeta">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etVencimiento"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:maxLength="5" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilCvv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/spacing_small"
+                    android:hint="@string/label_cvv"
+                    app:passwordToggleEnabled="true">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etCvv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberPassword"
+                        android:maxLength="4" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <!-- Nota de pago de prueba -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:text="@string/nota_pago_prueba"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="@dimen/text_caption" />
+
+            <!-- Mensaje de error/rechazo -->
+            <TextView
+                android:id="@+id/tvErrorPago"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:background="#FFEBEE"
+                android:padding="8dp"
+                android:textColor="#C62828"
+                android:textSize="14sp"
+                android:visibility="gone"
+                tools:text="La tarjeta fue rechazada por el banco"
+                tools:visibility="visible" />
+
+            <ProgressBar
+                android:id="@+id/progressBarPago"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPagar"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/touch_target_min"
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:enabled="false"
+                android:text="Pagar"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:cornerRadius="@dimen/button_corner_radius"
+                tools:text="Pagar $1,050.00" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- 2. Pantalla de Resultado (Confirmado / En revisión) -->
+    <LinearLayout
+        android:id="@+id/layoutResultadoPago"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_large"
+        android:visibility="gone"
+        tools:visibility="gone">
+
+        <ImageView
+            android:id="@+id/ivIconoResultado"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:contentDescription="@string/titulo_reserva_confirmada"
+            android:src="@drawable/ic_check_circle_24" />
+
+        <TextView
+            android:id="@+id/tvTituloResultado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_medium"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            tools:text="¡Reserva confirmada!" />
+
+        <TextView
+            android:id="@+id/tvNumeroPedidoResultado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="Pedido #1001" />
+
+        <TextView
+            android:id="@+id/tvDetalleEventoResultado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAlignment="center"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="@dimen/text_body"
+            tools:text="Boda de Ana y Luis\nViernes 20 de Noviembre · 16:00" />
+
+        <TextView
+            android:id="@+id/tvMontoPagadoResultado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="Anticipo pagado: $1,050.00" />
+
+        <TextView
+            android:id="@+id/tvMensajeSaldoResultado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textAlignment="center"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="14sp"
+            tools:text="El saldo restante de $2,450.00 se paga el día del evento" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnVolverCatalogoResultado"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/touch_target_min"
+            android:layout_marginTop="@dimen/spacing_xlarge"
+            android:text="@string/btn_volver_catalogo"
+            app:cornerRadius="@dimen/button_corner_radius" />
+
+    </LinearLayout>
+
+    <!-- 3. Pantalla de Reserva no disponible / vencida -->
+    <LinearLayout
+        android:id="@+id/layoutReservaNoDisponible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_large"
+        android:visibility="gone"
+        tools:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/reserva_no_disponible"
+            android:textAlignment="center"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="El tiempo de apartado ha expirado o el pedido ya fue procesado."
+            android:textAlignment="center"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="@dimen/text_body" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnVolverCatalogoNoDisponible"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/touch_target_min"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:text="@string/btn_volver_catalogo"
+            app:cornerRadius="@dimen/button_corner_radius" />
+
+    </LinearLayout>
+
+</FrameLayout>

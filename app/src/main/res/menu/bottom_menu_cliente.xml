@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/clienteHomeFragment"
+        android:icon="@drawable/ic_catalogo_24"
+        android:title="@string/nav_catalogo" />
+
+    <item
+        android:id="@+id/nav_cliente_pedidos"
+        android:icon="@drawable/ic_pedidos_placeholder"
+        android:title="@string/nav_mis_pedidos" />
+
+</menu>

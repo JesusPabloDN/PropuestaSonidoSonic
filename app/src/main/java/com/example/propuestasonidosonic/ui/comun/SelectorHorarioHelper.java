@@ -1,8 +1,6 @@
-package com.example.propuestasonidosonic.ui.socio;
+package com.example.propuestasonidosonic.ui.comun;
 
 import android.content.Context;
-import android.text.format.DateFormat;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 

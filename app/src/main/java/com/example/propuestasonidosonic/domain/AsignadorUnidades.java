@@ -144,23 +144,25 @@ public final class AsignadorUnidades {
                 }
             });
 
-            // Asignar unidades a cada demanda del modelo
+            Map<Demanda, List<String>> asignadasPorDemanda = new LinkedHashMap<>();
+            Map<Demanda, Set<String>> asignadasSetPorDemanda = new LinkedHashMap<>();
             for (Demanda d : demandasModelo) {
-                List<String> asignadas = new ArrayList<>();
+                asignadasPorDemanda.put(d, new ArrayList<String>());
+                asignadasSetPorDemanda.put(d, new HashSet<String>());
+            }
+
+            // Fase 1: Asignar previas (fijas y no fijas que conservan sus unidades)
+            for (Demanda d : demandasModelo) {
+                List<String> asignadas = asignadasPorDemanda.get(d);
+                Set<String> asignadasSet = asignadasSetPorDemanda.get(d);
 
                 if (d.fija && !d.unidadesPrevias.isEmpty()) {
-                    // Demanda fija: conserva exactamente sus previas
                     for (String uid : d.unidadesPrevias) {
                         asignadas.add(uid);
+                        asignadasSet.add(uid);
                         registrarIntervalo(intervalosPorUnidad, uid, d.desde, d.hasta);
                     }
-                    if (asignadas.size() < d.cantidad) {
-                        pedidosIncompletos.add(d.pedidoId);
-                    }
                 } else {
-                    // Demanda no fija:
-                    // 1) Reutilizar unidades previas que sigan en el catálogo y estén libres
-                    Set<String> asignadasSet = new HashSet<>();
                     for (String uid : d.unidadesPrevias) {
                         if (asignadas.size() >= d.cantidad) break;
                         if (mapUnidades.containsKey(uid) && !asignadasSet.contains(uid)) {
@@ -171,8 +173,15 @@ public final class AsignadorUnidades {
                             }
                         }
                     }
+                }
+            }
 
-                    // 2) Para las faltantes, elegir la unidad libre de mejor ajuste
+            // Fase 2: Para las que falten, elegir la unidad libre de mejor ajuste
+            for (Demanda d : demandasModelo) {
+                List<String> asignadas = asignadasPorDemanda.get(d);
+                Set<String> asignadasSet = asignadasSetPorDemanda.get(d);
+
+                if (!d.fija || d.unidadesPrevias.isEmpty()) {
                     while (asignadas.size() < d.cantidad) {
                         UnidadDisponible mejor = null;
                         long mejorUltimoFin = -2L;
@@ -207,14 +216,13 @@ public final class AsignadorUnidades {
                             asignadasSet.add(mejor.id);
                             registrarIntervalo(intervalosPorUnidad, mejor.id, d.desde, d.hasta);
                         } else {
-                            // No hay más unidades libres
                             break;
                         }
                     }
+                }
 
-                    if (asignadas.size() < d.cantidad) {
-                        pedidosIncompletos.add(d.pedidoId);
-                    }
+                if (asignadas.size() < d.cantidad) {
+                    pedidosIncompletos.add(d.pedidoId);
                 }
 
                 // Agregar asignadas al acumulador del pedido
