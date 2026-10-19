@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         topLevelDestinations.add(R.id.clienteHomeFragment);
         topLevelDestinations.add(R.id.nav_cliente_pedidos);
         topLevelDestinations.add(R.id.asistenteHomeFragment);
+        topLevelDestinations.add(R.id.nav_asistente_disponibilidad);
 
         appBarConfiguration = new AppBarConfiguration.Builder(topLevelDestinations)
                 .setOpenableLayout(drawerLayout)
@@ -131,6 +132,17 @@ public class MainActivity extends AppCompatActivity {
                 NavOptions navOptions = new NavOptions.Builder()
                         .setLaunchSingleTop(true)
                         .setPopUpTo(R.id.clienteHomeFragment, false)
+                        .build();
+                navController.navigate(itemId, null, navOptions);
+                return true;
+            } else if (Usuario.ROL_ASISTENTE.equals(rol)) {
+                if (itemId == R.id.asistenteHomeFragment) {
+                    navController.popBackStack(R.id.asistenteHomeFragment, false);
+                    return true;
+                }
+                NavOptions navOptions = new NavOptions.Builder()
+                        .setLaunchSingleTop(true)
+                        .setPopUpTo(R.id.asistenteHomeFragment, false)
                         .build();
                 navController.navigate(itemId, null, navOptions);
                 return true;
@@ -206,6 +218,16 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 bottomNavigationView.setVisibility(View.GONE);
             }
+        } else if (Usuario.ROL_ASISTENTE.equals(rol)) {
+            if (destinationId == R.id.asistenteHomeFragment || destinationId == R.id.nav_asistente_disponibilidad) {
+                bottomNavigationView.setVisibility(View.VISIBLE);
+                android.view.MenuItem menuItem = bottomNavigationView.getMenu().findItem(destinationId);
+                if (menuItem != null) {
+                    menuItem.setChecked(true);
+                }
+            } else {
+                bottomNavigationView.setVisibility(View.GONE);
+            }
         } else {
             bottomNavigationView.setVisibility(View.GONE);
         }
@@ -236,6 +258,8 @@ public class MainActivity extends AppCompatActivity {
                     bottomNavigationView.inflateMenu(R.menu.bottom_menu);
                 } else if (Usuario.ROL_CLIENTE.equals(usuario.getRol())) {
                     bottomNavigationView.inflateMenu(R.menu.bottom_menu_cliente);
+                } else if (Usuario.ROL_ASISTENTE.equals(usuario.getRol())) {
+                    bottomNavigationView.inflateMenu(R.menu.bottom_menu_asistente);
                 }
             } else {
                 tvDrawerUserName.setText("");
@@ -336,6 +360,22 @@ public class MainActivity extends AppCompatActivity {
                         }
                         if (currentId == R.id.nav_cliente_pedidos) {
                             navController.popBackStack(R.id.clienteHomeFragment, false);
+                            return;
+                        }
+                        if (navController.popBackStack()) {
+                            return;
+                        }
+                        moveTaskToBack(true);
+                        return;
+                    }
+
+                    if (Usuario.ROL_ASISTENTE.equals(rol)) {
+                        if (currentId == R.id.asistenteHomeFragment) {
+                            moveTaskToBack(true);
+                            return;
+                        }
+                        if (currentId == R.id.nav_asistente_disponibilidad) {
+                            navController.popBackStack(R.id.asistenteHomeFragment, false);
                             return;
                         }
                         if (navController.popBackStack()) {

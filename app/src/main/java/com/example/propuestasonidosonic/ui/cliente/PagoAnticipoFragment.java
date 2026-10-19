@@ -75,6 +75,7 @@ public class PagoAnticipoFragment extends Fragment {
     private TextView tvMontoPagadoResultado;
     private TextView tvMensajeSaldoResultado;
     private MaterialButton btnVolverCatalogoResultado;
+    private MaterialButton btnVerMisPedidosResultado;
 
     // No disponible
     private MaterialButton btnVolverCatalogoNoDisponible;
@@ -145,10 +146,14 @@ public class PagoAnticipoFragment extends Fragment {
         tvMontoPagadoResultado = view.findViewById(R.id.tvMontoPagadoResultado);
         tvMensajeSaldoResultado = view.findViewById(R.id.tvMensajeSaldoResultado);
         btnVolverCatalogoResultado = view.findViewById(R.id.btnVolverCatalogoResultado);
+        btnVerMisPedidosResultado = view.findViewById(R.id.btnVerMisPedidosResultado);
 
         btnVolverCatalogoNoDisponible = view.findViewById(R.id.btnVolverCatalogoNoDisponible);
 
         btnVolverCatalogoResultado.setOnClickListener(v -> volverAlCatalogo());
+        if (btnVerMisPedidosResultado != null) {
+            btnVerMisPedidosResultado.setOnClickListener(v -> verMisPedidos());
+        }
         btnVolverCatalogoNoDisponible.setOnClickListener(v -> volverAlCatalogo());
     }
 
@@ -365,6 +370,15 @@ public class PagoAnticipoFragment extends Fragment {
         limpiarDatosTarjeta();
         detenerCuentaRegresiva();
         Navigation.findNavController(requireView()).popBackStack(R.id.clienteHomeFragment, false);
+    }
+
+    private void verMisPedidos() {
+        limpiarDatosTarjeta();
+        detenerCuentaRegresiva();
+        androidx.navigation.NavOptions navOptions = new androidx.navigation.NavOptions.Builder()
+                .setPopUpTo(R.id.clienteHomeFragment, false)
+                .build();
+        Navigation.findNavController(requireView()).navigate(R.id.nav_cliente_pedidos, null, navOptions);
     }
 
     private void iniciarCuentaRegresiva() {

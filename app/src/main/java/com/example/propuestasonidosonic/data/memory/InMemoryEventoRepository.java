@@ -116,11 +116,15 @@ public class InMemoryEventoRepository implements EventoRepository {
             if (ev.getId().equals(eventoId)) {
                 ev.setChecklist(checklist);
                 notificarCambios();
-                callback.onSuccess(null);
+                if (callback != null) {
+                    callback.onSuccess(null);
+                }
                 return;
             }
         }
-        callback.onError("Evento no encontrado");
+        if (callback != null) {
+            callback.onError("Evento no encontrado");
+        }
     }
 
     @Override

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/asistenteHomeFragment"
+        android:icon="@drawable/ic_agenda_placeholder"
+        android:title="@string/nav_asistente_eventos" />
+
+    <item
+        android:id="@+id/nav_asistente_disponibilidad"
+        android:icon="@drawable/ic_calendar_month_24"
+        android:title="@string/nav_asistente_disponibilidad" />
+
+</menu>

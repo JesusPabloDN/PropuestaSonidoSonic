@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardEventoAsistente"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_medium"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardCornerRadius="@dimen/card_corner_radius"
+    app:cardElevation="1dp"
+    app:strokeColor="?attr/colorSurfaceVariant"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_medium">
+
+        <!-- Fila Superior: Nombre del Evento e Insignias -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvNombreEvento"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="@dimen/text_title"
+                android:textStyle="bold"
+                tools:text="Boda de Carlos y Ana" />
+
+            <TextView
+                android:id="@+id/tvBadgeHoy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_small"
+                android:background="@drawable/bg_badge_rounded"
+                android:paddingStart="@dimen/spacing_small"
+                android:paddingTop="2dp"
+                android:paddingEnd="@dimen/spacing_small"
+                android:paddingBottom="2dp"
+                android:text="@string/badge_hoy"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/tvBadgeChecklist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_tiny"
+                android:background="@drawable/bg_badge_rounded"
+                android:paddingStart="@dimen/spacing_small"
+                android:paddingTop="2dp"
+                android:paddingEnd="@dimen/spacing_small"
+                android:paddingBottom="2dp"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:text="Pendiente"
+                tools:visibility="visible" />
+
+        </LinearLayout>
+
+        <!-- Fecha del Evento -->
+        <TextView
+            android:id="@+id/tvFechaEvento"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_tiny"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="@dimen/text_body"
+            android:textStyle="bold"
+            tools:text="sábado, 5 de diciembre de 2026" />
+
+        <!-- Llegada y Evento -->
+        <TextView
+            android:id="@+id/tvHorariosEvento"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="@dimen/text_body"
+            android:textStyle="bold"
+            tools:text="Llegada: 17:30 · Evento: 19:00–23:00" />
+
+        <!-- Dirección -->
+        <TextView
+            android:id="@+id/tvDireccionEvento"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_tiny"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="13sp"
+            tools:text="Salón Los Cedros, Av. Insurgentes 123" />
+
+        <!-- Paquete -->
+        <TextView
+            android:id="@+id/tvPaqueteEvento"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="13sp"
+            tools:text="Paquete Básico" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

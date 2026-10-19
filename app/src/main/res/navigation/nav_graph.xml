@@ -183,7 +183,27 @@
             android:id="@+id/nav_cliente_pedidos"
             android:name="com.example.propuestasonidosonic.ui.cliente.ClientePedidosFragment"
             android:label="@string/nav_mis_pedidos"
-            tools:layout="@layout/fragment_cliente_pedidos" />
+            tools:layout="@layout/fragment_cliente_pedidos">
+            <action
+                android:id="@+id/action_clientePedidos_to_detalle"
+                app:destination="@id/clientePedidoDetalleFragment" />
+            <action
+                android:id="@+id/action_clientePedidos_to_pagoAnticipo"
+                app:destination="@id/pagoAnticipoFragment" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/clientePedidoDetalleFragment"
+            android:name="com.example.propuestasonidosonic.ui.cliente.ClientePedidoDetalleFragment"
+            android:label="@string/titulo_pedido_detalle_cliente"
+            tools:layout="@layout/fragment_cliente_pedido_detalle">
+            <argument
+                android:name="pedidoId"
+                app:argType="string" />
+            <action
+                android:id="@+id/action_clientePedidoDetalle_to_pagoAnticipo"
+                app:destination="@id/pagoAnticipoFragment" />
+        </fragment>
 
         <fragment
             android:id="@+id/paqueteDetalleClienteFragment"
@@ -226,6 +246,11 @@
                 app:destination="@id/clienteHomeFragment"
                 app:popUpTo="@id/clienteHomeFragment"
                 app:popUpToInclusive="false" />
+            <action
+                android:id="@+id/action_pagoAnticipo_to_clientePedidos"
+                app:destination="@id/nav_cliente_pedidos"
+                app:popUpTo="@id/clienteHomeFragment"
+                app:popUpToInclusive="false" />
         </fragment>
 
     </navigation>
@@ -238,8 +263,28 @@
         <fragment
             android:id="@+id/asistenteHomeFragment"
             android:name="com.example.propuestasonidosonic.ui.asistente.AsistenteHomeFragment"
-            android:label="@string/placeholder_asistente_titulo"
-            tools:layout="@layout/fragment_asistente_home" />
+            android:label="@string/nav_asistente_eventos"
+            tools:layout="@layout/fragment_asistente_home">
+            <action
+                android:id="@+id/action_asistenteHome_to_detalle"
+                app:destination="@id/asistenteEventoDetalleFragment" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/nav_asistente_disponibilidad"
+            android:name="com.example.propuestasonidosonic.ui.asistente.AsistenteDisponibilidadFragment"
+            android:label="@string/nav_asistente_disponibilidad"
+            tools:layout="@layout/fragment_asistente_disponibilidad" />
+
+        <fragment
+            android:id="@+id/asistenteEventoDetalleFragment"
+            android:name="com.example.propuestasonidosonic.ui.asistente.AsistenteEventoDetalleFragment"
+            android:label="@string/titulo_evento_detalle_asistente"
+            tools:layout="@layout/fragment_asistente_evento_detalle">
+            <argument
+                android:name="pedidoId"
+                app:argType="string" />
+        </fragment>
 
     </navigation>
 

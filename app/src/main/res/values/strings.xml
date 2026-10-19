@@ -444,4 +444,83 @@
     <string name="aviso_revision_urgente_cliente">Como tu evento es en menos de 48 horas, el equipo debe confirmarlo. Si no se aprueba, te reembolsamos el 100%.</string>
     <string name="btn_volver_catalogo">Volver al catálogo</string>
     <string name="reserva_no_disponible">Esta reserva ya no está disponible</string>
+
+    <!-- ETAPA 5B: App del Cliente (Mis pedidos, detalle, cancelación y recibos) -->
+    <string name="tab_activos">Activos</string>
+    <string name="tab_historial">Historial</string>
+    <string name="empty_pedidos_cliente_activos">Aún no tienes pedidos activos</string>
+    <string name="empty_pedidos_cliente_historial">Sin historial</string>
+    <string name="btn_pagar_anticipo">Pagar anticipo</string>
+    <string name="btn_ver_catalogo">Ver catálogo</string>
+    <string name="btn_ver_mis_pedidos">Ver mis pedidos</string>
+    <string name="saldo_por_pagar_formato">Saldo por pagar: %1$s</string>
+    <string name="formato_vencida">Vencida</string>
+
+    <string name="titulo_pedido_detalle_cliente">Detalle de pedido</string>
+    <string name="pedido_no_disponible">Este pedido no está disponible</string>
+    <string name="btn_volver_a_pedidos">Volver a mis pedidos</string>
+
+    <string name="badge_cliente_pendiente_pago">Pendiente de pago</string>
+    <string name="badge_cliente_confirmado">Confirmado</string>
+    <string name="badge_cliente_en_revision">En revisión</string>
+    <string name="badge_cliente_realizado">Realizado</string>
+    <string name="badge_cliente_cancelado">Cancelado</string>
+    <string name="badge_cliente_no_aprobado">No aprobado</string>
+
+    <string name="msg_contextual_apartado">Tu reserva está apartada. Págala antes de que venza</string>
+    <string name="msg_contextual_revision">El equipo está confirmando tu evento. Si no se aprueba, te reembolsamos el 100%</string>
+    <string name="msg_contextual_confirmado">¡Todo listo! Te esperamos</string>
+    <string name="msg_contextual_realizado">Evento realizado</string>
+    <string name="msg_contextual_cancelado">Tu reserva ha sido cancelada</string>
+    <string name="msg_contextual_rechazado">Tu reserva no fue aprobada</string>
+    <string name="formato_reembolso_monto">Reembolso: %1$s</string>
+
+    <string name="seccion_tu_evento">Tu evento</string>
+    <string name="label_anticipo_pagado">Anticipo pagado</string>
+    <string name="label_saldo_pendiente_titulo">Saldo pendiente</string>
+    <string name="aviso_saldo_dia_evento">El saldo se paga el día del evento</string>
+    <string name="seccion_pagos">Historial de pagos</string>
+    <string name="empty_pagos">Aún no hay pagos</string>
+
+    <string name="btn_cancelar_reserva">Cancelar reserva</string>
+    <string name="pregunta_cambiar_fecha">¿Necesitas cambiar la fecha?</string>
+    <string name="btn_contactar">Contactar al negocio</string>
+    <string name="err_abrir_whatsapp">No se pudo abrir WhatsApp</string>
+
+    <string name="dialog_cancelar_reserva_titulo">¿Cancelar reserva?</string>
+    <string name="cancelar_liberar_sin_pago">Se liberará tu reserva.</string>
+    <string name="cancelar_reembolso_formato">Se te reembolsarán %1$s (%2$d%%)</string>
+    <string name="dialog_btn_no_cancelar">No cancelar</string>
+    <string name="aviso_reembolso_revision">Como tu evento está en revisión, se te reembolsa el 100% de lo pagado.</string>
+
+    <!-- ETAPA 6: App del Asistente -->
+    <string name="nav_asistente_eventos">Mis eventos</string>
+    <string name="nav_asistente_disponibilidad">Disponibilidad</string>
+    <string name="tab_proximos">Próximos</string>
+    <string name="tab_pasados">Pasados</string>
+    <string name="empty_asistente_proximos">No tienes eventos próximos</string>
+    <string name="empty_asistente_pasados">Sin eventos pasados</string>
+    <string name="saludo_asistente_formato">Hola, %1$s</string>
+    <string name="horario_asistente_formato">Llegada: %1$s · Evento: %2$s–%3$s</string>
+    <string name="badge_hoy">Hoy</string>
+    <string name="evento_no_disponible">Este evento no está disponible</string>
+    <string name="btn_abrir_mapas">Abrir en mapas</string>
+    <string name="contacto_no_disponible_aviso">Disponible 24 h antes del evento</string>
+    <string name="seccion_equipo_checklist">Equipo (checklist)</string>
+    <string name="checklist_salio">Salió</string>
+    <string name="checklist_regreso">Regresó</string>
+    <string name="hint_observacion_checklist">Observación</string>
+    <string name="btn_guardar_observacion">Guardar</string>
+    <string name="aviso_checklist_no_editable">El checklist se habilita 3 horas antes de la llegada</string>
+    <string name="checklist_resumen_encabezado">Salieron %1$d/%2$d · Regresaron %3$d/%2$d</string>
+    <string name="checklist_resumen_socio_formato">Checklist: salieron %1$d/%2$d · regresaron %3$d/%2$d</string>
+    <string name="checklist_observaciones_titulo">Observaciones:</string>
+    <string name="btn_marcar_fines_de_semana">Marcar viernes a domingo del mes</string>
+    <string name="dias_disponibles_mes_formato">Días disponibles este mes: %1$d</string>
+    <string name="snackbar_dias_marcados_confirmacion">Se marcaron %1$d días como disponibles</string>
+    <string name="action_deshacer">Deshacer</string>
+    <string name="aviso_desmarcar_evento">Tienes un evento ese día. Pídele al Socio que te reasigne.</string>
+    <string name="error_no_app_mapas">No se encontró una aplicación de mapas</string>
+    <string name="error_no_app_telefono">No se encontró una aplicación para realizar llamadas</string>
+    <string name="titulo_evento_detalle_asistente">Detalle del evento</string>
 </resources>

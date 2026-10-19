@@ -40,6 +40,12 @@ public final class FormatUtils {
         return sdf.format(new Date(millis)).replace(".", "");
     }
 
+    public static String hora(long millis) {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", LOCALE_MX);
+        sdf.setTimeZone(java.util.TimeZone.getTimeZone(Config.ZONA_HORARIA));
+        return sdf.format(new Date(millis));
+    }
+
     public static String rangoHorario(long inicioMillis, long finMillis) {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", LOCALE_MX);
         sdf.setTimeZone(java.util.TimeZone.getTimeZone(Config.ZONA_HORARIA));

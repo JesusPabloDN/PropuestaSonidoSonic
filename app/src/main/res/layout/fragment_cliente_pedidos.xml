@@ -1,19 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="@dimen/spacing_large"
-    android:background="?attr/android:colorBackground">
+    android:background="?attr/android:colorBackground"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tvPlaceholderPedidos"
-        android:layout_width="wrap_content"
+    <!-- Selector Activos | Historial -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/placeholder_cliente_pedidos"
-        android:textColor="?attr/colorOnSurfaceVariant"
-        android:textSize="@dimen/text_headline"
-        android:textStyle="bold" />
+        android:gravity="center"
+        android:paddingStart="@dimen/spacing_medium"
+        android:paddingTop="@dimen/spacing_medium"
+        android:paddingEnd="@dimen/spacing_medium"
+        android:paddingBottom="@dimen/spacing_small">
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggleGroupPedidos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:checkedButton="@id/btnTabActivos"
+            app:selectionRequired="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnTabActivos"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/touch_target_min"
+                android:text="@string/tab_activos"
+                android:textSize="14sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnTabHistorial"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/touch_target_min"
+                android:text="@string/tab_historial"
+                android:textSize="14sp" />
+
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Lista de pedidos -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvPedidosCliente"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="@dimen/spacing_small"
+            android:paddingBottom="@dimen/spacing_large"
+            tools:listitem="@layout/item_pedido_cliente" />
+
+        <!-- Estado vacío -->
+        <LinearLayout
+            android:id="@+id/layoutEstadoVacio"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_large"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <TextView
+                android:id="@+id/tvVacioMensaje"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/empty_pedidos_cliente_activos"
+                android:textAlignment="center"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="@dimen/text_body"
+                android:textStyle="bold" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnVerCatalogo"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/touch_target_min"
+                android:layout_marginTop="@dimen/spacing_large"
+                android:text="@string/btn_ver_catalogo"
+                app:cornerRadius="@dimen/button_corner_radius" />
+
+        </LinearLayout>
+
+    </FrameLayout>
 
 </LinearLayout>

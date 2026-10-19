@@ -347,10 +347,27 @@ public class InMemoryPedidoRepository implements PedidoRepository {
                 ? canceladoPor.trim()
                 : Pedido.CANCELA_SOCIO;
 
-        long ahora = reloj.ahora();
-        double reembolso = PoliticaCancelacion.calcularReembolso(target.getAnticipoPagado(),
-                target.getInicioMillis(), ahora, quienCancela);
+        if (Pedido.CANCELA_SOCIO.equals(quienCancela)) {
+            if (motivo == null || motivo.trim().isEmpty()) {
+                if (callback != null) callback.onError("El motivo de cancelación es obligatorio");
+                return;
+            }
+        } else if (Pedido.CANCELA_CLIENTE.equals(quienCancela)) {
+            if (motivo == null || motivo.trim().isEmpty()) {
+                motivo = "Cancelado por el cliente";
+            }
+        }
 
+        long ahora = reloj.ahora();
+        double reembolso;
+        if (Pedido.CANCELA_CLIENTE.equals(quienCancela) && Pedido.ESTADO_EN_REVISION.equals(target.getEstado())) {
+            reembolso = MoneyUtils.redondear2(target.getAnticipoPagado());
+        } else {
+            reembolso = PoliticaCancelacion.calcularReembolso(target.getAnticipoPagado(),
+                    target.getInicioMillis(), ahora, quienCancela);
+        }
+
+        final String motivoFinal = motivo;
         if (reembolso > 0 && pagoRepository != null) {
             String metodo = target.getMetodoAnticipo() != null ? target.getMetodoAnticipo() : Pago.METODO_EFECTIVO;
             Pago pagoReembolso = new Pago(UUID.randomUUID().toString(), target.getId(),
@@ -361,7 +378,7 @@ public class InMemoryPedidoRepository implements PedidoRepository {
                 @Override
                 public void onSuccess(Pago result) {
                     synchronized (InMemoryPedidoRepository.this) {
-                        aplicarCancelacion(finalTarget, quienCancela, motivo, reembolso, ahora, callback);
+                        aplicarCancelacion(finalTarget, quienCancela, motivoFinal, reembolso, ahora, callback);
                     }
                 }
 
@@ -371,7 +388,7 @@ public class InMemoryPedidoRepository implements PedidoRepository {
                 }
             });
         } else {
-            aplicarCancelacion(target, quienCancela, motivo, reembolso, ahora, callback);
+            aplicarCancelacion(target, quienCancela, motivoFinal, reembolso, ahora, callback);
         }
     }
 
@@ -1000,6 +1017,9 @@ public class InMemoryPedidoRepository implements PedidoRepository {
     public synchronized double calcularReembolsoPrevio(String pedidoId, String canceladoPor) {
         Pedido p = getPedidoPorId(pedidoId);
         if (p == null) return 0.0;
+        if (Pedido.CANCELA_CLIENTE.equals(canceladoPor) && Pedido.ESTADO_EN_REVISION.equals(p.getEstado())) {
+            return MoneyUtils.redondear2(p.getAnticipoPagado());
+        }
         return PoliticaCancelacion.calcularReembolso(p.getAnticipoPagado(), p.getInicioMillis(), reloj.ahora(), canceladoPor);
     }
 }

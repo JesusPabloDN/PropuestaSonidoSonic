@@ -75,4 +75,95 @@ public class InMemoryDiaOperativoRepository implements DiaOperativoRepository {
             callback.onSuccess(new DiaOperativo(copia));
         }
     }
+
+    @Override
+    public synchronized void establecerDisponibilidadAsistente(String fechaClave, String asistenteId, boolean disponible, Callback<DiaOperativo> callback) {
+        // FIRESTORE: transacción
+        if (fechaClave == null || !FORMATO_FECHA.matcher(fechaClave).matches()) {
+            if (callback != null) {
+                callback.onError("Formato de fecha inválido. Se espera yyyy-MM-dd");
+            }
+            return;
+        }
+        if (asistenteId == null || asistenteId.trim().isEmpty()) {
+            if (callback != null) {
+                callback.onError("Identificador de asistente inválido");
+            }
+            return;
+        }
+
+        DiaOperativo existente = dias.get(fechaClave);
+        DiaOperativo target;
+        if (existente != null) {
+            target = new DiaOperativo(existente);
+        } else {
+            target = new DiaOperativo(fechaClave, new ArrayList<String>(), new ArrayList<String>());
+        }
+
+        List<String> asistentes = target.getAsistentesDisponiblesIds() != null
+                ? new ArrayList<>(target.getAsistentesDisponiblesIds()) : new ArrayList<String>();
+
+        if (disponible) {
+            if (!asistentes.contains(asistenteId)) {
+                asistentes.add(asistenteId);
+            }
+        } else {
+            asistentes.remove(asistenteId);
+        }
+        target.setAsistentesDisponiblesIds(asistentes);
+
+        dias.put(fechaClave, target);
+        notificarCambios();
+        if (callback != null) {
+            callback.onSuccess(new DiaOperativo(target));
+        }
+    }
+
+    @Override
+    public synchronized void establecerDisponibilidadAsistenteVarios(List<String> fechaClaves, String asistenteId, boolean disponible, Callback<Void> callback) {
+        // FIRESTORE: transacción
+        if (asistenteId == null || asistenteId.trim().isEmpty()) {
+            if (callback != null) {
+                callback.onError("Identificador de asistente inválido");
+            }
+            return;
+        }
+        if (fechaClaves == null || fechaClaves.isEmpty()) {
+            if (callback != null) {
+                callback.onSuccess(null);
+            }
+            return;
+        }
+
+        for (String fechaClave : fechaClaves) {
+            if (fechaClave == null || !FORMATO_FECHA.matcher(fechaClave).matches()) {
+                continue;
+            }
+            DiaOperativo existente = dias.get(fechaClave);
+            DiaOperativo target;
+            if (existente != null) {
+                target = new DiaOperativo(existente);
+            } else {
+                target = new DiaOperativo(fechaClave, new ArrayList<String>(), new ArrayList<String>());
+            }
+
+            List<String> asistentes = target.getAsistentesDisponiblesIds() != null
+                    ? new ArrayList<>(target.getAsistentesDisponiblesIds()) : new ArrayList<String>();
+
+            if (disponible) {
+                if (!asistentes.contains(asistenteId)) {
+                    asistentes.add(asistenteId);
+                }
+            } else {
+                asistentes.remove(asistenteId);
+            }
+            target.setAsistentesDisponiblesIds(asistentes);
+            dias.put(fechaClave, target);
+        }
+
+        notificarCambios();
+        if (callback != null) {
+            callback.onSuccess(null);
+        }
+    }
 }

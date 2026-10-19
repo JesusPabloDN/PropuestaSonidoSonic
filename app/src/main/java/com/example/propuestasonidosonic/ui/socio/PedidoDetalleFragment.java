@@ -53,6 +53,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.propuestasonidosonic.data.EventoRepository;
+import com.example.propuestasonidosonic.domain.AsistenteUtils;
+import com.example.propuestasonidosonic.model.ChecklistItem;
+import com.example.propuestasonidosonic.model.Evento;
+
 public class PedidoDetalleFragment extends Fragment {
 
     private String pedidoId;
@@ -60,6 +65,11 @@ public class PedidoDetalleFragment extends Fragment {
     private UsuarioRepository usuarioRepository;
     private EquipoRepository equipoRepository;
     private PagoRepository pagoRepository;
+    private EventoRepository eventoRepository;
+
+    private TextView tvChecklistResumen;
+    private TextView tvChecklistObservacionesTitulo;
+    private TextView tvChecklistObservacionesLista;
 
     private MaterialCardView cardRevision;
     private TextView tvRevisionTitulo;
@@ -130,6 +140,7 @@ public class PedidoDetalleFragment extends Fragment {
         usuarioRepository = SonidoSonicApp.getApp(requireContext()).getAppContainer().getUsuarioRepository();
         equipoRepository = SonidoSonicApp.getApp(requireContext()).getAppContainer().getEquipoRepository();
         pagoRepository = SonidoSonicApp.getApp(requireContext()).getAppContainer().getPagoRepository();
+        eventoRepository = SonidoSonicApp.getApp(requireContext()).getAppContainer().getEventoRepository();
 
         if (getArguments() != null) {
             pedidoId = getArguments().getString("pedidoId");
@@ -171,6 +182,9 @@ public class PedidoDetalleFragment extends Fragment {
         cardEquipoAsignado = view.findViewById(R.id.cardEquipoAsignado);
         tvAvisoAsignacionIncompleta = view.findViewById(R.id.tvAvisoAsignacionIncompleta);
         tvEquipoAsignadoLista = view.findViewById(R.id.tvEquipoAsignadoLista);
+        tvChecklistResumen = view.findViewById(R.id.tvChecklistResumen);
+        tvChecklistObservacionesTitulo = view.findViewById(R.id.tvChecklistObservacionesTitulo);
+        tvChecklistObservacionesLista = view.findViewById(R.id.tvChecklistObservacionesLista);
 
         tvTotal = view.findViewById(R.id.tvTotal);
         tvAnticipoRequerido = view.findViewById(R.id.tvAnticipoRequerido);
@@ -409,6 +423,53 @@ public class PedidoDetalleFragment extends Fragment {
                 sbEquipo.append("Sin equipo asignado");
             }
             tvEquipoAsignadoLista.setText(sbEquipo.toString());
+
+            if (pedido.getEventoId() != null && eventoRepository != null) {
+                eventoRepository.getEventoPorId(pedido.getEventoId(), new Callback<Evento>() {
+                    @Override
+                    public void onSuccess(Evento evento) {
+                        if (!isAdded() || evento == null) return;
+                        List<ChecklistItem> cl = evento.getChecklist();
+                        if (cl != null && !cl.isEmpty()) {
+                            int[] res = AsistenteUtils.resumenChecklist(cl);
+                            tvChecklistResumen.setText(getString(R.string.checklist_resumen_socio_formato,
+                                    res[1], res[0], res[2], res[0]));
+                            tvChecklistResumen.setVisibility(View.VISIBLE);
+
+                            if (res[3] > 0) {
+                                StringBuilder sbObs = new StringBuilder();
+                                for (ChecklistItem it : cl) {
+                                    if (it != null && it.getObservacion() != null && !it.getObservacion().trim().isEmpty()) {
+                                        if (sbObs.length() > 0) sbObs.append("\n");
+                                        sbObs.append("• ").append(it.getNombre()).append(": ").append(it.getObservacion().trim());
+                                    }
+                                }
+                                tvChecklistObservacionesLista.setText(sbObs.toString());
+                                tvChecklistObservacionesTitulo.setVisibility(View.VISIBLE);
+                                tvChecklistObservacionesLista.setVisibility(View.VISIBLE);
+                            } else {
+                                tvChecklistObservacionesTitulo.setVisibility(View.GONE);
+                                tvChecklistObservacionesLista.setVisibility(View.GONE);
+                            }
+                        } else {
+                            tvChecklistResumen.setVisibility(View.GONE);
+                            tvChecklistObservacionesTitulo.setVisibility(View.GONE);
+                            tvChecklistObservacionesLista.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        tvChecklistResumen.setVisibility(View.GONE);
+                        tvChecklistObservacionesTitulo.setVisibility(View.GONE);
+                        tvChecklistObservacionesLista.setVisibility(View.GONE);
+                    }
+                });
+            } else {
+                tvChecklistResumen.setVisibility(View.GONE);
+                tvChecklistObservacionesTitulo.setVisibility(View.GONE);
+                tvChecklistObservacionesLista.setVisibility(View.GONE);
+            }
         }
 
         // 6. Dinero

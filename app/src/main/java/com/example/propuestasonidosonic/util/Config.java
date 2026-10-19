@@ -61,6 +61,16 @@ public final class Config {
     public static final double REEMBOLSO_PARCIAL_PORCENTAJE = 0.5;
     // valor provisional, validar con los socios
     public static final int[] APARTADO_MANUAL_OPCIONES_HORAS = {2, 6, 12, 24, 48};
+
+    // Contacto y atención
+    // valor provisional, validar con los socios
+    public static final String NEGOCIO_WHATSAPP = CUENTA_SOCIO_TELEFONO;
+
+    // Checklist de equipo del asistente
+    // valor provisional, validar con los socios
+    public static final int CHECKLIST_ANTES_HORAS = 3;
+    // valor provisional, validar con los socios
+    public static final int CHECKLIST_DESPUES_HORAS = 24;
 }
 
 

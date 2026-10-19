@@ -21,14 +21,16 @@ public class AppContainer {
     private final FinanzasRepository finanzasRepository;
     private final SessionManager sessionManager;
     private final PasarelaPago pasarelaPago;
+    private final com.example.propuestasonidosonic.util.Reloj reloj;
 
     public AppContainer() {
+        this.reloj = new RelojSistema();
         this.equipoRepository = new InMemoryEquipoRepository();
         this.paqueteRepository = new InMemoryPaqueteRepository(this.equipoRepository);
         this.sessionManager = SessionManager.getInstance();
         this.usuarioRepository = new InMemoryUsuarioRepository(this.sessionManager);
         this.diaOperativoRepository = new InMemoryDiaOperativoRepository();
-        this.pagoRepository = new InMemoryPagoRepository();
+        this.pagoRepository = new InMemoryPagoRepository(this.reloj);
         this.eventoRepository = new InMemoryEventoRepository();
         this.pasarelaPago = new com.example.propuestasonidosonic.data.memory.PasarelaSimulada();
         this.pedidoRepository = new InMemoryPedidoRepository(
@@ -38,7 +40,7 @@ public class AppContainer {
                 this.diaOperativoRepository,
                 this.pagoRepository,
                 this.eventoRepository,
-                new RelojSistema()
+                this.reloj
         );
         this.finanzasRepository = new InMemoryFinanzasRepository();
 
@@ -87,5 +89,9 @@ public class AppContainer {
 
     public PasarelaPago getPasarelaPago() {
         return pasarelaPago;
+    }
+
+    public com.example.propuestasonidosonic.util.Reloj getReloj() {
+        return reloj;
     }
 }

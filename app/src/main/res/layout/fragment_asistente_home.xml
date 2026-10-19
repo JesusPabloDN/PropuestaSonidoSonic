@@ -1,29 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
-    android:padding="@dimen/spacing_large"
+    android:paddingStart="@dimen/spacing_medium"
+    android:paddingTop="@dimen/spacing_medium"
+    android:paddingEnd="@dimen/spacing_medium"
     android:background="?attr/android:colorBackground">
 
+    <!-- Encabezado con Saludo -->
     <TextView
-        android:id="@+id/tvTituloAsistente"
-        android:layout_width="wrap_content"
+        android:id="@+id/tvSaludoAsistente"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/spacing_small"
-        android:text="@string/placeholder_asistente_titulo"
         android:textColor="?attr/colorOnSurface"
         android:textSize="@dimen/text_headline"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:text="Hola, Carlos" />
 
-    <TextView
-        android:id="@+id/tvSubtituloAsistente"
-        android:layout_width="wrap_content"
+    <!-- Selector Próximos | Pasados -->
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/btnGroupAsistenteEventos"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/placeholder_proximamente"
-        android:textColor="?attr/colorOnSurfaceVariant"
-        android:textSize="@dimen/text_body" />
+        android:layout_marginTop="@dimen/spacing_medium"
+        android:layout_marginBottom="@dimen/spacing_small"
+        app:selectionRequired="true"
+        app:singleSelection="true">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnProximos"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/tab_proximos" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPasados"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/tab_pasados" />
+
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- Lista de Eventos -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvEventosAsistente"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/spacing_large"
+            tools:listitem="@layout/item_evento_asistente" />
+
+        <!-- Estado Vacío -->
+        <LinearLayout
+            android:id="@+id/layoutEmptyAsistente"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_large"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <TextView
+                android:id="@+id/tvEmptyMensaje"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="@dimen/text_body"
+                tools:text="No tienes eventos próximos" />
+
+        </LinearLayout>
+
+    </FrameLayout>
 
 </LinearLayout>

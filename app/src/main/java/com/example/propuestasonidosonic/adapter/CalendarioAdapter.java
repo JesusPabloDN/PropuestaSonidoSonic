@@ -32,8 +32,15 @@ public class CalendarioAdapter extends RecyclerView.Adapter<CalendarioAdapter.Di
         void onDiaClick(long diaMillis);
     }
 
+    public static final int MODO_AGENDA_SOCIO = 0;
+    public static final int MODO_DISPONIBILIDAD_ASISTENTE = 1;
+
+    private int modo = MODO_AGENDA_SOCIO;
     private final List<Long> celdas = new ArrayList<>();
     private final Map<String, int[]> marcadores = new HashMap<>();
+    private final java.util.Set<String> fechasDisponibles = new java.util.HashSet<>();
+    private final java.util.Set<String> fechasConEvento = new java.util.HashSet<>();
+    private long ahora;
     private int mesActual0;
     private long diaSeleccionadoMillis;
     private final OnDiaClickListener listener;
@@ -46,6 +53,7 @@ public class CalendarioAdapter extends RecyclerView.Adapter<CalendarioAdapter.Di
 
     public void setDatos(List<Long> nuevasCeldas, int mesActual0, long diaSeleccionadoMillis,
                          Map<String, int[]> nuevosMarcadores) {
+        this.modo = MODO_AGENDA_SOCIO;
         this.celdas.clear();
         if (nuevasCeldas != null) {
             this.celdas.addAll(nuevasCeldas);
@@ -56,6 +64,28 @@ public class CalendarioAdapter extends RecyclerView.Adapter<CalendarioAdapter.Di
         if (nuevosMarcadores != null) {
             this.marcadores.putAll(nuevosMarcadores);
         }
+        notifyDataSetChanged();
+    }
+
+    public void setModoDisponibilidad(List<Long> nuevasCeldas, int mesActual0,
+                                      java.util.Set<String> nuevasDisponibles,
+                                      java.util.Set<String> nuevasConEvento,
+                                      long ahora) {
+        this.modo = MODO_DISPONIBILIDAD_ASISTENTE;
+        this.celdas.clear();
+        if (nuevasCeldas != null) {
+            this.celdas.addAll(nuevasCeldas);
+        }
+        this.mesActual0 = mesActual0;
+        this.fechasDisponibles.clear();
+        if (nuevasDisponibles != null) {
+            this.fechasDisponibles.addAll(nuevasDisponibles);
+        }
+        this.fechasConEvento.clear();
+        if (nuevasConEvento != null) {
+            this.fechasConEvento.addAll(nuevasConEvento);
+        }
+        this.ahora = ahora;
         notifyDataSetChanged();
     }
 
@@ -73,7 +103,11 @@ public class CalendarioAdapter extends RecyclerView.Adapter<CalendarioAdapter.Di
 
     @Override
     public void onBindViewHolder(@NonNull DiaViewHolder holder, int position) {
-        holder.bind(celdas.get(position), mesActual0, diaSeleccionadoMillis, marcadores, listener);
+        if (modo == MODO_DISPONIBILIDAD_ASISTENTE) {
+            holder.bindDisponibilidad(celdas.get(position), mesActual0, fechasDisponibles, fechasConEvento, ahora, listener);
+        } else {
+            holder.bind(celdas.get(position), mesActual0, diaSeleccionadoMillis, marcadores, listener);
+        }
     }
 
     @Override
@@ -166,6 +200,80 @@ public class CalendarioAdapter extends RecyclerView.Adapter<CalendarioAdapter.Di
                     listener.onDiaClick(celdaMillis);
                 }
             });
+        }
+
+        public void bindDisponibilidad(long celdaMillis, int mesActual0,
+                                       java.util.Set<String> fechasDisponibles,
+                                       java.util.Set<String> fechasConEvento,
+                                       long ahora, OnDiaClickListener listener) {
+            Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(Config.ZONA_HORARIA), Locale.ROOT);
+            cal.setTimeInMillis(celdaMillis);
+
+            int diaMes = cal.get(Calendar.DAY_OF_MONTH);
+            int mesCelda = cal.get(Calendar.MONTH);
+            boolean esMesActual = (mesCelda == mesActual0);
+
+            tvNumeroDia.setText(String.valueOf(diaMes));
+
+            SimpleDateFormat sdfDia = new SimpleDateFormat("d 'de' MMMM", LOCALE_MX);
+            sdfDia.setTimeZone(TimeZone.getTimeZone(Config.ZONA_HORARIA));
+            String fechaTexto = sdfDia.format(new Date(celdaMillis));
+
+            String clave = TiempoUtils.claveDia(celdaMillis);
+            long hoyInicio = TiempoUtils.inicioDelDia(ahora);
+            boolean esPasado = (celdaMillis < hoyInicio);
+
+            boolean disponible = fechasDisponibles != null && fechasDisponibles.contains(clave);
+            boolean conEvento = fechasConEvento != null && fechasConEvento.contains(clave);
+
+            dotApartados.setVisibility(View.GONE);
+
+            if (esPasado) {
+                itemView.setAlpha(0.38f);
+                frameIndicadorDia.setBackground(null);
+                tvNumeroDia.setTextColor(MaterialColors.getColor(tvNumeroDia,
+                        com.google.android.material.R.attr.colorOutline));
+                dotConfirmados.setVisibility(View.GONE);
+                itemView.setOnClickListener(null);
+                itemView.setContentDescription(fechaTexto + ", Día pasado");
+                return;
+            }
+
+            itemView.setAlpha(1.0f);
+            itemView.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onDiaClick(celdaMillis);
+                }
+            });
+
+            if (conEvento) {
+                dotConfirmados.setVisibility(View.VISIBLE);
+                if (disponible) {
+                    frameIndicadorDia.setBackgroundResource(R.drawable.bg_dia_seleccionado);
+                    tvNumeroDia.setTextColor(MaterialColors.getColor(tvNumeroDia,
+                            com.google.android.material.R.attr.colorOnPrimary));
+                    itemView.setContentDescription(fechaTexto + ", Con evento asignado, Disponible");
+                } else {
+                    frameIndicadorDia.setBackground(null);
+                    tvNumeroDia.setTextColor(MaterialColors.getColor(tvNumeroDia,
+                            esMesActual ? com.google.android.material.R.attr.colorOnSurface
+                                        : com.google.android.material.R.attr.colorOutline));
+                    itemView.setContentDescription(fechaTexto + ", Con evento asignado");
+                }
+            } else if (disponible) {
+                dotConfirmados.setVisibility(View.GONE);
+                frameIndicadorDia.setBackgroundResource(R.drawable.bg_dia_seleccionado);
+                tvNumeroDia.setTextColor(MaterialColors.getColor(tvNumeroDia,
+                        com.google.android.material.R.attr.colorOnPrimary));
+                itemView.setContentDescription(fechaTexto + ", Disponible");
+            } else {
+                dotConfirmados.setVisibility(View.GONE);
+                frameIndicadorDia.setBackground(null);
+                tvNumeroDia.setTextColor(MaterialColors.getColor(tvNumeroDia,
+                        esMesActual ? com.google.android.material.R.attr.colorOnSurface
+                                    : com.google.android.material.R.attr.colorOutline));
+                itemView.setContentDescription(fechaTexto + ", No disponible");
+            }
         }
     }
 }

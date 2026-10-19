@@ -304,6 +304,15 @@
             android:text="@string/btn_volver_catalogo"
             app:cornerRadius="@dimen/button_corner_radius" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnVerMisPedidosResultado"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/touch_target_min"
+            android:layout_marginTop="@dimen/spacing_medium"
+            android:text="@string/btn_ver_mis_pedidos"
+            app:cornerRadius="@dimen/button_corner_radius" />
+
     </LinearLayout>
 
     <!-- 3. Pantalla de Reserva no disponible / vencida -->

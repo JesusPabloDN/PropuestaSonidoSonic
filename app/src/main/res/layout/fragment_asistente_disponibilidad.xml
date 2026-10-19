@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/spacing_medium"
+    android:paddingTop="@dimen/spacing_medium"
+    android:paddingEnd="@dimen/spacing_medium"
+    android:background="?attr/android:colorBackground">
+
+    <!-- Selector de Mes y Botón Hoy -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btnMesAnterior"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/cd_mes_anterior"
+            android:src="@drawable/ic_chevron_left_24"
+            app:tint="?attr/colorOnSurface" />
+
+        <TextView
+            android:id="@+id/tvMesAnio"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="@dimen/text_title"
+            android:textStyle="bold"
+            tools:text="octubre de 2026" />
+
+        <ImageButton
+            android:id="@+id/btnMesSiguiente"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/cd_mes_siguiente"
+            android:src="@drawable/ic_chevron_right_24"
+            app:tint="?attr/colorOnSurface" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnHoy"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_tiny"
+            android:text="@string/btn_hoy" />
+
+    </LinearLayout>
+
+    <!-- Encabezado de Días de la Semana (Lunes a Domingo) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_small"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/TextAppearance.Material3.BodySmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/dia_lunes_letra"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textStyle="bold" />
+
+        <TextView
+            style="@style/TextAppearance.Material3.BodySmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/dia_martes_letra"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textStyle="bold" />
+
+        <TextView
+            style="@style/TextAppearance.Material3.BodySmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/dia_miercoles_letra"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textStyle="bold" />
+
+        <TextView
+            style="@style/TextAppearance.Material3.BodySmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/dia_jueves_letra"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textStyle="bold" />
+
+        <TextView
+            style="@style/TextAppearance.Material3.BodySmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/dia_viernes_letra"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textStyle="bold" />
+
+        <TextView
+            style="@style/TextAppearance.Material3.BodySmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/dia_sabado_letra"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textStyle="bold" />
+
+        <TextView
+            style="@style/TextAppearance.Material3.BodySmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/dia_domingo_letra"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <!-- Cuadrícula del Calendario (42 Celdas) -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCalendarioDisponibilidad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_tiny"
+        android:overScrollMode="never" />
+
+    <!-- Resumen de Días Disponibles este Mes -->
+    <TextView
+        android:id="@+id/tvDiasDisponiblesMes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_medium"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="@dimen/text_body"
+        android:textStyle="bold"
+        tools:text="Días disponibles este mes: 8" />
+
+    <!-- Botón para Marcar Fines de Semana -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnMarcarFinesDeSemana"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_medium"
+        android:text="@string/btn_marcar_fines_de_semana" />
+
+</LinearLayout>
