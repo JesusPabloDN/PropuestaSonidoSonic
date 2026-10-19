@@ -17,6 +17,15 @@ public class SessionManager {
         return instance;
     }
 
+    public static synchronized SessionManager getInstancia(android.content.Context context) {
+        return getInstance();
+    }
+
+    public String getRol() {
+        Usuario u = getUsuarioActual();
+        return u != null ? u.getRol() : null;
+    }
+
     public void iniciarSesion(Usuario usuario) {
         usuarioActualLiveData.setValue(usuario);
     }

@@ -25,7 +25,7 @@ public class AppContainer {
 
     public AppContainer() {
         this.reloj = new RelojSistema();
-        this.equipoRepository = new InMemoryEquipoRepository();
+        this.equipoRepository = new InMemoryEquipoRepository(this.reloj);
         this.paqueteRepository = new InMemoryPaqueteRepository(this.equipoRepository);
         this.sessionManager = SessionManager.getInstance();
         this.usuarioRepository = new InMemoryUsuarioRepository(this.sessionManager);

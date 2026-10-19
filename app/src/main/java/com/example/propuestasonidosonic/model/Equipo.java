@@ -17,10 +17,25 @@ public class Equipo {
     private String estadoFisico;
     private double precioRenta;
     private String fotoUri;
+    private long fechaAlta;
 
     public Equipo() {
         this.id = UUID.randomUUID().toString();
         this.estadoFisico = ESTADO_DISPONIBLE;
+        this.fechaAlta = System.currentTimeMillis();
+    }
+
+    public Equipo(Equipo otro) {
+        if (otro != null) {
+            this.id = otro.id;
+            this.nombre = otro.nombre;
+            this.categoria = otro.categoria;
+            this.numeroUnidad = otro.numeroUnidad;
+            this.estadoFisico = otro.estadoFisico;
+            this.precioRenta = otro.precioRenta;
+            this.fotoUri = otro.fotoUri;
+            this.fechaAlta = otro.fechaAlta;
+        }
     }
 
     public Equipo(String id, String nombre, String categoria, int numeroUnidad, String estadoFisico, double precioRenta) {
@@ -35,6 +50,7 @@ public class Equipo {
         this.estadoFisico = estadoFisico != null ? estadoFisico : ESTADO_DISPONIBLE;
         this.precioRenta = precioRenta;
         this.fotoUri = fotoUri;
+        this.fechaAlta = System.currentTimeMillis();
     }
 
     public String getId() {
@@ -91,6 +107,14 @@ public class Equipo {
 
     public void setFotoUri(String fotoUri) {
         this.fotoUri = fotoUri;
+    }
+
+    public long getFechaAlta() {
+        return fechaAlta;
+    }
+
+    public void setFechaAlta(long fechaAlta) {
+        this.fechaAlta = fechaAlta;
     }
 
     @Override

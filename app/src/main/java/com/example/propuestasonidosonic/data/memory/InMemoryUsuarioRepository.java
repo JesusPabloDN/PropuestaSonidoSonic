@@ -332,4 +332,91 @@ public class InMemoryUsuarioRepository implements UsuarioRepository {
             callback.onSuccess(new Usuario(target));
         }
     }
+
+    @Override
+    public synchronized void actualizarPerfil(String usuarioId, String nombre, String telefono, Callback<Usuario> callback) {
+        // FIRESTORE: transacción
+        Usuario target = null;
+        for (Usuario u : usuarios) {
+            if (u.getId().equals(usuarioId)) {
+                target = u;
+                break;
+            }
+        }
+        if (target == null) {
+            if (callback != null) callback.onError("Usuario no encontrado");
+            return;
+        }
+
+        if (nombre == null || nombre.trim().isEmpty()) {
+            if (callback != null) callback.onError("El nombre es obligatorio");
+            return;
+        }
+        if (nombre.trim().length() > 80) {
+            if (callback != null) callback.onError("El nombre no puede exceder 80 caracteres");
+            return;
+        }
+
+        if (telefono == null) {
+            if (callback != null) callback.onError("El teléfono es obligatorio");
+            return;
+        }
+        String digitos = telefono.trim().replaceAll("\\D", "");
+        if (digitos.length() < 10) {
+            if (callback != null) callback.onError("El teléfono debe tener al menos 10 dígitos");
+            return;
+        }
+
+        target.setNombre(nombre.trim());
+        target.setTelefono(telefono.trim());
+
+        if (sessionManager != null) {
+            sessionManager.refrescarUsuario(target);
+        }
+        notificarCambios();
+        if (callback != null) {
+            callback.onSuccess(new Usuario(target));
+        }
+    }
+
+    @Override
+    public synchronized void cambiarContrasena(String usuarioId, String contrasenaActual, String contrasenaNueva, Callback<Void> callback) {
+        // FIRESTORE: transacción
+        Usuario target = null;
+        for (Usuario u : usuarios) {
+            if (u.getId().equals(usuarioId)) {
+                target = u;
+                break;
+            }
+        }
+        if (target == null) {
+            if (callback != null) callback.onError("Usuario no encontrado");
+            return;
+        }
+
+        if (contrasenaActual == null || !contrasenaActual.equals(target.getContrasena())) {
+            if (callback != null) callback.onError("La contraseña actual es incorrecta");
+            return;
+        }
+
+        if (contrasenaNueva == null || !PasswordValidator.isValid(contrasenaNueva)) {
+            if (callback != null) callback.onError("La nueva contraseña no cumple con los requisitos de seguridad");
+            return;
+        }
+
+        if (contrasenaNueva.equals(contrasenaActual)) {
+            if (callback != null) callback.onError("La nueva contraseña no puede ser igual a la actual");
+            return;
+        }
+
+        target.setContrasena(contrasenaNueva);
+
+        if (sessionManager != null) {
+            sessionManager.refrescarUsuario(target);
+        }
+        notificarCambios();
+        if (callback != null) {
+            callback.onSuccess(null);
+        }
+    }
 }

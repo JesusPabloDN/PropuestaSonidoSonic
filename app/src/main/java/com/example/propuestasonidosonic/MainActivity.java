@@ -22,10 +22,12 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.propuestasonidosonic.data.AppContainer;
 import com.example.propuestasonidosonic.data.SessionManager;
+import com.example.propuestasonidosonic.domain.PerfilUtils;
 import com.example.propuestasonidosonic.model.Usuario;
 import com.example.propuestasonidosonic.util.ThemeHelper;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.color.MaterialColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.HashSet;
@@ -39,14 +41,25 @@ public class MainActivity extends AppCompatActivity {
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
 
+    private LinearLayout drawerHeader;
+    private TextView tvDrawerInitials;
     private TextView tvDrawerUserName;
     private TextView tvDrawerUserRole;
+    private TextView tvDrawerUserEmail;
+    private TextView tvDrawerSeccionGestion;
     private LinearLayout drawerItemEquipo;
     private LinearLayout drawerItemClientes;
+    private TextView tvDrawerSeccionCuentaNegocio;
+    private LinearLayout drawerItemPerfil;
+    private LinearLayout drawerItemPoliticas;
+    private TextView tvDrawerSeccionInformacion;
+    private LinearLayout drawerItemAyuda;
+    private LinearLayout drawerItemAcercaDe;
     private LinearLayout drawerItemTheme;
     private ImageView ivDrawerThemeIcon;
     private TextView tvDrawerThemeLabel;
     private LinearLayout drawerItemLogout;
+    private TextView tvDrawerVersion;
 
     private SessionManager sessionManager;
 
@@ -77,12 +90,23 @@ public class MainActivity extends AppCompatActivity {
 
         tvDrawerUserName = findViewById(R.id.tvDrawerUserName);
         tvDrawerUserRole = findViewById(R.id.tvDrawerUserRole);
+        drawerHeader = findViewById(R.id.drawerHeader);
+        tvDrawerInitials = findViewById(R.id.tvDrawerInitials);
+        tvDrawerUserEmail = findViewById(R.id.tvDrawerUserEmail);
+        tvDrawerSeccionGestion = findViewById(R.id.tvDrawerSeccionGestion);
         drawerItemEquipo = findViewById(R.id.drawerItemEquipo);
         drawerItemClientes = findViewById(R.id.drawerItemClientes);
+        tvDrawerSeccionCuentaNegocio = findViewById(R.id.tvDrawerSeccionCuentaNegocio);
+        drawerItemPerfil = findViewById(R.id.drawerItemPerfil);
+        drawerItemPoliticas = findViewById(R.id.drawerItemPoliticas);
+        tvDrawerSeccionInformacion = findViewById(R.id.tvDrawerSeccionInformacion);
+        drawerItemAyuda = findViewById(R.id.drawerItemAyuda);
+        drawerItemAcercaDe = findViewById(R.id.drawerItemAcercaDe);
         drawerItemTheme = findViewById(R.id.drawerItemTheme);
         ivDrawerThemeIcon = findViewById(R.id.ivDrawerThemeIcon);
         tvDrawerThemeLabel = findViewById(R.id.tvDrawerThemeLabel);
         drawerItemLogout = findViewById(R.id.drawerItemLogout);
+        tvDrawerVersion = findViewById(R.id.tvDrawerVersion);
 
         setSupportActionBar(toolbar);
 
@@ -181,17 +205,28 @@ public class MainActivity extends AppCompatActivity {
             bottomNavigationView.setVisibility(View.GONE);
             drawerLayout.closeDrawer(GravityCompat.START);
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            actualizarResaltadoDrawer(destinationId);
             return;
         } else if (destinationId == R.id.registerFragment) {
             toolbar.setVisibility(View.VISIBLE);
             bottomNavigationView.setVisibility(View.GONE);
             drawerLayout.closeDrawer(GravityCompat.START);
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            actualizarResaltadoDrawer(destinationId);
             return;
         }
 
         toolbar.setVisibility(View.VISIBLE);
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        actualizarResaltadoDrawer(destinationId);
+
+        // Pantallas compartidas y secundarias: ocultar bottom navigation
+        if (destinationId == R.id.perfilFragment || destinationId == R.id.ayudaFragment ||
+            destinationId == R.id.acercaDeFragment || destinationId == R.id.politicasFragment ||
+            destinationId == R.id.usuariosFragment || destinationId == R.id.clientesFragment) {
+            bottomNavigationView.setVisibility(View.GONE);
+            return;
+        }
 
         Usuario usuario = sessionManager.getUsuarioActual();
         String rol = usuario != null ? usuario.getRol() : null;
@@ -233,11 +268,48 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void actualizarResaltadoDrawer(int destinationId) {
+        resaltarItem(drawerItemEquipo, destinationId == R.id.usuariosFragment);
+        resaltarItem(drawerItemClientes, destinationId == R.id.clientesFragment);
+        resaltarItem(drawerItemPerfil, destinationId == R.id.perfilFragment);
+        resaltarItem(drawerItemPoliticas, destinationId == R.id.politicasFragment);
+        resaltarItem(drawerItemAyuda, destinationId == R.id.ayudaFragment);
+        resaltarItem(drawerItemAcercaDe, destinationId == R.id.acercaDeFragment);
+    }
+
+    private void resaltarItem(LinearLayout item, boolean seleccionado) {
+        if (item == null) return;
+        if (seleccionado) {
+            int colorBg = MaterialColors.getColor(item, com.google.android.material.R.attr.colorSecondaryContainer, 0x1A000000);
+            item.setBackgroundColor(colorBg);
+        } else {
+            android.util.TypedValue outValue = new android.util.TypedValue();
+            getTheme().resolveAttribute(android.R.attr.selectableItemBackground, outValue, true);
+            item.setBackgroundResource(outValue.resourceId);
+        }
+    }
+
+    private void navegarDesdeDrawer(int destinationId) {
+        drawerLayout.closeDrawer(GravityCompat.START);
+        if (navController != null) {
+            int currentId = navController.getCurrentDestination() != null
+                    ? navController.getCurrentDestination().getId() : 0;
+            if (currentId != destinationId) {
+                NavOptions navOptions = new NavOptions.Builder()
+                        .setLaunchSingleTop(true)
+                        .build();
+                navController.navigate(destinationId, null, navOptions);
+            }
+        }
+    }
+
     private void configurarDrawer() {
         // Observar sesión para datos del usuario en encabezado del drawer y menú por rol
         sessionManager.getUsuarioActualLiveData().observe(this, usuario -> {
             if (usuario != null) {
+                tvDrawerInitials.setText(PerfilUtils.iniciales(usuario.getNombre()));
                 tvDrawerUserName.setText(usuario.getNombre());
+                tvDrawerUserEmail.setText(usuario.getCorreo());
                 String rolTexto;
                 if (Usuario.ROL_SOCIO.equals(usuario.getRol())) {
                     rolTexto = getString(R.string.drawer_header_rol_socio);
@@ -249,9 +321,23 @@ public class MainActivity extends AppCompatActivity {
                     rolTexto = usuario.getRol();
                 }
                 tvDrawerUserRole.setText(rolTexto);
+
                 boolean esSocio = Usuario.ROL_SOCIO.equals(usuario.getRol());
+                tvDrawerSeccionGestion.setVisibility(esSocio ? View.VISIBLE : View.GONE);
                 drawerItemEquipo.setVisibility(esSocio ? View.VISIBLE : View.GONE);
                 drawerItemClientes.setVisibility(esSocio ? View.VISIBLE : View.GONE);
+                tvDrawerSeccionCuentaNegocio.setVisibility(esSocio ? View.VISIBLE : View.GONE);
+                drawerItemPerfil.setVisibility(View.VISIBLE);
+                drawerItemPoliticas.setVisibility(esSocio ? View.VISIBLE : View.GONE);
+                tvDrawerSeccionInformacion.setVisibility(View.VISIBLE);
+                drawerItemAyuda.setVisibility(View.VISIBLE);
+                drawerItemAcercaDe.setVisibility(View.VISIBLE);
+
+                String version = "1.0";
+                try {
+                    version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+                } catch (Exception ignored) {}
+                tvDrawerVersion.setText(getString(R.string.app_version_formato, version));
 
                 bottomNavigationView.getMenu().clear();
                 if (Usuario.ROL_SOCIO.equals(usuario.getRol())) {
@@ -262,10 +348,16 @@ public class MainActivity extends AppCompatActivity {
                     bottomNavigationView.inflateMenu(R.menu.bottom_menu_asistente);
                 }
             } else {
+                tvDrawerInitials.setText("?");
                 tvDrawerUserName.setText("");
                 tvDrawerUserRole.setText("");
+                tvDrawerUserEmail.setText("");
+                tvDrawerSeccionGestion.setVisibility(View.GONE);
                 drawerItemEquipo.setVisibility(View.GONE);
                 drawerItemClientes.setVisibility(View.GONE);
+                tvDrawerSeccionCuentaNegocio.setVisibility(View.GONE);
+                drawerItemPerfil.setVisibility(View.GONE);
+                drawerItemPoliticas.setVisibility(View.GONE);
                 bottomNavigationView.getMenu().clear();
             }
 
@@ -274,33 +366,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        drawerItemEquipo.setOnClickListener(v -> {
-            drawerLayout.closeDrawer(GravityCompat.START);
-            if (navController != null) {
-                int currentId = navController.getCurrentDestination() != null
-                        ? navController.getCurrentDestination().getId() : 0;
-                if (currentId != R.id.usuariosFragment) {
-                    NavOptions navOptions = new NavOptions.Builder()
-                            .setLaunchSingleTop(true)
-                            .build();
-                    navController.navigate(R.id.usuariosFragment, null, navOptions);
-                }
-            }
-        });
-
-        drawerItemClientes.setOnClickListener(v -> {
-            drawerLayout.closeDrawer(GravityCompat.START);
-            if (navController != null) {
-                int currentId = navController.getCurrentDestination() != null
-                        ? navController.getCurrentDestination().getId() : 0;
-                if (currentId != R.id.clientesFragment) {
-                    NavOptions navOptions = new NavOptions.Builder()
-                            .setLaunchSingleTop(true)
-                            .build();
-                    navController.navigate(R.id.clientesFragment, null, navOptions);
-                }
-            }
-        });
+        drawerHeader.setOnClickListener(v -> navegarDesdeDrawer(R.id.perfilFragment));
+        drawerItemEquipo.setOnClickListener(v -> navegarDesdeDrawer(R.id.usuariosFragment));
+        drawerItemClientes.setOnClickListener(v -> navegarDesdeDrawer(R.id.clientesFragment));
+        drawerItemPerfil.setOnClickListener(v -> navegarDesdeDrawer(R.id.perfilFragment));
+        drawerItemPoliticas.setOnClickListener(v -> navegarDesdeDrawer(R.id.politicasFragment));
+        drawerItemAyuda.setOnClickListener(v -> navegarDesdeDrawer(R.id.ayudaFragment));
+        drawerItemAcercaDe.setOnClickListener(v -> navegarDesdeDrawer(R.id.acercaDeFragment));
 
         // Configurar estado actual de tema en el drawer
         actualizarVistaTema();
@@ -349,6 +421,16 @@ public class MainActivity extends AppCompatActivity {
                 if (navController != null) {
                     int currentId = navController.getCurrentDestination() != null
                             ? navController.getCurrentDestination().getId() : 0;
+
+                    // Si estamos en una de las pantallas secundarias/compartidas, volver atrás
+                    if (currentId == R.id.perfilFragment ||
+                        currentId == R.id.ayudaFragment ||
+                        currentId == R.id.acercaDeFragment ||
+                        currentId == R.id.politicasFragment) {
+                        if (navController.popBackStack()) {
+                            return;
+                        }
+                    }
 
                     Usuario usuario = sessionManager.getUsuarioActual();
                     String rol = usuario != null ? usuario.getRol() : null;

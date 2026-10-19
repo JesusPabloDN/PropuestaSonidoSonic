@@ -53,33 +53,72 @@
         android:background="?attr/colorSurface"
         android:orientation="vertical">
 
-        <!-- Encabezado con datos del usuario -->
+        <!-- Encabezado con datos del usuario (Clickable -> Mi perfil) -->
         <LinearLayout
+            android:id="@+id/drawerHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
             android:paddingStart="@dimen/spacing_large"
-            android:paddingTop="@dimen/spacing_small"
+            android:paddingTop="@dimen/spacing_large"
             android:paddingEnd="@dimen/spacing_large"
-            android:paddingBottom="@dimen/spacing_large">
+            android:paddingBottom="@dimen/spacing_medium">
 
+            <!-- Círculo con iniciales -->
             <TextView
-                android:id="@+id/tvDrawerUserName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Nombre de Usuario"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="@dimen/text_title"
-                android:textStyle="bold" />
+                android:id="@+id/tvDrawerInitials"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_avatar_circle"
+                android:gravity="center"
+                android:textColor="?attr/colorOnPrimaryContainer"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:text="SP" />
 
-            <TextView
-                android:id="@+id/tvDrawerUserRole"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_tiny"
-                android:text="Rol"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="@dimen/text_caption" />
+                android:layout_marginStart="@dimen/spacing_medium"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvDrawerUserName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="@dimen/text_title"
+                    android:textStyle="bold"
+                    tools:text="Nombre Usuario" />
+
+                <TextView
+                    android:id="@+id/tvDrawerUserRole"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textColor="?attr/colorPrimary"
+                    android:textSize="@dimen/text_caption"
+                    android:textStyle="bold"
+                    tools:text="Socio" />
+
+                <TextView
+                    android:id="@+id/tvDrawerUserEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="12sp"
+                    tools:text="correo@sonic.com" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -87,85 +126,277 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <!-- Opción superior: Equipo de trabajo (visible solo para Socio) -->
-        <LinearLayout
-            android:id="@+id/drawerItemEquipo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:minHeight="@dimen/touch_target_min"
-            android:orientation="horizontal"
-            android:paddingStart="@dimen/spacing_large"
-            android:paddingEnd="@dimen/spacing_large"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@+id/ivDrawerEquipoIcon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:contentDescription="@string/menu_equipo_trabajo"
-                android:src="@drawable/ic_group_24"
-                app:tint="?attr/colorOnSurface" />
-
-            <TextView
-                android:id="@+id/tvDrawerEquipoLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_medium"
-                android:text="@string/menu_equipo_trabajo"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="@dimen/text_body" />
-
-        </LinearLayout>
-
-        <!-- Opción superior: Clientes (visible solo para Socio) -->
-        <LinearLayout
-            android:id="@+id/drawerItemClientes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:minHeight="@dimen/touch_target_min"
-            android:orientation="horizontal"
-            android:paddingStart="@dimen/spacing_large"
-            android:paddingEnd="@dimen/spacing_large"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@+id/ivDrawerClientesIcon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:contentDescription="@string/menu_clientes"
-                android:src="@drawable/ic_contacts_24"
-                app:tint="?attr/colorOnSurface" />
-
-            <TextView
-                android:id="@+id/tvDrawerClientesLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_medium"
-                android:text="@string/menu_clientes"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="@dimen/text_body" />
-
-        </LinearLayout>
-
-        <!-- Espacio flexible para empujar las opciones al fondo -->
-        <View
+        <!-- Cuerpo del menú con Scroll -->
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/spacing_small"
+                android:paddingBottom="@dimen/spacing_small">
+
+                <!-- SECCIÓN GESTIÓN (Solo Socio) -->
+                <TextView
+                    android:id="@+id/tvDrawerSeccionGestion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/spacing_large"
+                    android:paddingTop="@dimen/spacing_small"
+                    android:paddingEnd="@dimen/spacing_large"
+                    android:paddingBottom="4dp"
+                    android:text="@string/drawer_seccion_gestion"
+                    android:textColor="?attr/colorPrimary"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <!-- Opción: Equipo de trabajo (visible solo para Socio) -->
+                <LinearLayout
+                    android:id="@+id/drawerItemEquipo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/touch_target_min"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/spacing_large"
+                    android:paddingEnd="@dimen/spacing_large"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/ivDrawerEquipoIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="@string/menu_equipo_trabajo"
+                        android:src="@drawable/ic_group_24"
+                        app:tint="?attr/colorOnSurface" />
+
+                    <TextView
+                        android:id="@+id/tvDrawerEquipoLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_medium"
+                        android:text="@string/menu_equipo_trabajo"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="@dimen/text_body" />
+
+                </LinearLayout>
+
+                <!-- Opción: Clientes (visible solo para Socio) -->
+                <LinearLayout
+                    android:id="@+id/drawerItemClientes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/touch_target_min"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/spacing_large"
+                    android:paddingEnd="@dimen/spacing_large"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/ivDrawerClientesIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="@string/menu_clientes"
+                        android:src="@drawable/ic_contacts_24"
+                        app:tint="?attr/colorOnSurface" />
+
+                    <TextView
+                        android:id="@+id/tvDrawerClientesLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_medium"
+                        android:text="@string/menu_clientes"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="@dimen/text_body" />
+
+                </LinearLayout>
+
+                <!-- SECCIÓN CUENTA Y NEGOCIO (Título visible solo para Socio) -->
+                <TextView
+                    android:id="@+id/tvDrawerSeccionCuentaNegocio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_small"
+                    android:paddingStart="@dimen/spacing_large"
+                    android:paddingTop="@dimen/spacing_small"
+                    android:paddingEnd="@dimen/spacing_large"
+                    android:paddingBottom="4dp"
+                    android:text="@string/drawer_seccion_cuenta_negocio"
+                    android:textColor="?attr/colorPrimary"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <!-- Opción: Mi perfil (Todos los roles) -->
+                <LinearLayout
+                    android:id="@+id/drawerItemPerfil"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/touch_target_min"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/spacing_large"
+                    android:paddingEnd="@dimen/spacing_large">
+
+                    <ImageView
+                        android:id="@+id/ivDrawerPerfilIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="@string/menu_mi_perfil"
+                        android:src="@drawable/ic_person_24"
+                        app:tint="?attr/colorOnSurface" />
+
+                    <TextView
+                        android:id="@+id/tvDrawerPerfilLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_medium"
+                        android:text="@string/menu_mi_perfil"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="@dimen/text_body" />
+
+                </LinearLayout>
+
+                <!-- Opción: Políticas del negocio (visible solo para Socio) -->
+                <LinearLayout
+                    android:id="@+id/drawerItemPoliticas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/touch_target_min"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/spacing_large"
+                    android:paddingEnd="@dimen/spacing_large"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/ivDrawerPoliticasIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="@string/menu_politicas_negocio"
+                        android:src="@drawable/ic_policy_24"
+                        app:tint="?attr/colorOnSurface" />
+
+                    <TextView
+                        android:id="@+id/tvDrawerPoliticasLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_medium"
+                        android:text="@string/menu_politicas_negocio"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="@dimen/text_body" />
+
+                </LinearLayout>
+
+                <!-- SECCIÓN INFORMACIÓN -->
+                <TextView
+                    android:id="@+id/tvDrawerSeccionInformacion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_small"
+                    android:paddingStart="@dimen/spacing_large"
+                    android:paddingTop="@dimen/spacing_small"
+                    android:paddingEnd="@dimen/spacing_large"
+                    android:paddingBottom="4dp"
+                    android:text="@string/drawer_seccion_informacion"
+                    android:textColor="?attr/colorPrimary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <!-- Opción: Ayuda (Todos los roles) -->
+                <LinearLayout
+                    android:id="@+id/drawerItemAyuda"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/touch_target_min"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/spacing_large"
+                    android:paddingEnd="@dimen/spacing_large">
+
+                    <ImageView
+                        android:id="@+id/ivDrawerAyudaIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="@string/menu_ayuda"
+                        android:src="@drawable/ic_help_24"
+                        app:tint="?attr/colorOnSurface" />
+
+                    <TextView
+                        android:id="@+id/tvDrawerAyudaLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_medium"
+                        android:text="@string/menu_ayuda"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="@dimen/text_body" />
+
+                </LinearLayout>
+
+                <!-- Opción: Acerca de (Todos los roles) -->
+                <LinearLayout
+                    android:id="@+id/drawerItemAcercaDe"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/touch_target_min"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/spacing_large"
+                    android:paddingEnd="@dimen/spacing_large">
+
+                    <ImageView
+                        android:id="@+id/ivDrawerAcercaDeIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="@string/menu_acerca_de"
+                        android:src="@drawable/ic_info_24"
+                        app:tint="?attr/colorOnSurface" />
+
+                    <TextView
+                        android:id="@+id/tvDrawerAcercaDeLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_medium"
+                        android:text="@string/menu_acerca_de"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="@dimen/text_body" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
 
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <!-- Opción 1: Modo oscuro / Modo claro -->
+        <!-- Pie Fijo -->
+        <!-- Opción: Modo oscuro / Modo claro -->
         <LinearLayout
             android:id="@+id/drawerItemTheme"
             android:layout_width="match_parent"
@@ -198,7 +429,7 @@
 
         </LinearLayout>
 
-        <!-- Opción 2: Cerrar sesión -->
+        <!-- Opción: Cerrar sesión -->
         <LinearLayout
             android:id="@+id/drawerItemLogout"
             android:layout_width="match_parent"
@@ -230,6 +461,18 @@
                 android:textSize="@dimen/text_body" />
 
         </LinearLayout>
+
+        <!-- Versión de la app -->
+        <TextView
+            android:id="@+id/tvDrawerVersion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="6dp"
+            android:paddingBottom="12dp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="12sp"
+            tools:text="Sonido Sonic · v1.0" />
 
     </LinearLayout>
 

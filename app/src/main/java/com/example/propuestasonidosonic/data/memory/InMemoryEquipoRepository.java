@@ -9,6 +9,7 @@ import com.example.propuestasonidosonic.data.EventoRepository;
 import com.example.propuestasonidosonic.model.BitacoraEntrada;
 import com.example.propuestasonidosonic.model.Equipo;
 import com.example.propuestasonidosonic.model.Evento;
+import com.example.propuestasonidosonic.util.Reloj;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,8 +26,19 @@ public class InMemoryEquipoRepository implements EquipoRepository {
 
     private EventoRepository eventoRepository;
     private Runnable onInventarioCambio;
+    private Reloj reloj;
 
-    public InMemoryEquipoRepository() {}
+    public InMemoryEquipoRepository() {
+        this(null);
+    }
+
+    public InMemoryEquipoRepository(Reloj reloj) {
+        this.reloj = reloj;
+    }
+
+    public void setReloj(Reloj reloj) {
+        this.reloj = reloj;
+    }
 
     public void setEventoRepository(EventoRepository eventoRepository) {
         this.eventoRepository = eventoRepository;
@@ -79,6 +91,9 @@ public class InMemoryEquipoRepository implements EquipoRepository {
     @Override
     public synchronized void agregarEquipo(Equipo equipo, Callback<Equipo> callback) {
         // FIRESTORE: aquí irá una transacción
+        if (equipo != null && equipo.getFechaAlta() <= 0) {
+            equipo.setFechaAlta(reloj != null ? reloj.ahora() : System.currentTimeMillis());
+        }
         equipos.add(equipo);
         notificarEquipos();
         dispararCambioInventario();
@@ -104,6 +119,7 @@ public class InMemoryEquipoRepository implements EquipoRepository {
             }
         }
 
+        long ahora = reloj != null ? reloj.ahora() : System.currentTimeMillis();
         List<Equipo> nuevos = new ArrayList<>();
         for (int i = 1; i <= cantidad; i++) {
             Equipo nuevo = new Equipo();
@@ -113,6 +129,7 @@ public class InMemoryEquipoRepository implements EquipoRepository {
             nuevo.setEstadoFisico(estadoFisico);
             nuevo.setNumeroUnidad(maxNumero + i);
             nuevo.setFotoUri(fotoUri);
+            nuevo.setFechaAlta(ahora);
             equipos.add(nuevo);
             nuevos.add(nuevo);
         }

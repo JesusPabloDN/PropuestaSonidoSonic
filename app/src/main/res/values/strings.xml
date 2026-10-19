@@ -523,4 +523,145 @@
     <string name="error_no_app_mapas">No se encontró una aplicación de mapas</string>
     <string name="error_no_app_telefono">No se encontró una aplicación para realizar llamadas</string>
     <string name="titulo_evento_detalle_asistente">Detalle del evento</string>
+
+    <!-- ETAPA 7: Menú lateral, Perfil, Políticas, Ayuda, Acerca de y Lo más reciente -->
+    <string name="titulo_mi_perfil">Mi perfil</string>
+    <string name="titulo_ayuda">Ayuda</string>
+    <string name="titulo_acerca_de">Acerca de</string>
+    <string name="titulo_politicas_negocio">Políticas del negocio</string>
+
+    <string name="drawer_seccion_gestion">Gestión</string>
+    <string name="drawer_seccion_cuenta_negocio">Cuenta y negocio</string>
+    <string name="drawer_seccion_informacion">Información</string>
+    <string name="menu_mi_perfil">Mi perfil</string>
+    <string name="menu_politicas_negocio">Políticas del negocio</string>
+    <string name="menu_ayuda">Ayuda</string>
+    <string name="menu_acerca_de">Acerca de</string>
+    <string name="app_version_formato">Sonido Sonic · v%1$s</string>
+
+    <!-- Mi perfil -->
+    <string name="perfil_seccion_datos_personales">Datos personales</string>
+    <string name="perfil_seccion_cambiar_contrasena">Cambiar contraseña</string>
+    <string name="label_cuenta_creada">Cuenta creada el %1$s</string>
+    <string name="btn_guardar_cambios">Guardar cambios</string>
+    <string name="btn_cambiar_contrasena">Cambiar contraseña</string>
+    <string name="snackbar_perfil_actualizado">Perfil actualizado</string>
+    <string name="snackbar_contrasena_actualizada">Contraseña actualizada</string>
+    <string name="hint_contrasena_actual">Contraseña actual</string>
+    <string name="hint_contrasena_nueva">Nueva contraseña</string>
+    <string name="hint_confirmar_contrasena_nueva">Confirmar nueva contraseña</string>
+    <string name="ayuda_reglas_contrasena">Mínimo 8 caracteres, al menos una mayúscula, un número y un carácter especial.</string>
+    <string name="hint_nombre">Nombre</string>
+    <string name="header_rol">Rol</string>
+    <string name="error_nombre_personal_invalido">Ingresa un nombre válido</string>
+    <string name="error_telefono_personal_invalido">Ingresa un número telefónico de al menos 10 dígitos</string>
+    <string name="error_contrasena_debil">La contraseña debe tener mínimo 8 caracteres, una mayúscula, un número y un carácter especial</string>
+    <string name="error_contrasena_misma">La nueva contraseña debe ser diferente a la actual</string>
+
+    <!-- Dashboard: Lo más reciente -->
+    <string name="seccion_lo_mas_reciente">Lo más reciente</string>
+    <string name="reciente_pedidos_vacio">Aún no hay pedidos</string>
+    <string name="reciente_agenda_vacio">No hay eventos próximos</string>
+    <string name="reciente_inventario_vacio">Aún no hay equipo registrado</string>
+    <string name="reciente_finanzas_vacio">Aún no hay movimientos</string>
+    <string name="reciente_pedido_titulo_formato">Pedido #%1$d · %2$s</string>
+    <string name="reciente_pedido_subtitulo_formato">%1$s · %2$s · %3$s</string>
+    <string name="reciente_agenda_subtitulo_formato">%1$s · %2$s · %3$s</string>
+    <string name="reciente_inventario_titulo_formato">%1$s (%2$d)</string>
+    <string name="reciente_inventario_subtitulo_formato">%1$s · %2$s</string>
+    <string name="reciente_finanzas_titulo_formato">%1$s · %2$s</string>
+    <string name="reciente_finanzas_subtitulo_formato">Pedido #%1$d · %2$s</string>
+
+    <!-- Tiempos relativos -->
+    <string name="tiempo_ahora">hace un momento</string>
+    <string name="tiempo_ayer">ayer</string>
+    <plurals name="tiempo_minutos">
+        <item quantity="one">hace 1 minuto</item>
+        <item quantity="other">hace %d minutos</item>
+    </plurals>
+    <plurals name="tiempo_horas">
+        <item quantity="one">hace 1 hora</item>
+        <item quantity="other">hace %d horas</item>
+    </plurals>
+    <plurals name="tiempo_dias">
+        <item quantity="one">hace 1 día</item>
+        <item quantity="other">hace %d días</item>
+    </plurals>
+
+    <!-- Acerca de -->
+    <string name="acerca_de_descripcion">Administra la renta de equipo de audio: inventario, reservas, pagos y agenda.</string>
+    <string name="acerca_de_equipo_titulo">Equipo de desarrollo</string>
+    <string name="acerca_de_desarrolladores">Angel Maza Fabila y Jesús Pablo Damián Nava</string>
+    <string name="acerca_de_materia_titulo">Materia</string>
+    <string name="acerca_de_materia">Taller de Desarrollo Móvil</string>
+    <string name="acerca_de_institucion_titulo">Institución</string>
+    <string name="acerca_de_institucion">Instituto Tecnológico de Chilpancingo</string>
+    <string name="acerca_de_nota_memoria">Esta versión guarda la información solo mientras la app está abierta.</string>
+
+    <!-- Políticas del negocio -->
+    <string name="politicas_seccion_reservas_anticipo">Reservas y anticipo</string>
+    <string name="politicas_reservas_anticipo_desc">Anticipo del %1$d%% para confirmar la reserva. El apartado dura %2$d minutos si lo hace el cliente en la app y el Socio cuenta con opciones de apartado de %3$s horas. Eventos con menos de %4$d horas de anticipación desde la app quedan en revisión.</string>
+    <string name="politicas_seccion_cancelaciones_reembolsos">Cancelaciones y reembolsos</string>
+    <string name="politicas_cancelaciones_reembolsos_desc">El cliente recibe el 100%% de reembolso con %1$d o más días de anticipación; el %2$d%% entre %3$d horas y %1$d días; y nada con menos de %3$d horas. Si cancela el Socio o si el cliente cancela un pedido en revisión, se reembolsa el 100%%.</string>
+    <string name="politicas_seccion_operacion">Operación</string>
+    <string name="politicas_operacion_desc">Montaje por defecto: %1$d min. Desmontaje por defecto: %2$d min. Máximo de eventos simultáneos: %3$d. Horarios de inicio disponibles: de %4$s a %5$s con intervalos de %6$d min. Duración del evento: de %7$s a %8$s.</string>
+    <string name="politicas_seccion_personal">Personal</string>
+    <string name="politicas_personal_desc">Los Socios están disponibles salvo que se marquen ausentes. Los Asistentes participan solo en los días que marcan en su calendario. El sistema prioriza la asignación de Asistentes según la configuración operativa.</string>
+    <string name="politicas_seccion_pagos">Pagos</string>
+    <string name="politicas_pagos_desc">Se aceptan pagos en efectivo, transferencia bancaria y tarjeta de crédito o débito (la pasarela de tarjeta es de prueba).</string>
+    <string name="politicas_nota_final">Estos valores son los que usa la app hoy. Si el negocio decide cambiarlos, se actualizan en una nueva versión.</string>
+
+    <!-- Ayuda -->
+    <string name="seccion_contacto_ayuda">Contacto</string>
+    <string name="btn_whatsapp_ayuda">Escribir por WhatsApp</string>
+    <string name="mensaje_whatsapp_ayuda">Hola, necesito ayuda con la app Sonido Sonic.</string>
+    <string name="ayuda_contacto_descripcion">¿Tienes alguna duda o necesitas asistencia personalizada? Contáctanos directamente por WhatsApp.</string>
+
+    <string-array name="faq_socio_preguntas">
+        <item>¿Cómo registrar un pedido?</item>
+        <item>¿Qué significan Apartado, Confirmado y En revisión?</item>
+        <item>¿Cómo cobrar el saldo y obtener un recibo?</item>
+        <item>¿Cómo marcar que un operador no está disponible?</item>
+        <item>¿Qué hacer si un pedido queda con \"Faltan unidades por asignar\"?</item>
+        <item>¿Cómo se calculan los reembolsos?</item>
+    </string-array>
+
+    <string-array name="faq_socio_respuestas">
+        <item>En la pestaña Pedidos, pulsa el botón \"+\" (Nuevo pedido), selecciona o crea un cliente, elige la fecha, el horario y el paquete, y confirma el anticipo o apartado.</item>
+        <item>Apartado: reserva temporal pendiente de anticipo. Confirmado: anticipo cubierto y cupo garantizado. En revisión: evento solicitado con menos de 48 horas de anticipación que requiere tu aprobación.</item>
+        <item>Abre el pedido en la pestaña Pedidos, pulsa \"Registrar pago\", ingresa el monto y método de pago. Una vez liquidado o abonado, pulsa \"Generar recibo\" para ver y compartir el comprobante en PDF.</item>
+        <item>En el menú lateral ve a \"Equipo de trabajo\", selecciona al socio u operador y marca la fecha como no disponible en su calendario.</item>
+        <item>Abre el detalle del pedido. Si agregaste equipos al inventario o se liberaron de otro evento, el sistema reintentará asignarlos automáticamente; también puedes verificar el inventario disponible en esa fecha.</item>
+        <item>Si el cliente cancela con 7 días o más recibe el 100%%; entre 72 horas y 7 días recibe el 50%%; con menos de 72 horas no hay reembolso. Si el Socio cancela o se rechaza un pedido en revisión, se reembolsa el 100%%.</item>
+    </string-array>
+
+    <string-array name="faq_cliente_preguntas">
+        <item>¿Cómo reservar?</item>
+        <item>¿Cuánto dura el apartado y qué pasa si no pago?</item>
+        <item>¿Qué es \"En revisión\"?</item>
+        <item>¿Cómo cancelar y cuánto me devuelven?</item>
+        <item>¿Dónde veo mi recibo?</item>
+    </string-array>
+
+    <string-array name="faq_cliente_respuestas">
+        <item>En el Catálogo, elige el paquete que más se adapte a tu evento, selecciona la fecha, el horario y la dirección, y pulsa \"Apartar y pagar\" para cubrir el anticipo con tarjeta.</item>
+        <item>El apartado dura 30 minutos. Si no completas el pago del anticipo en ese tiempo, la reserva se cancela automáticamente y las unidades quedan libres para otros clientes.</item>
+        <item>Si reservas un evento con menos de 48 horas de anticipación, nuestro equipo revisa la disponibilidad operativa para aprobarlo. Si no se puede cubrir, te reembolsamos el 100%% de lo pagado.</item>
+        <item>Desde \"Mis pedidos\", abre el pedido y pulsa \"Cancelar reserva\". Con 7 días o más recibes el 100%% de reembolso; entre 72 horas y 7 días recibes el 50%%; con menos de 72 horas no aplica reembolso.</item>
+        <item>En el detalle de tu pedido en \"Mis pedidos\", encontrarás la sección de pagos con el botón para descargar o visualizar tu recibo en formato PDF.</item>
+    </string-array>
+
+    <string-array name="faq_asistente_preguntas">
+        <item>¿Cómo marco los días que puedo trabajar?</item>
+        <item>¿Por qué no puedo quitar un día?</item>
+        <item>¿Cuándo veo el teléfono del cliente?</item>
+        <item>¿Cómo uso el checklist de equipo?</item>
+    </string-array>
+
+    <string-array name="faq_asistente_respuestas">
+        <item>En la pantalla de Disponibilidad, toca en el calendario los días en que estás disponible para trabajar y pulsa \"Guardar disponibilidad\".</item>
+        <item>No puedes desmarcar un día en el que ya tienes un evento asignado. Si no puedes asistir, contacta al Socio para que reasigne el evento a otro operador.</item>
+        <item>El teléfono y los datos de contacto del cliente están visibles en el detalle del evento para que puedas comunicarte en caso de dudas sobre la llegada o ubicación.</item>
+        <item>En el detalle del evento asignado, marca cada unidad como \"Salió\" al cargar el equipo y como \"Regresó\" al finalizar. Si hay un daño o faltante, añade una observación.</item>
+    </string-array>
 </resources>

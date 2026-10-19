@@ -1,5 +1,10 @@
 package com.example.propuestasonidosonic.util;
 
+import android.content.Context;
+
+import com.example.propuestasonidosonic.R;
+import com.example.propuestasonidosonic.domain.ActividadRecienteUtils;
+
 import java.text.Normalizer;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -93,6 +98,26 @@ public final class FormatUtils {
         if (texto == null) return "";
         String normalizado = Normalizer.normalize(texto, Normalizer.Form.NFD);
         return normalizado.replaceAll("\\p{M}", "").toLowerCase(LOCALE_MX).trim();
+    }
+
+    public static String tiempoRelativoFormateado(Context context, long ahora, long momento) {
+        if (context == null) return "";
+        ActividadRecienteUtils.TiempoRelativo tr = ActividadRecienteUtils.tiempoRelativo(ahora, momento);
+        switch (tr.getTipo()) {
+            case ActividadRecienteUtils.TiempoRelativo.AHORA:
+                return context.getString(R.string.tiempo_ahora);
+            case ActividadRecienteUtils.TiempoRelativo.MINUTOS:
+                return context.getResources().getQuantityString(R.plurals.tiempo_minutos, (int) tr.getValor(), (int) tr.getValor());
+            case ActividadRecienteUtils.TiempoRelativo.HORAS:
+                return context.getResources().getQuantityString(R.plurals.tiempo_horas, (int) tr.getValor(), (int) tr.getValor());
+            case ActividadRecienteUtils.TiempoRelativo.AYER:
+                return context.getString(R.string.tiempo_ayer);
+            case ActividadRecienteUtils.TiempoRelativo.DIAS:
+                return context.getResources().getQuantityString(R.plurals.tiempo_dias, (int) tr.getValor(), (int) tr.getValor());
+            case ActividadRecienteUtils.TiempoRelativo.FECHA:
+            default:
+                return formatoFecha(momento);
+        }
     }
 }
 

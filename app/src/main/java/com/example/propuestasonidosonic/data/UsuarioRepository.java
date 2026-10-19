@@ -17,6 +17,8 @@ public interface UsuarioRepository {
     void crearPersonal(Usuario nuevo, String contrasena, Callback<Usuario> callback);
     void actualizarPersonal(String actorId, String usuarioId, String nombre, String telefono,
                             Boolean cuentaActiva, String nuevaContrasena, Callback<Usuario> callback);
+    void actualizarPerfil(String usuarioId, String nombre, String telefono, Callback<Usuario> callback);
+    void cambiarContrasena(String usuarioId, String contrasenaActual, String contrasenaNueva, Callback<Void> callback);
 }
 
 

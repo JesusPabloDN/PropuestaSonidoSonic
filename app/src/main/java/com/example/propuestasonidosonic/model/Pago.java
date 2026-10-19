@@ -7,6 +7,7 @@ public class Pago {
     public static final String TIPO_ANTICIPO = "ANTICIPO";
     public static final String TIPO_ABONO = "ABONO";
     public static final String TIPO_TOTAL = "TOTAL";
+    public static final String TIPO_LIQUIDACION = "TOTAL";
     public static final String TIPO_REEMBOLSO = "REEMBOLSO";
 
     public static final String METODO_EFECTIVO = "EFECTIVO";
