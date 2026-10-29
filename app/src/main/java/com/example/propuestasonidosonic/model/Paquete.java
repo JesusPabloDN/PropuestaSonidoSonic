@@ -1,6 +1,7 @@
 package com.example.propuestasonidosonic.model;
 
 import com.example.propuestasonidosonic.util.Config;
+import com.google.firebase.firestore.Exclude;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,10 +99,12 @@ public class Paquete {
         this.precio = precio;
     }
 
+    @Exclude
     public double getPrecioBase() {
         return precio;
     }
 
+    @Exclude
     public void setPrecioBase(double precioBase) {
         this.precio = precioBase;
     }

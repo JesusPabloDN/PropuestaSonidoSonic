@@ -9,6 +9,8 @@ import com.example.propuestasonidosonic.data.UsuarioRepository;
 import com.example.propuestasonidosonic.model.Usuario;
 import com.example.propuestasonidosonic.util.Config;
 import com.example.propuestasonidosonic.util.PasswordValidator;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +18,15 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class InMemoryUsuarioRepository implements UsuarioRepository {
+    public static final String COLECCION_USUARIOS = "usuarios";
+    private static final String SEED_SOCIO_ID = "socio-seed-0001";
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
 
     private final List<Usuario> usuarios = new ArrayList<>();
     private final MutableLiveData<List<Usuario>> usuariosLiveData = new MutableLiveData<>(new ArrayList<>());
     private SessionManager sessionManager;
+    private FirebaseFirestore firestore;
+    private final Usuario seedSocio;
 
     public InMemoryUsuarioRepository() {
         this(SessionManager.getInstance());
@@ -28,8 +34,9 @@ public class InMemoryUsuarioRepository implements UsuarioRepository {
 
     public InMemoryUsuarioRepository(SessionManager sessionManager) {
         this.sessionManager = sessionManager;
-        // Cuenta semilla para el Socio (fijada para pruebas)
-        Usuario seedSocio = new Usuario();
+        // Cuenta semilla para el Socio (fijada para pruebas y arranque inicial)
+        seedSocio = new Usuario();
+        seedSocio.setId(SEED_SOCIO_ID);
         seedSocio.setNombre(Config.CUENTA_SOCIO_NOMBRE);
         seedSocio.setCorreo(Config.CUENTA_SOCIO_CORREO);
         seedSocio.setTelefono(Config.CUENTA_SOCIO_TELEFONO);
@@ -39,6 +46,69 @@ public class InMemoryUsuarioRepository implements UsuarioRepository {
         seedSocio.setFechaAlta(System.currentTimeMillis());
         usuarios.add(seedSocio);
         notificarCambios();
+    }
+
+    public synchronized void conectarFirestore(FirebaseFirestore db) {
+        if (db == null || this.firestore != null) return;
+        this.firestore = db;
+        this.firestore.collection(COLECCION_USUARIOS)
+                .addSnapshotListener((snapshots, error) -> {
+                    if (error != null || snapshots == null) {
+                        return;
+                    }
+                    synchronized (InMemoryUsuarioRepository.this) {
+                        List<Usuario> remotos = new ArrayList<>();
+                        boolean existeSocioSeed = false;
+                        for (DocumentSnapshot doc : snapshots.getDocuments()) {
+                            Usuario u = doc.toObject(Usuario.class);
+                            if (u != null) {
+                                if (u.getId() == null || u.getId().trim().isEmpty()) {
+                                    u.setId(doc.getId());
+                                }
+                                if (Config.CUENTA_SOCIO_CORREO.equalsIgnoreCase(u.getCorreo())
+                                        || SEED_SOCIO_ID.equals(u.getId())) {
+                                    existeSocioSeed = true;
+                                }
+                                remotos.add(u);
+                            }
+                        }
+
+                        if (!existeSocioSeed && remotos.isEmpty()) {
+                            guardarEnFirestore(seedSocio);
+                            remotos.add(new Usuario(seedSocio));
+                        }
+
+                        usuarios.clear();
+                        usuarios.addAll(remotos);
+                        notificarCambios();
+
+                        if (sessionManager != null && sessionManager.getUsuarioActual() != null) {
+                            String actualId = sessionManager.getUsuarioActual().getId();
+                            for (Usuario u : usuarios) {
+                                if (u.getId().equals(actualId)) {
+                                    sessionManager.refrescarUsuario(u);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                });
+    }
+
+    private void guardarEnFirestore(Usuario usuario) {
+        if (firestore != null && usuario != null && usuario.getId() != null) {
+            firestore.collection(COLECCION_USUARIOS)
+                    .document(usuario.getId())
+                    .set(new Usuario(usuario));
+        }
+    }
+
+    private void eliminarEnFirestore(String id) {
+        if (firestore != null && id != null) {
+            firestore.collection(COLECCION_USUARIOS)
+                    .document(id)
+                    .delete();
+        }
     }
 
     public void setSessionManager(SessionManager sessionManager) {
@@ -99,7 +169,6 @@ public class InMemoryUsuarioRepository implements UsuarioRepository {
 
     @Override
     public synchronized void registrarUsuario(Usuario usuario, Callback<Usuario> callback) {
-        // FIRESTORE: aquí irá una transacción
         if (usuario == null) {
             if (callback != null) callback.onError("Usuario nulo");
             return;
@@ -113,13 +182,13 @@ public class InMemoryUsuarioRepository implements UsuarioRepository {
             }
         }
         usuarios.add(usuario);
+        guardarEnFirestore(usuario);
         notificarCambios();
         if (callback != null) callback.onSuccess(new Usuario(usuario));
     }
 
     @Override
     public synchronized void actualizarUsuario(Usuario usuario, Callback<Usuario> callback) {
-        // FIRESTORE: aquí irá una transacción
         if (usuario == null) {
             if (callback != null) callback.onError("Usuario nulo");
             return;
@@ -127,6 +196,7 @@ public class InMemoryUsuarioRepository implements UsuarioRepository {
         for (int i = 0; i < usuarios.size(); i++) {
             if (usuarios.get(i).getId().equals(usuario.getId())) {
                 usuarios.set(i, usuario);
+                guardarEnFirestore(usuario);
                 notificarCambios();
                 if (callback != null) callback.onSuccess(new Usuario(usuario));
                 return;
@@ -137,9 +207,9 @@ public class InMemoryUsuarioRepository implements UsuarioRepository {
 
     @Override
     public synchronized void eliminarUsuario(String id, Callback<Void> callback) {
-        // FIRESTORE: aquí irá una transacción
         boolean removed = usuarios.removeIf(u -> u.getId().equals(id));
         if (removed) {
+            eliminarEnFirestore(id);
             notificarCambios();
             if (callback != null) callback.onSuccess(null);
         } else {
@@ -180,7 +250,6 @@ public class InMemoryUsuarioRepository implements UsuarioRepository {
 
     @Override
     public synchronized void crearPersonal(Usuario nuevo, String contrasena, Callback<Usuario> callback) {
-        // FIRESTORE: transacción
         if (nuevo == null) {
             if (callback != null) callback.onError("Usuario nulo");
             return;
@@ -238,6 +307,7 @@ public class InMemoryUsuarioRepository implements UsuarioRepository {
         nuevo.setFechaAlta(System.currentTimeMillis());
 
         usuarios.add(nuevo);
+        guardarEnFirestore(nuevo);
         notificarCambios();
         if (callback != null) {
             callback.onSuccess(new Usuario(nuevo));
@@ -248,7 +318,6 @@ public class InMemoryUsuarioRepository implements UsuarioRepository {
     public synchronized void actualizarPersonal(String actorId, String usuarioId, String nombre,
                                                 String telefono, Boolean cuentaActiva,
                                                 String nuevaContrasena, Callback<Usuario> callback) {
-        // FIRESTORE: transacción
         Usuario target = null;
         for (Usuario u : usuarios) {
             if (u.getId().equals(usuarioId)) {
@@ -322,6 +391,8 @@ public class InMemoryUsuarioRepository implements UsuarioRepository {
             }
         }
 
+        guardarEnFirestore(target);
+
         // Si el usuario editado es el de la sesión actual, refrescar SessionManager
         if (sessionManager != null) {
             sessionManager.refrescarUsuario(target);
@@ -335,7 +406,6 @@ public class InMemoryUsuarioRepository implements UsuarioRepository {
 
     @Override
     public synchronized void actualizarPerfil(String usuarioId, String nombre, String telefono, Callback<Usuario> callback) {
-        // FIRESTORE: transacción
         Usuario target = null;
         for (Usuario u : usuarios) {
             if (u.getId().equals(usuarioId)) {
@@ -370,6 +440,8 @@ public class InMemoryUsuarioRepository implements UsuarioRepository {
         target.setNombre(nombre.trim());
         target.setTelefono(telefono.trim());
 
+        guardarEnFirestore(target);
+
         if (sessionManager != null) {
             sessionManager.refrescarUsuario(target);
         }
@@ -381,7 +453,6 @@ public class InMemoryUsuarioRepository implements UsuarioRepository {
 
     @Override
     public synchronized void cambiarContrasena(String usuarioId, String contrasenaActual, String contrasenaNueva, Callback<Void> callback) {
-        // FIRESTORE: transacción
         Usuario target = null;
         for (Usuario u : usuarios) {
             if (u.getId().equals(usuarioId)) {
@@ -410,6 +481,8 @@ public class InMemoryUsuarioRepository implements UsuarioRepository {
         }
 
         target.setContrasena(contrasenaNueva);
+
+        guardarEnFirestore(target);
 
         if (sessionManager != null) {
             sessionManager.refrescarUsuario(target);

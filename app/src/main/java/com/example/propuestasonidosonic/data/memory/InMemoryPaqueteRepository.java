@@ -9,6 +9,8 @@ import com.example.propuestasonidosonic.data.PaqueteRepository;
 import com.example.propuestasonidosonic.model.ComponentePaquete;
 import com.example.propuestasonidosonic.model.ModeloInventario;
 import com.example.propuestasonidosonic.model.Paquete;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,14 +19,57 @@ import java.util.Set;
 import java.util.UUID;
 
 public class InMemoryPaqueteRepository implements PaqueteRepository {
+    public static final String COLECCION_PAQUETES = "paquetes";
+
     private final List<Paquete> paquetes = new ArrayList<>();
     private final MutableLiveData<List<Paquete>> paquetesLiveData = new MutableLiveData<>(new ArrayList<>());
     private EquipoRepository equipoRepository;
+    private FirebaseFirestore firestore;
 
     public InMemoryPaqueteRepository() {}
 
     public InMemoryPaqueteRepository(EquipoRepository equipoRepository) {
         this.equipoRepository = equipoRepository;
+    }
+
+    public synchronized void conectarFirestore(FirebaseFirestore db) {
+        if (db == null || this.firestore != null) return;
+        this.firestore = db;
+        this.firestore.collection(COLECCION_PAQUETES)
+                .addSnapshotListener((snapshots, error) -> {
+                    if (error != null || snapshots == null) {
+                        return;
+                    }
+                    synchronized (InMemoryPaqueteRepository.this) {
+                        paquetes.clear();
+                        for (DocumentSnapshot doc : snapshots.getDocuments()) {
+                            Paquete p = doc.toObject(Paquete.class);
+                            if (p != null) {
+                                if (p.getId() == null || p.getId().trim().isEmpty()) {
+                                    p.setId(doc.getId());
+                                }
+                                paquetes.add(p);
+                            }
+                        }
+                        notificarCambios();
+                    }
+                });
+    }
+
+    private void guardarEnFirestore(Paquete paquete) {
+        if (firestore != null && paquete != null && paquete.getId() != null) {
+            firestore.collection(COLECCION_PAQUETES)
+                    .document(paquete.getId())
+                    .set(new Paquete(paquete));
+        }
+    }
+
+    private void eliminarEnFirestore(String id) {
+        if (firestore != null && id != null) {
+            firestore.collection(COLECCION_PAQUETES)
+                    .document(id)
+                    .delete();
+        }
     }
 
     public void setEquipoRepository(EquipoRepository equipoRepository) {
@@ -62,7 +107,6 @@ public class InMemoryPaqueteRepository implements PaqueteRepository {
 
     @Override
     public synchronized void guardarPaquete(Paquete paquete, Callback<Paquete> callback) {
-        // FIRESTORE: transacción
         if (paquete == null) {
             callback.onError("El paquete no puede ser nulo");
             return;
@@ -181,16 +225,16 @@ public class InMemoryPaqueteRepository implements PaqueteRepository {
             paquetes.add(paqueteAGuardar);
         }
 
+        guardarEnFirestore(paqueteAGuardar);
         notificarCambios();
         callback.onSuccess(new Paquete(paqueteAGuardar));
     }
 
     @Override
     public synchronized void eliminarPaquete(String id, Callback<Void> callback) {
-        // FIRESTORE: aquí irá una transacción
-        // TODO etapa de Reservas: impedir eliminar si hay reservas futuras que usan este paquete
         boolean removed = paquetes.removeIf(p -> p.getId().equals(id));
         if (removed) {
+            eliminarEnFirestore(id);
             notificarCambios();
             callback.onSuccess(null);
         } else {

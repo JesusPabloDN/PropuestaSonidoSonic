@@ -9,16 +9,17 @@ import com.example.propuestasonidosonic.data.memory.InMemoryPaqueteRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryPedidoRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryUsuarioRepository;
 import com.example.propuestasonidosonic.util.RelojSistema;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class AppContainer {
-    private final UsuarioRepository usuarioRepository;
+    private final InMemoryUsuarioRepository usuarioRepository;
     private final InMemoryEquipoRepository equipoRepository;
-    private final PaqueteRepository paqueteRepository;
-    private final EventoRepository eventoRepository;
-    private final DiaOperativoRepository diaOperativoRepository;
-    private final PedidoRepository pedidoRepository;
-    private final PagoRepository pagoRepository;
-    private final FinanzasRepository finanzasRepository;
+    private final InMemoryPaqueteRepository paqueteRepository;
+    private final InMemoryEventoRepository eventoRepository;
+    private final InMemoryDiaOperativoRepository diaOperativoRepository;
+    private final InMemoryPedidoRepository pedidoRepository;
+    private final InMemoryPagoRepository pagoRepository;
+    private final InMemoryFinanzasRepository finanzasRepository;
     private final SessionManager sessionManager;
     private final PasarelaPago pasarelaPago;
     private final com.example.propuestasonidosonic.util.Reloj reloj;
@@ -49,6 +50,27 @@ public class AppContainer {
 
         // Disparar recálculo de asignaciones cuando cambie el inventario
         this.equipoRepository.setOnInventarioCambio(() -> this.pedidoRepository.reasignarUnidades(null));
+    }
+
+    public void conectarFirestore() {
+        try {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            conectarFirestore(db);
+        } catch (Exception ignored) {
+            // En caso de ejecutarse en un entorno de pruebas sin FirebaseApp inicializado
+        }
+    }
+
+    public void conectarFirestore(FirebaseFirestore db) {
+        if (db == null) return;
+        this.usuarioRepository.conectarFirestore(db);
+        this.equipoRepository.conectarFirestore(db);
+        this.paqueteRepository.conectarFirestore(db);
+        this.diaOperativoRepository.conectarFirestore(db);
+        this.pagoRepository.conectarFirestore(db);
+        this.eventoRepository.conectarFirestore(db);
+        this.pedidoRepository.conectarFirestore(db);
+        this.finanzasRepository.conectarFirestore(db);
     }
 
     public UsuarioRepository getUsuarioRepository() {

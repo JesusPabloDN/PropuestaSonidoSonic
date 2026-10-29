@@ -1,12 +1,15 @@
 package com.example.propuestasonidosonic.data.memory;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.propuestasonidosonic.data.Callback;
 import com.example.propuestasonidosonic.data.EventoRepository;
 import com.example.propuestasonidosonic.model.ChecklistItem;
 import com.example.propuestasonidosonic.model.Evento;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -14,10 +17,45 @@ import java.util.List;
 import java.util.Map;
 
 public class InMemoryEventoRepository implements EventoRepository {
+    public static final String COLECCION_EVENTOS = "eventos";
+
     private final List<Evento> eventos = new ArrayList<>();
     private final MutableLiveData<List<Evento>> eventosLiveData = new MutableLiveData<>(new ArrayList<>());
+    private FirebaseFirestore firestore;
 
     public InMemoryEventoRepository() {}
+
+    public synchronized void conectarFirestore(FirebaseFirestore db) {
+        if (db == null || this.firestore != null) return;
+        this.firestore = db;
+        this.firestore.collection(COLECCION_EVENTOS)
+                .addSnapshotListener((snapshots, error) -> {
+                    if (error != null || snapshots == null) {
+                        return;
+                    }
+                    synchronized (InMemoryEventoRepository.this) {
+                        eventos.clear();
+                        for (DocumentSnapshot doc : snapshots.getDocuments()) {
+                            Evento ev = doc.toObject(Evento.class);
+                            if (ev != null) {
+                                if (ev.getId() == null || ev.getId().trim().isEmpty()) {
+                                    ev.setId(doc.getId());
+                                }
+                                eventos.add(ev);
+                            }
+                        }
+                        notificarCambios();
+                    }
+                });
+    }
+
+    private void guardarEnFirestore(Evento evento) {
+        if (firestore != null && evento != null && evento.getId() != null) {
+            firestore.collection(COLECCION_EVENTOS)
+                    .document(evento.getId())
+                    .set(evento);
+        }
+    }
 
     private void notificarCambios() {
         eventosLiveData.setValue(new ArrayList<>(eventos));
@@ -51,7 +89,6 @@ public class InMemoryEventoRepository implements EventoRepository {
 
     @Override
     public synchronized void crearEvento(Evento evento, Callback<Evento> callback) {
-        // FIRESTORE: aquí irá una transacción
         // Verificación básica de traslape
         if (evento.getEquipoIds() != null && !evento.getEquipoIds().isEmpty()) {
             List<String> ocupadas = unidadesOcupadas(desde(evento), hasta(evento), null);
@@ -63,16 +100,17 @@ public class InMemoryEventoRepository implements EventoRepository {
             }
         }
         eventos.add(evento);
+        guardarEnFirestore(evento);
         notificarCambios();
         if (callback != null) callback.onSuccess(evento);
     }
 
     @Override
     public synchronized void actualizarEvento(Evento evento, Callback<Evento> callback) {
-        // FIRESTORE: aquí irá una transacción
         for (int i = 0; i < eventos.size(); i++) {
             if (eventos.get(i).getId().equals(evento.getId())) {
                 eventos.set(i, evento);
+                guardarEnFirestore(evento);
                 notificarCambios();
                 if (callback != null) callback.onSuccess(evento);
                 return;
@@ -83,10 +121,10 @@ public class InMemoryEventoRepository implements EventoRepository {
 
     @Override
     public synchronized void cancelarEvento(String id, Callback<Evento> callback) {
-        // FIRESTORE: aquí irá una transacción
         for (Evento ev : eventos) {
             if (ev.getId().equals(id)) {
                 ev.setEstado(Evento.ESTADO_CANCELADO);
+                guardarEnFirestore(ev);
                 notificarCambios();
                 if (callback != null) callback.onSuccess(ev);
                 return;
@@ -97,10 +135,10 @@ public class InMemoryEventoRepository implements EventoRepository {
 
     @Override
     public synchronized void finalizarEvento(String id, Callback<Evento> callback) {
-        // FIRESTORE: aquí irá una transacción
         for (Evento ev : eventos) {
             if (ev.getId().equals(id)) {
                 ev.setEstado(Evento.ESTADO_FINALIZADO);
+                guardarEnFirestore(ev);
                 notificarCambios();
                 if (callback != null) callback.onSuccess(ev);
                 return;
@@ -111,10 +149,10 @@ public class InMemoryEventoRepository implements EventoRepository {
 
     @Override
     public synchronized void actualizarChecklist(String eventoId, List<ChecklistItem> checklist, Callback<Void> callback) {
-        // FIRESTORE: aquí irá una transacción
         for (Evento ev : eventos) {
             if (ev.getId().equals(eventoId)) {
                 ev.setChecklist(checklist);
+                guardarEnFirestore(ev);
                 notificarCambios();
                 if (callback != null) {
                     callback.onSuccess(null);
@@ -127,22 +165,28 @@ public class InMemoryEventoRepository implements EventoRepository {
         }
     }
 
-    @Override
-    public synchronized LiveData<List<Evento>> eventosDelDia(long fechaMillis) {
-        MutableLiveData<List<Evento>> delDia = new MutableLiveData<>(new ArrayList<>());
+    private List<Evento> filtrarEventosDelDia(List<Evento> fuente, long fechaMillis) {
         Calendar calTarget = Calendar.getInstance();
         calTarget.setTimeInMillis(fechaMillis);
 
         List<Evento> res = new ArrayList<>();
+        if (fuente == null) return res;
         Calendar calEv = Calendar.getInstance();
-        for (Evento ev : eventos) {
+        for (Evento ev : fuente) {
             calEv.setTimeInMillis(ev.getInicioMillis());
             if (calEv.get(Calendar.YEAR) == calTarget.get(Calendar.YEAR) &&
                 calEv.get(Calendar.DAY_OF_YEAR) == calTarget.get(Calendar.DAY_OF_YEAR)) {
                 res.add(ev);
             }
         }
-        delDia.setValue(res);
+        return res;
+    }
+
+    @Override
+    public synchronized LiveData<List<Evento>> eventosDelDia(long fechaMillis) {
+        MediatorLiveData<List<Evento>> delDia = new MediatorLiveData<>();
+        delDia.setValue(filtrarEventosDelDia(eventos, fechaMillis));
+        delDia.addSource(eventosLiveData, lista -> delDia.setValue(filtrarEventosDelDia(lista, fechaMillis)));
         return delDia;
     }
 
@@ -215,7 +259,6 @@ public class InMemoryEventoRepository implements EventoRepository {
 
     @Override
     public synchronized void reemplazarAsignaciones(Map<String, List<String>> equipoIdsPorEventoId, Callback<Void> callback) {
-        // FIRESTORE: transacción
         if (equipoIdsPorEventoId != null) {
             for (Evento ev : eventos) {
                 if (Evento.ESTADO_CANCELADO.equals(ev.getEstado()) || Evento.ESTADO_FINALIZADO.equals(ev.getEstado())) {
@@ -224,6 +267,7 @@ public class InMemoryEventoRepository implements EventoRepository {
                 if (equipoIdsPorEventoId.containsKey(ev.getId())) {
                     List<String> nuevosIds = equipoIdsPorEventoId.get(ev.getId());
                     ev.setEquipoIds(nuevosIds != null ? new ArrayList<>(nuevosIds) : new ArrayList<String>());
+                    guardarEnFirestore(ev);
                 }
             }
             notificarCambios();

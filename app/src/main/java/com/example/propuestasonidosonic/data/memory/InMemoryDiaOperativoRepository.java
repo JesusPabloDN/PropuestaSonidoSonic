@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.propuestasonidosonic.data.Callback;
 import com.example.propuestasonidosonic.data.DiaOperativoRepository;
 import com.example.propuestasonidosonic.model.DiaOperativo;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,12 +17,46 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public class InMemoryDiaOperativoRepository implements DiaOperativoRepository {
+    public static final String COLECCION_DIAS = "dias_operativos";
     private static final Pattern FORMATO_FECHA = Pattern.compile("^\\d{4}-\\d{2}-\\d{2}$");
 
     private final Map<String, DiaOperativo> dias = new LinkedHashMap<>();
     private final MutableLiveData<List<DiaOperativo>> diasLiveData = new MutableLiveData<>(new ArrayList<>());
+    private FirebaseFirestore firestore;
 
     public InMemoryDiaOperativoRepository() {}
+
+    public synchronized void conectarFirestore(FirebaseFirestore db) {
+        if (db == null || this.firestore != null) return;
+        this.firestore = db;
+        this.firestore.collection(COLECCION_DIAS)
+                .addSnapshotListener((snapshots, error) -> {
+                    if (error != null || snapshots == null) {
+                        return;
+                    }
+                    synchronized (InMemoryDiaOperativoRepository.this) {
+                        dias.clear();
+                        for (DocumentSnapshot doc : snapshots.getDocuments()) {
+                            DiaOperativo d = doc.toObject(DiaOperativo.class);
+                            if (d != null) {
+                                if (d.getFechaClave() == null || d.getFechaClave().trim().isEmpty()) {
+                                    d.setFechaClave(doc.getId());
+                                }
+                                dias.put(d.getFechaClave(), d);
+                            }
+                        }
+                        notificarCambios();
+                    }
+                });
+    }
+
+    private void guardarEnFirestore(DiaOperativo dia) {
+        if (firestore != null && dia != null && dia.getFechaClave() != null) {
+            firestore.collection(COLECCION_DIAS)
+                    .document(dia.getFechaClave())
+                    .set(new DiaOperativo(dia));
+        }
+    }
 
     private void notificarCambios() {
         List<DiaOperativo> lista = new ArrayList<>();
@@ -53,7 +89,6 @@ public class InMemoryDiaOperativoRepository implements DiaOperativoRepository {
 
     @Override
     public synchronized void guardarDia(DiaOperativo dia, Callback<DiaOperativo> callback) {
-        // FIRESTORE: transacción
         if (dia == null || dia.getFechaClave() == null || !FORMATO_FECHA.matcher(dia.getFechaClave()).matches()) {
             if (callback != null) {
                 callback.onError("Formato de fecha inválido. Se espera yyyy-MM-dd");
@@ -70,6 +105,7 @@ public class InMemoryDiaOperativoRepository implements DiaOperativoRepository {
             copia.setSociosNoDisponiblesIds(new ArrayList<>(new java.util.LinkedHashSet<>(copia.getSociosNoDisponiblesIds())));
         }
         dias.put(copia.getFechaClave(), copia);
+        guardarEnFirestore(copia);
         notificarCambios();
         if (callback != null) {
             callback.onSuccess(new DiaOperativo(copia));
@@ -78,7 +114,6 @@ public class InMemoryDiaOperativoRepository implements DiaOperativoRepository {
 
     @Override
     public synchronized void establecerDisponibilidadAsistente(String fechaClave, String asistenteId, boolean disponible, Callback<DiaOperativo> callback) {
-        // FIRESTORE: transacción
         if (fechaClave == null || !FORMATO_FECHA.matcher(fechaClave).matches()) {
             if (callback != null) {
                 callback.onError("Formato de fecha inválido. Se espera yyyy-MM-dd");
@@ -113,6 +148,7 @@ public class InMemoryDiaOperativoRepository implements DiaOperativoRepository {
         target.setAsistentesDisponiblesIds(asistentes);
 
         dias.put(fechaClave, target);
+        guardarEnFirestore(target);
         notificarCambios();
         if (callback != null) {
             callback.onSuccess(new DiaOperativo(target));
@@ -121,7 +157,6 @@ public class InMemoryDiaOperativoRepository implements DiaOperativoRepository {
 
     @Override
     public synchronized void establecerDisponibilidadAsistenteVarios(List<String> fechaClaves, String asistenteId, boolean disponible, Callback<Void> callback) {
-        // FIRESTORE: transacción
         if (asistenteId == null || asistenteId.trim().isEmpty()) {
             if (callback != null) {
                 callback.onError("Identificador de asistente inválido");
@@ -159,6 +194,7 @@ public class InMemoryDiaOperativoRepository implements DiaOperativoRepository {
             }
             target.setAsistentesDisponiblesIds(asistentes);
             dias.put(fechaClave, target);
+            guardarEnFirestore(target);
         }
 
         notificarCambios();

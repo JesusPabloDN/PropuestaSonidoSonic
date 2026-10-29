@@ -1,6 +1,7 @@
 package com.example.propuestasonidosonic.model;
 
 import com.example.propuestasonidosonic.domain.MoneyUtils;
+import com.google.firebase.firestore.Exclude;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -334,10 +335,12 @@ public class Pedido {
         this.anticipoPagado = anticipoPagado;
     }
 
+    @Exclude
     public double getSaldoPendiente() {
         return MoneyUtils.redondear2(Math.max(0.0, total - anticipoPagado));
     }
 
+    @Exclude
     public boolean estaLiquidado() {
         return MoneyUtils.iguales(getSaldoPendiente(), 0.0);
     }

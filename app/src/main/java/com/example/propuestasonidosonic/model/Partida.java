@@ -1,5 +1,7 @@
 package com.example.propuestasonidosonic.model;
 
+import com.google.firebase.firestore.Exclude;
+
 import java.util.Objects;
 
 public class Partida {
@@ -55,6 +57,7 @@ public class Partida {
         this.precioUnitario = precioUnitario;
     }
 
+    @Exclude
     public double getSubtotal() {
         return cantidad * precioUnitario;
     }

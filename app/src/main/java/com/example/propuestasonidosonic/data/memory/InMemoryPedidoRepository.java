@@ -32,18 +32,21 @@ import com.example.propuestasonidosonic.util.ModeloUtils;
 import com.example.propuestasonidosonic.util.Reloj;
 import com.example.propuestasonidosonic.util.RelojSistema;
 import com.example.propuestasonidosonic.util.TiempoUtils;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Objects;
 import java.util.UUID;
 
 public class InMemoryPedidoRepository implements PedidoRepository {
+    public static final String COLECCION_PEDIDOS = "pedidos";
+
     private final List<Pedido> pedidos = new ArrayList<>();
     private final MutableLiveData<List<Pedido>> pedidosLiveData = new MutableLiveData<>(new ArrayList<>());
     private long consecutivoNumero = 1001;
@@ -55,6 +58,7 @@ public class InMemoryPedidoRepository implements PedidoRepository {
     private final PagoRepository pagoRepository;
     private final EventoRepository eventoRepository;
     private final Reloj reloj;
+    private FirebaseFirestore firestore;
 
     public InMemoryPedidoRepository() {
         this(null, null, null, null, null, null, new RelojSistema());
@@ -91,6 +95,45 @@ public class InMemoryPedidoRepository implements PedidoRepository {
         this.pagoRepository = pagoRepository;
         this.eventoRepository = eventoRepository;
         this.reloj = reloj != null ? reloj : new RelojSistema();
+    }
+
+    public synchronized void conectarFirestore(FirebaseFirestore db) {
+        if (db == null || this.firestore != null) return;
+        this.firestore = db;
+        this.firestore.collection(COLECCION_PEDIDOS)
+                .addSnapshotListener((snapshots, error) -> {
+                    if (error != null || snapshots == null) {
+                        return;
+                    }
+                    synchronized (InMemoryPedidoRepository.this) {
+                        pedidos.clear();
+                        long maxNumero = 1000;
+                        for (DocumentSnapshot doc : snapshots.getDocuments()) {
+                            Pedido p = doc.toObject(Pedido.class);
+                            if (p != null) {
+                                if (p.getId() == null || p.getId().trim().isEmpty()) {
+                                    p.setId(doc.getId());
+                                }
+                                pedidos.add(p);
+                                if (p.getNumero() > maxNumero) {
+                                    maxNumero = p.getNumero();
+                                }
+                            }
+                        }
+                        if (maxNumero >= consecutivoNumero) {
+                            consecutivoNumero = maxNumero + 1;
+                        }
+                        notificarCambios();
+                    }
+                });
+    }
+
+    private void guardarEnFirestore(Pedido pedido) {
+        if (firestore != null && pedido != null && pedido.getId() != null) {
+            firestore.collection(COLECCION_PEDIDOS)
+                    .document(pedido.getId())
+                    .set(new Pedido(pedido));
+        }
     }
 
     private void notificarCambios() {
@@ -144,19 +187,20 @@ public class InMemoryPedidoRepository implements PedidoRepository {
 
     @Override
     public synchronized int liberarApartadosVencidos() {
-        // FIRESTORE: transacción
         long ahora = reloj.ahora();
         int cambiados = 0;
         for (Pedido p : pedidos) {
             if (Pedido.ESTADO_APARTADO.equals(p.getEstado()) && p.getVencimientoApartadoMillis() <= ahora) {
                 p.setEstado(Pedido.ESTADO_VENCIDO);
                 p.setFechaActualizacion(ahora);
+                guardarEnFirestore(p);
                 cambiados++;
             } else if (Pedido.ESTADO_CONFIRMADO.equals(p.getEstado())) {
                 long finBloqueo = p.getBloqueoFinMillis() > 0 ? p.getBloqueoFinMillis() : p.getFinMillis();
                 if (finBloqueo <= ahora) {
                     p.setEstado(Pedido.ESTADO_COMPLETADO);
                     p.setFechaActualizacion(ahora);
+                    guardarEnFirestore(p);
                     if (p.getEventoId() != null && eventoRepository != null) {
                         eventoRepository.finalizarEvento(p.getEventoId(), null);
                     }
@@ -172,7 +216,6 @@ public class InMemoryPedidoRepository implements PedidoRepository {
 
     @Override
     public synchronized void crearReserva(SolicitudReserva solicitud, Callback<Pedido> callback) {
-        // FIRESTORE: transacción
         liberarApartadosVencidos();
 
         if (solicitud == null) {
@@ -312,6 +355,7 @@ public class InMemoryPedidoRepository implements PedidoRepository {
         pedido.setVencimientoApartadoMillis(vencimiento);
 
         pedidos.add(pedido);
+        guardarEnFirestore(pedido);
         notificarCambios();
         if (callback != null) {
             callback.onSuccess(new Pedido(pedido));
@@ -320,7 +364,6 @@ public class InMemoryPedidoRepository implements PedidoRepository {
 
     @Override
     public synchronized void cancelarReserva(String pedidoId, String canceladoPor, String motivo, Callback<Pedido> callback) {
-        // FIRESTORE: transacción
         Pedido target = null;
         for (Pedido p : pedidos) {
             if (p.getId().equals(pedidoId)) {
@@ -417,6 +460,7 @@ public class InMemoryPedidoRepository implements PedidoRepository {
             target.setNotas(notaCancelacion);
         }
 
+        guardarEnFirestore(target);
         notificarCambios();
         if (callback != null) {
             callback.onSuccess(new Pedido(target));
@@ -425,7 +469,6 @@ public class InMemoryPedidoRepository implements PedidoRepository {
 
     @Override
     public synchronized void registrarAnticipo(String pedidoId, double monto, String metodo, Callback<Pedido> callback) {
-        // FIRESTORE: transacción
         Pedido target = null;
         for (Pedido p : pedidos) {
             if (p.getId().equals(pedidoId)) {
@@ -448,6 +491,7 @@ public class InMemoryPedidoRepository implements PedidoRepository {
         if (target.getVencimientoApartadoMillis() > 0 && target.getVencimientoApartadoMillis() <= ahora) {
             target.setEstado(Pedido.ESTADO_VENCIDO);
             target.setFechaActualizacion(ahora);
+            guardarEnFirestore(target);
             notificarCambios();
             if (callback != null) callback.onError("El apartado ya venció");
             return;
@@ -560,6 +604,7 @@ public class InMemoryPedidoRepository implements PedidoRepository {
                     @Override
                     public void onSuccess(Evento result) {
                         target.setEventoId(result.getId());
+                        guardarEnFirestore(target);
                     }
 
                     @Override
@@ -569,6 +614,7 @@ public class InMemoryPedidoRepository implements PedidoRepository {
             }
         }
 
+        guardarEnFirestore(target);
         notificarCambios();
         if (callback != null) {
             callback.onSuccess(new Pedido(target));
@@ -577,7 +623,6 @@ public class InMemoryPedidoRepository implements PedidoRepository {
 
     @Override
     public synchronized void liquidarSaldo(String pedidoId, double monto, String metodo, Callback<Pago> callback) {
-        // FIRESTORE: transacción
         Pedido target = null;
         for (Pedido p : pedidos) {
             if (p.getId().equals(pedidoId)) {
@@ -663,6 +708,7 @@ public class InMemoryPedidoRepository implements PedidoRepository {
             target.setCobrado(true);
             target.setFechaCobro(ahora);
         }
+        guardarEnFirestore(target);
         notificarCambios();
         if (callback != null) {
             callback.onSuccess(pago);
@@ -671,7 +717,6 @@ public class InMemoryPedidoRepository implements PedidoRepository {
 
     @Override
     public synchronized void reprogramarReserva(String pedidoId, long nuevoInicioMillis, Callback<Pedido> callback) {
-        // FIRESTORE: transacción
         Pedido target = null;
         for (Pedido p : pedidos) {
             if (p.getId().equals(pedidoId)) {
@@ -750,6 +795,7 @@ public class InMemoryPedidoRepository implements PedidoRepository {
             });
         }
 
+        guardarEnFirestore(target);
         notificarCambios();
         if (callback != null) {
             callback.onSuccess(new Pedido(target));
@@ -758,7 +804,6 @@ public class InMemoryPedidoRepository implements PedidoRepository {
 
     @Override
     public synchronized void aprobarPedido(String pedidoId, Callback<Pedido> callback) {
-        // FIRESTORE: transacción
         Pedido target = null;
         for (Pedido p : pedidos) {
             if (p.getId().equals(pedidoId)) {
@@ -782,6 +827,7 @@ public class InMemoryPedidoRepository implements PedidoRepository {
         target.setRequiereRevision(false);
         target.setFechaActualizacion(ahora);
 
+        guardarEnFirestore(target);
         notificarCambios();
         if (callback != null) {
             callback.onSuccess(new Pedido(target));
@@ -790,7 +836,6 @@ public class InMemoryPedidoRepository implements PedidoRepository {
 
     @Override
     public synchronized void rechazarPedido(String pedidoId, String motivo, Callback<Pedido> callback) {
-        // FIRESTORE: transacción
         Pedido target = null;
         for (Pedido p : pedidos) {
             if (p.getId().equals(pedidoId)) {
@@ -864,6 +909,7 @@ public class InMemoryPedidoRepository implements PedidoRepository {
             target.setNotas(notaRechazo);
         }
 
+        guardarEnFirestore(target);
         notificarCambios();
         if (callback != null) {
             callback.onSuccess(new Pedido(target));
@@ -872,7 +918,6 @@ public class InMemoryPedidoRepository implements PedidoRepository {
 
     @Override
     public synchronized void reasignarUnidades(Callback<Void> callback) {
-        // FIRESTORE: transacción
         long ahora = reloj.ahora();
         reasignarUnidadesInterno(ahora);
         notificarCambios();
@@ -881,7 +926,6 @@ public class InMemoryPedidoRepository implements PedidoRepository {
         }
     }
 
-    // FIRESTORE: transacción
     private void reasignarUnidadesInterno(long ahora) {
         if (equipoRepository == null) return;
 
@@ -937,8 +981,14 @@ public class InMemoryPedidoRepository implements PedidoRepository {
         for (Pedido p : pedidosActivos) {
             List<String> asignadas = resultado.unidadesPorPedido.get(p.getId());
             if (asignadas == null) asignadas = new ArrayList<>();
+            boolean incompleta = resultado.pedidosIncompletos.contains(p.getId());
+            boolean cambio = !Objects.equals(p.getEquipoIds(), asignadas) || p.isAsignacionIncompleta() != incompleta;
             p.setEquipoIds(asignadas);
-            p.setAsignacionIncompleta(resultado.pedidosIncompletos.contains(p.getId()));
+            p.setAsignacionIncompleta(incompleta);
+
+            if (cambio) {
+                guardarEnFirestore(p);
+            }
 
             if (p.getEventoId() != null) {
                 equipoIdsPorEventoId.put(p.getEventoId(), asignadas);

@@ -10,14 +10,18 @@ import com.example.propuestasonidosonic.model.BitacoraEntrada;
 import com.example.propuestasonidosonic.model.Equipo;
 import com.example.propuestasonidosonic.model.Evento;
 import com.example.propuestasonidosonic.util.Reloj;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class InMemoryEquipoRepository implements EquipoRepository {
+    public static final String COLECCION_EQUIPOS = "equipos";
+    public static final String COLECCION_BITACORAS = "bitacora_equipos";
+
     private final List<Equipo> equipos = new ArrayList<>();
     private final MutableLiveData<List<Equipo>> equiposLiveData = new MutableLiveData<>(new ArrayList<>());
 
@@ -27,6 +31,7 @@ public class InMemoryEquipoRepository implements EquipoRepository {
     private EventoRepository eventoRepository;
     private Runnable onInventarioCambio;
     private Reloj reloj;
+    private FirebaseFirestore firestore;
 
     public InMemoryEquipoRepository() {
         this(null);
@@ -34,6 +39,77 @@ public class InMemoryEquipoRepository implements EquipoRepository {
 
     public InMemoryEquipoRepository(Reloj reloj) {
         this.reloj = reloj;
+    }
+
+    public synchronized void conectarFirestore(FirebaseFirestore db) {
+        if (db == null || this.firestore != null) return;
+        this.firestore = db;
+
+        this.firestore.collection(COLECCION_EQUIPOS)
+                .addSnapshotListener((snapshots, error) -> {
+                    if (error != null || snapshots == null) {
+                        return;
+                    }
+                    synchronized (InMemoryEquipoRepository.this) {
+                        equipos.clear();
+                        for (DocumentSnapshot doc : snapshots.getDocuments()) {
+                            Equipo e = doc.toObject(Equipo.class);
+                            if (e != null) {
+                                if (e.getId() == null || e.getId().trim().isEmpty()) {
+                                    e.setId(doc.getId());
+                                }
+                                equipos.add(e);
+                            }
+                        }
+                        notificarEquipos();
+                    }
+                });
+
+        this.firestore.collection(COLECCION_BITACORAS)
+                .addSnapshotListener((snapshots, error) -> {
+                    if (error != null || snapshots == null) {
+                        return;
+                    }
+                    synchronized (InMemoryEquipoRepository.this) {
+                        bitacoras.clear();
+                        for (DocumentSnapshot doc : snapshots.getDocuments()) {
+                            BitacoraEntrada b = doc.toObject(BitacoraEntrada.class);
+                            if (b != null) {
+                                if (b.getId() == null || b.getId().trim().isEmpty()) {
+                                    b.setId(doc.getId());
+                                }
+                                bitacoras.add(b);
+                            }
+                        }
+                        for (String equipoId : bitacoraLiveDataMap.keySet()) {
+                            notificarBitacora(equipoId);
+                        }
+                    }
+                });
+    }
+
+    private void guardarEquipoEnFirestore(Equipo equipo) {
+        if (firestore != null && equipo != null && equipo.getId() != null) {
+            firestore.collection(COLECCION_EQUIPOS)
+                    .document(equipo.getId())
+                    .set(new Equipo(equipo));
+        }
+    }
+
+    private void eliminarEquipoEnFirestore(String id) {
+        if (firestore != null && id != null) {
+            firestore.collection(COLECCION_EQUIPOS)
+                    .document(id)
+                    .delete();
+        }
+    }
+
+    private void guardarBitacoraEnFirestore(BitacoraEntrada entrada) {
+        if (firestore != null && entrada != null && entrada.getId() != null) {
+            firestore.collection(COLECCION_BITACORAS)
+                    .document(entrada.getId())
+                    .set(entrada);
+        }
     }
 
     public void setReloj(Reloj reloj) {
@@ -63,7 +139,7 @@ public class InMemoryEquipoRepository implements EquipoRepository {
         if (liveData != null) {
             List<BitacoraEntrada> filtradas = new ArrayList<>();
             for (BitacoraEntrada b : bitacoras) {
-                if (b.getEquipoId().equals(equipoId)) {
+                if (equipoId.equals(b.getEquipoId())) {
                     filtradas.add(b);
                 }
             }
@@ -90,11 +166,11 @@ public class InMemoryEquipoRepository implements EquipoRepository {
 
     @Override
     public synchronized void agregarEquipo(Equipo equipo, Callback<Equipo> callback) {
-        // FIRESTORE: aquí irá una transacción
         if (equipo != null && equipo.getFechaAlta() <= 0) {
             equipo.setFechaAlta(reloj != null ? reloj.ahora() : System.currentTimeMillis());
         }
         equipos.add(equipo);
+        guardarEquipoEnFirestore(equipo);
         notificarEquipos();
         dispararCambioInventario();
         callback.onSuccess(equipo);
@@ -109,7 +185,6 @@ public class InMemoryEquipoRepository implements EquipoRepository {
     @Override
     public synchronized void agregarUnidades(String nombre, String categoria, double precioRenta,
                                             String estadoFisico, int cantidad, String fotoUri, Callback<List<Equipo>> callback) {
-        // FIRESTORE: aquí irá una transacción
         int maxNumero = 0;
         for (Equipo e : equipos) {
             if (e.getNombre().equalsIgnoreCase(nombre)) {
@@ -132,6 +207,7 @@ public class InMemoryEquipoRepository implements EquipoRepository {
             nuevo.setFechaAlta(ahora);
             equipos.add(nuevo);
             nuevos.add(nuevo);
+            guardarEquipoEnFirestore(nuevo);
         }
         notificarEquipos();
         dispararCambioInventario();
@@ -140,10 +216,10 @@ public class InMemoryEquipoRepository implements EquipoRepository {
 
     @Override
     public synchronized void actualizar(Equipo equipo, Callback<Equipo> callback) {
-        // FIRESTORE: aquí irá una transacción
         for (int i = 0; i < equipos.size(); i++) {
             if (equipos.get(i).getId().equals(equipo.getId())) {
                 equipos.set(i, equipo);
+                guardarEquipoEnFirestore(equipo);
                 notificarEquipos();
                 dispararCambioInventario();
                 callback.onSuccess(equipo);
@@ -167,6 +243,7 @@ public class InMemoryEquipoRepository implements EquipoRepository {
 
         boolean removed = equipos.removeIf(e -> e.getId().equals(id));
         if (removed) {
+            eliminarEquipoEnFirestore(id);
             notificarEquipos();
             dispararCambioInventario();
             callback.onSuccess(null);
@@ -177,10 +254,10 @@ public class InMemoryEquipoRepository implements EquipoRepository {
 
     @Override
     public synchronized void cambiarEstado(String equipoId, String nuevoEstado, Callback<Equipo> callback) {
-        // FIRESTORE: aquí irá una transacción
         for (Equipo e : equipos) {
             if (e.getId().equals(equipoId)) {
                 e.setEstadoFisico(nuevoEstado);
+                guardarEquipoEnFirestore(e);
                 notificarEquipos();
                 dispararCambioInventario();
                 callback.onSuccess(e);
@@ -192,8 +269,8 @@ public class InMemoryEquipoRepository implements EquipoRepository {
 
     @Override
     public synchronized void agregarBitacora(BitacoraEntrada entrada, Callback<BitacoraEntrada> callback) {
-        // FIRESTORE: aquí irá una transacción
         bitacoras.add(entrada);
+        guardarBitacoraEnFirestore(entrada);
         notificarBitacora(entrada.getEquipoId());
         callback.onSuccess(entrada);
     }
@@ -285,8 +362,7 @@ public class InMemoryEquipoRepository implements EquipoRepository {
     public synchronized List<Equipo> listarTodos() {
         List<Equipo> copia = new ArrayList<>();
         for (Equipo e : equipos) {
-            copia.add(new Equipo(e.getId(), e.getNombre(), e.getCategoria(), e.getNumeroUnidad(),
-                    e.getEstadoFisico(), e.getPrecioRenta(), e.getFotoUri()));
+            copia.add(new Equipo(e));
         }
         return copia;
     }

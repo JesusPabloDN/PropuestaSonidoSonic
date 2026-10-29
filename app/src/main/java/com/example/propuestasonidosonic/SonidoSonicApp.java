@@ -7,6 +7,7 @@ import android.os.Looper;
 
 import com.example.propuestasonidosonic.data.AppContainer;
 import com.example.propuestasonidosonic.util.ThemeHelper;
+import com.google.firebase.FirebaseApp;
 
 public class SonidoSonicApp extends Application {
     private AppContainer appContainer;
@@ -24,7 +25,9 @@ public class SonidoSonicApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        FirebaseApp.initializeApp(this);
         appContainer = new AppContainer();
+        appContainer.conectarFirestore();
         ThemeHelper.applySavedTheme(this);
         cleanupHandler.postDelayed(cleanupRunnable, 60_000L);
     }

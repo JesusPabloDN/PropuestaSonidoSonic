@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "693994274431",
+    "project_id": "sonidosonic-3b013",
+    "storage_bucket": "sonidosonic-3b013.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:693994274431:android:a4ed7740fbd65a95aac94a",
+        "android_client_info": {
+          "package_name": "com.example.propuestasonidosonic"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDe651AJYxBgoYzUjHP-4IVOxUTjy_Je8c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
