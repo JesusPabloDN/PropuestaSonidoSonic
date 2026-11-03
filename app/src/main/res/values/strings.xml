@@ -28,10 +28,10 @@
     <string name="error_contrasena_invalida">La contraseña debe tener mínimo 8 caracteres, una mayúscula, un número y un carácter especial</string>
     <string name="error_contrasenas_no_coinciden">Las contraseñas no coinciden</string>
     <string name="error_credenciales_invalidas">Correo o contraseña incorrectos</string>
-    <string name="error_rol_no_coincide_socio">Esta cuenta no tiene el rol de Socio</string>
-    <string name="error_rol_no_coincide_cliente">Esta cuenta no tiene el rol de Cliente</string>
-    <string name="error_rol_no_coincide_asistente">Esta cuenta no tiene el rol de Asistente</string>
-    <string name="error_cuenta_inactiva">Esta cuenta se encuentra desactivada</string>
+    <string name="error_rol_no_coincide_socio">Credenciales inválidas</string>
+    <string name="error_rol_no_coincide_cliente">Credenciales inválidas</string>
+    <string name="error_rol_no_coincide_asistente">Credenciales inválidas</string>
+    <string name="error_cuenta_inactiva">Error de autenticación E012</string>
     <string name="error_correo_ya_registrado">Este correo ya está registrado</string>
 
     <!-- Drawer Lateral -->
