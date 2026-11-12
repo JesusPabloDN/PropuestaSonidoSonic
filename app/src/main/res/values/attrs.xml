@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="colorEstadoDisponible" format="color" />
+    <attr name="colorEstadoDisponibleContainer" format="color" />
+    <attr name="colorEstadoPendiente" format="color" />
+    <attr name="colorEstadoPendienteContainer" format="color" />
+    <attr name="colorEstadoDanado" format="color" />
+    <attr name="colorEstadoDanadoContainer" format="color" />
+    <attr name="colorEstadoRentado" format="color" />
+    <attr name="colorEstadoRentadoContainer" format="color" />
+</resources>

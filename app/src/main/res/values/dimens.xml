@@ -13,6 +13,8 @@
     <dimen name="card_corner_radius">12dp</dimen>
     <dimen name="button_corner_radius">12dp</dimen>
     <dimen name="drawer_width">300dp</dimen>
+    <dimen name="drawer_item_height">56dp</dimen>
+    <dimen name="drawer_item_padding">28dp</dimen>
     <dimen name="logo_size">140dp</dimen>
 
     <!-- Tamaños de texto (mínimo 14sp) -->

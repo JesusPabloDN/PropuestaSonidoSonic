@@ -19,10 +19,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:minHeight="?attr/actionBarSize"
-            android:background="?attr/colorSurface"
-            app:titleTextColor="?attr/colorOnSurface"
-            app:navigationIconTint="?attr/colorOnSurface" />
+            android:minHeight="?attr/actionBarSize" />
 
         <!-- Host de Fragmentos de Navegación -->
         <androidx.fragment.app.FragmentContainerView
@@ -39,7 +36,6 @@
             android:id="@+id/bottomNavigationView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorSurface"
             app:menu="@menu/bottom_menu" />
 
     </LinearLayout>
@@ -50,7 +46,7 @@
         android:layout_width="@dimen/drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="?attr/colorSurface"
+        android:background="@drawable/bg_drawer_contenedor"
         android:orientation="vertical">
 
         <!-- Encabezado con datos del usuario (Clickable -> Mi perfil) -->
@@ -75,9 +71,8 @@
                 android:layout_height="48dp"
                 android:background="@drawable/bg_avatar_circle"
                 android:gravity="center"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
                 android:textColor="?attr/colorOnPrimaryContainer"
-                android:textSize="18sp"
-                android:textStyle="bold"
                 tools:text="SP" />
 
             <LinearLayout
@@ -93,9 +88,8 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="1"
+                    android:textAppearance="?attr/textAppearanceTitleLarge"
                     android:textColor="?attr/colorOnSurface"
-                    android:textSize="@dimen/text_title"
-                    android:textStyle="bold"
                     tools:text="Nombre Usuario" />
 
                 <TextView
@@ -103,9 +97,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="@dimen/text_caption"
-                    android:textStyle="bold"
+                    android:textAppearance="?attr/textAppearanceLabelLarge"
+                    android:textColor="?attr/colorTertiary"
                     tools:text="Socio" />
 
                 <TextView
@@ -114,8 +107,8 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="1"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="12sp"
                     tools:text="correo@sonic.com" />
 
             </LinearLayout>
@@ -145,14 +138,13 @@
                     android:id="@+id/tvDrawerSeccionGestion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingStart="@dimen/spacing_large"
-                    android:paddingTop="@dimen/spacing_small"
-                    android:paddingEnd="@dimen/spacing_large"
-                    android:paddingBottom="4dp"
+                    android:paddingStart="@dimen/drawer_item_padding"
+                    android:paddingTop="@dimen/spacing_medium"
+                    android:paddingEnd="@dimen/drawer_item_padding"
+                    android:paddingBottom="@dimen/spacing_small"
                     android:text="@string/drawer_seccion_gestion"
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
+                    android:textAppearance="?attr/textAppearanceTitleSmall"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:visibility="gone" />
 
                 <!-- Opción: Equipo de trabajo (visible solo para Socio) -->
@@ -160,14 +152,14 @@
                     android:id="@+id/drawerItemEquipo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
+                    android:background="@drawable/bg_drawer_item"
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center_vertical"
-                    android:minHeight="@dimen/touch_target_min"
+                    android:minHeight="@dimen/drawer_item_height"
                     android:orientation="horizontal"
-                    android:paddingStart="@dimen/spacing_large"
-                    android:paddingEnd="@dimen/spacing_large"
+                    android:paddingStart="@dimen/drawer_item_padding"
+                    android:paddingEnd="@dimen/drawer_item_padding"
                     android:visibility="gone">
 
                     <ImageView
@@ -176,7 +168,7 @@
                         android:layout_height="24dp"
                         android:contentDescription="@string/menu_equipo_trabajo"
                         android:src="@drawable/ic_group_24"
-                        app:tint="?attr/colorOnSurface" />
+                        app:tint="?attr/colorOnSurfaceVariant" />
 
                     <TextView
                         android:id="@+id/tvDrawerEquipoLabel"
@@ -184,8 +176,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/spacing_medium"
                         android:text="@string/menu_equipo_trabajo"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="@dimen/text_body" />
+                        android:textAppearance="?attr/textAppearanceLabelLarge"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
 
                 </LinearLayout>
 
@@ -194,14 +186,14 @@
                     android:id="@+id/drawerItemClientes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
+                    android:background="@drawable/bg_drawer_item"
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center_vertical"
-                    android:minHeight="@dimen/touch_target_min"
+                    android:minHeight="@dimen/drawer_item_height"
                     android:orientation="horizontal"
-                    android:paddingStart="@dimen/spacing_large"
-                    android:paddingEnd="@dimen/spacing_large"
+                    android:paddingStart="@dimen/drawer_item_padding"
+                    android:paddingEnd="@dimen/drawer_item_padding"
                     android:visibility="gone">
 
                     <ImageView
@@ -210,7 +202,7 @@
                         android:layout_height="24dp"
                         android:contentDescription="@string/menu_clientes"
                         android:src="@drawable/ic_contacts_24"
-                        app:tint="?attr/colorOnSurface" />
+                        app:tint="?attr/colorOnSurfaceVariant" />
 
                     <TextView
                         android:id="@+id/tvDrawerClientesLabel"
@@ -218,8 +210,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/spacing_medium"
                         android:text="@string/menu_clientes"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="@dimen/text_body" />
+                        android:textAppearance="?attr/textAppearanceLabelLarge"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
 
                 </LinearLayout>
 
@@ -229,14 +221,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_small"
-                    android:paddingStart="@dimen/spacing_large"
-                    android:paddingTop="@dimen/spacing_small"
-                    android:paddingEnd="@dimen/spacing_large"
-                    android:paddingBottom="4dp"
+                    android:paddingStart="@dimen/drawer_item_padding"
+                    android:paddingTop="@dimen/spacing_medium"
+                    android:paddingEnd="@dimen/drawer_item_padding"
+                    android:paddingBottom="@dimen/spacing_small"
                     android:text="@string/drawer_seccion_cuenta_negocio"
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
+                    android:textAppearance="?attr/textAppearanceTitleSmall"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:visibility="gone" />
 
                 <!-- Opción: Mi perfil (Todos los roles) -->
@@ -244,14 +235,14 @@
                     android:id="@+id/drawerItemPerfil"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
+                    android:background="@drawable/bg_drawer_item"
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center_vertical"
-                    android:minHeight="@dimen/touch_target_min"
+                    android:minHeight="@dimen/drawer_item_height"
                     android:orientation="horizontal"
-                    android:paddingStart="@dimen/spacing_large"
-                    android:paddingEnd="@dimen/spacing_large">
+                    android:paddingStart="@dimen/drawer_item_padding"
+                    android:paddingEnd="@dimen/drawer_item_padding">
 
                     <ImageView
                         android:id="@+id/ivDrawerPerfilIcon"
@@ -259,7 +250,7 @@
                         android:layout_height="24dp"
                         android:contentDescription="@string/menu_mi_perfil"
                         android:src="@drawable/ic_person_24"
-                        app:tint="?attr/colorOnSurface" />
+                        app:tint="?attr/colorOnSurfaceVariant" />
 
                     <TextView
                         android:id="@+id/tvDrawerPerfilLabel"
@@ -267,8 +258,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/spacing_medium"
                         android:text="@string/menu_mi_perfil"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="@dimen/text_body" />
+                        android:textAppearance="?attr/textAppearanceLabelLarge"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
 
                 </LinearLayout>
 
@@ -277,14 +268,14 @@
                     android:id="@+id/drawerItemPoliticas"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
+                    android:background="@drawable/bg_drawer_item"
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center_vertical"
-                    android:minHeight="@dimen/touch_target_min"
+                    android:minHeight="@dimen/drawer_item_height"
                     android:orientation="horizontal"
-                    android:paddingStart="@dimen/spacing_large"
-                    android:paddingEnd="@dimen/spacing_large"
+                    android:paddingStart="@dimen/drawer_item_padding"
+                    android:paddingEnd="@dimen/drawer_item_padding"
                     android:visibility="gone">
 
                     <ImageView
@@ -293,7 +284,7 @@
                         android:layout_height="24dp"
                         android:contentDescription="@string/menu_politicas_negocio"
                         android:src="@drawable/ic_policy_24"
-                        app:tint="?attr/colorOnSurface" />
+                        app:tint="?attr/colorOnSurfaceVariant" />
 
                     <TextView
                         android:id="@+id/tvDrawerPoliticasLabel"
@@ -301,8 +292,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/spacing_medium"
                         android:text="@string/menu_politicas_negocio"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="@dimen/text_body" />
+                        android:textAppearance="?attr/textAppearanceLabelLarge"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
 
                 </LinearLayout>
 
@@ -312,28 +303,27 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_small"
-                    android:paddingStart="@dimen/spacing_large"
-                    android:paddingTop="@dimen/spacing_small"
-                    android:paddingEnd="@dimen/spacing_large"
-                    android:paddingBottom="4dp"
+                    android:paddingStart="@dimen/drawer_item_padding"
+                    android:paddingTop="@dimen/spacing_medium"
+                    android:paddingEnd="@dimen/drawer_item_padding"
+                    android:paddingBottom="@dimen/spacing_small"
                     android:text="@string/drawer_seccion_informacion"
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:textAppearance="?attr/textAppearanceTitleSmall"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
 
                 <!-- Opción: Ayuda (Todos los roles) -->
                 <LinearLayout
                     android:id="@+id/drawerItemAyuda"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
+                    android:background="@drawable/bg_drawer_item"
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center_vertical"
-                    android:minHeight="@dimen/touch_target_min"
+                    android:minHeight="@dimen/drawer_item_height"
                     android:orientation="horizontal"
-                    android:paddingStart="@dimen/spacing_large"
-                    android:paddingEnd="@dimen/spacing_large">
+                    android:paddingStart="@dimen/drawer_item_padding"
+                    android:paddingEnd="@dimen/drawer_item_padding">
 
                     <ImageView
                         android:id="@+id/ivDrawerAyudaIcon"
@@ -341,7 +331,7 @@
                         android:layout_height="24dp"
                         android:contentDescription="@string/menu_ayuda"
                         android:src="@drawable/ic_help_24"
-                        app:tint="?attr/colorOnSurface" />
+                        app:tint="?attr/colorOnSurfaceVariant" />
 
                     <TextView
                         android:id="@+id/tvDrawerAyudaLabel"
@@ -349,8 +339,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/spacing_medium"
                         android:text="@string/menu_ayuda"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="@dimen/text_body" />
+                        android:textAppearance="?attr/textAppearanceLabelLarge"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
 
                 </LinearLayout>
 
@@ -359,14 +349,14 @@
                     android:id="@+id/drawerItemAcercaDe"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
+                    android:background="@drawable/bg_drawer_item"
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center_vertical"
-                    android:minHeight="@dimen/touch_target_min"
+                    android:minHeight="@dimen/drawer_item_height"
                     android:orientation="horizontal"
-                    android:paddingStart="@dimen/spacing_large"
-                    android:paddingEnd="@dimen/spacing_large">
+                    android:paddingStart="@dimen/drawer_item_padding"
+                    android:paddingEnd="@dimen/drawer_item_padding">
 
                     <ImageView
                         android:id="@+id/ivDrawerAcercaDeIcon"
@@ -374,7 +364,7 @@
                         android:layout_height="24dp"
                         android:contentDescription="@string/menu_acerca_de"
                         android:src="@drawable/ic_info_24"
-                        app:tint="?attr/colorOnSurface" />
+                        app:tint="?attr/colorOnSurfaceVariant" />
 
                     <TextView
                         android:id="@+id/tvDrawerAcercaDeLabel"
@@ -382,8 +372,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/spacing_medium"
                         android:text="@string/menu_acerca_de"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="@dimen/text_body" />
+                        android:textAppearance="?attr/textAppearanceLabelLarge"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
 
                 </LinearLayout>
 
@@ -401,14 +391,14 @@
             android:id="@+id/drawerItemTheme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
+            android:background="@drawable/bg_drawer_item"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center_vertical"
-            android:minHeight="@dimen/touch_target_min"
+            android:minHeight="@dimen/drawer_item_height"
             android:orientation="horizontal"
-            android:paddingStart="@dimen/spacing_large"
-            android:paddingEnd="@dimen/spacing_large">
+            android:paddingStart="@dimen/drawer_item_padding"
+            android:paddingEnd="@dimen/drawer_item_padding">
 
             <ImageView
                 android:id="@+id/ivDrawerThemeIcon"
@@ -416,7 +406,7 @@
                 android:layout_height="24dp"
                 android:contentDescription="@string/desc_toggle_tema"
                 android:src="@drawable/ic_dark_mode_24"
-                app:tint="?attr/colorOnSurface" />
+                app:tint="?attr/colorOnSurfaceVariant" />
 
             <TextView
                 android:id="@+id/tvDrawerThemeLabel"
@@ -424,8 +414,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_medium"
                 android:text="@string/menu_modo_oscuro"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="@dimen/text_body" />
+                android:textAppearance="?attr/textAppearanceLabelLarge"
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
         </LinearLayout>
 
@@ -434,14 +424,14 @@
             android:id="@+id/drawerItemLogout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
+            android:background="@drawable/bg_drawer_item"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center_vertical"
-            android:minHeight="@dimen/touch_target_min"
+            android:minHeight="@dimen/drawer_item_height"
             android:orientation="horizontal"
-            android:paddingStart="@dimen/spacing_large"
-            android:paddingEnd="@dimen/spacing_large">
+            android:paddingStart="@dimen/drawer_item_padding"
+            android:paddingEnd="@dimen/drawer_item_padding">
 
             <ImageView
                 android:id="@+id/ivDrawerLogoutIcon"
@@ -449,7 +439,7 @@
                 android:layout_height="24dp"
                 android:contentDescription="@string/desc_cerrar_sesion"
                 android:src="@drawable/ic_logout_24"
-                app:tint="?attr/colorOnSurface" />
+                app:tint="?attr/colorOnSurfaceVariant" />
 
             <TextView
                 android:id="@+id/tvDrawerLogoutLabel"
@@ -457,8 +447,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_medium"
                 android:text="@string/menu_cerrar_sesion"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="@dimen/text_body" />
+                android:textAppearance="?attr/textAppearanceLabelLarge"
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
         </LinearLayout>
 
@@ -470,10 +460,10 @@
             android:gravity="center"
             android:paddingTop="6dp"
             android:paddingBottom="12dp"
+            android:textAppearance="?attr/textAppearanceLabelSmall"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="12sp"
             tools:text="Sonido Sonic · v1.0" />
 
     </LinearLayout>
 
-</androidx.drawerlayout.widget.DrawerLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

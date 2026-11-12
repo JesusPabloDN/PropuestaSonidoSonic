@@ -7,6 +7,8 @@ import android.os.Looper;
 
 import com.example.propuestasonidosonic.data.AppContainer;
 import com.example.propuestasonidosonic.util.ThemeHelper;
+import com.google.android.material.color.ColorContrast;
+import com.google.android.material.color.ColorContrastOptions;
 import com.google.firebase.FirebaseApp;
 
 public class SonidoSonicApp extends Application {
@@ -29,6 +31,11 @@ public class SonidoSonicApp extends Application {
         appContainer = new AppContainer();
         appContainer.conectarFirestore();
         ThemeHelper.applySavedTheme(this);
+        ColorContrast.applyToActivitiesIfAvailable(this,
+                new ColorContrastOptions.Builder()
+                        .setMediumContrastThemeOverlay(R.style.ThemeOverlay_PropuestaSonidoSonic_MediumContrast)
+                        .setHighContrastThemeOverlay(R.style.ThemeOverlay_PropuestaSonidoSonic_HighContrast)
+                        .build());
         cleanupHandler.postDelayed(cleanupRunnable, 60_000L);
     }
 

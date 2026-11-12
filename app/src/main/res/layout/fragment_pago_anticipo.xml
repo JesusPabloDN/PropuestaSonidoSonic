@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/android:colorBackground">
+    android:background="?attr/colorSurface">
 
     <!-- 1. Formulario de Pago -->
     <androidx.core.widget.NestedScrollView

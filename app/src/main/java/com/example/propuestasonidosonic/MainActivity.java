@@ -1,5 +1,6 @@
 package com.example.propuestasonidosonic;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -13,6 +14,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.widget.ImageViewCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
@@ -279,13 +281,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void resaltarItem(LinearLayout item, boolean seleccionado) {
         if (item == null) return;
-        if (seleccionado) {
-            int colorBg = MaterialColors.getColor(item, com.google.android.material.R.attr.colorSecondaryContainer, 0x1A000000);
-            item.setBackgroundColor(colorBg);
-        } else {
-            android.util.TypedValue outValue = new android.util.TypedValue();
-            getTheme().resolveAttribute(android.R.attr.selectableItemBackground, outValue, true);
-            item.setBackgroundResource(outValue.resourceId);
+        item.setBackgroundResource(seleccionado ? R.drawable.bg_drawer_item_activo : R.drawable.bg_drawer_item);
+        int colorContenido = MaterialColors.getColor(item, seleccionado
+                ? com.google.android.material.R.attr.colorOnSecondaryContainer
+                : com.google.android.material.R.attr.colorOnSurfaceVariant);
+        for (int i = 0; i < item.getChildCount(); i++) {
+            View hijo = item.getChildAt(i);
+            if (hijo instanceof ImageView) {
+                ImageViewCompat.setImageTintList((ImageView) hijo, ColorStateList.valueOf(colorContenido));
+            } else if (hijo instanceof TextView) {
+                ((TextView) hijo).setTextColor(colorContenido);
+            }
         }
     }
 
@@ -494,4 +500,4 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
     }
-}
+}

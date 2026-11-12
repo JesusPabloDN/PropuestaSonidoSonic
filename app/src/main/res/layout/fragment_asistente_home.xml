@@ -8,7 +8,7 @@
     android:paddingStart="@dimen/spacing_medium"
     android:paddingTop="@dimen/spacing_medium"
     android:paddingEnd="@dimen/spacing_medium"
-    android:background="?attr/android:colorBackground">
+    android:background="?attr/colorSurface">
 
     <!-- Encabezado con Saludo -->
     <TextView

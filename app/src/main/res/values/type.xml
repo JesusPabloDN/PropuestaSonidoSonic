@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TextAppearance.SonidoSonic.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="fontFamily">@font/adamina_regular</item>
+        <item name="android:fontFamily">@font/adamina_regular</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="TextAppearance.SonidoSonic.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium">
+        <item name="fontFamily">@font/adamina_regular</item>
+        <item name="android:fontFamily">@font/adamina_regular</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="TextAppearance.SonidoSonic.DisplaySmall" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="fontFamily">@font/adamina_regular</item>
+        <item name="android:fontFamily">@font/adamina_regular</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="TextAppearance.SonidoSonic.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="fontFamily">@font/adamina_regular</item>
+        <item name="android:fontFamily">@font/adamina_regular</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="TextAppearance.SonidoSonic.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="fontFamily">@font/adamina_regular</item>
+        <item name="android:fontFamily">@font/adamina_regular</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="TextAppearance.SonidoSonic.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="fontFamily">@font/adamina_regular</item>
+        <item name="android:fontFamily">@font/adamina_regular</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="TextAppearance.SonidoSonic.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="fontFamily">@font/adamina_regular</item>
+        <item name="android:fontFamily">@font/adamina_regular</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="TextAppearance.SonidoSonic.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="fontFamily">@font/montserrat_medium</item>
+        <item name="android:fontFamily">@font/montserrat_medium</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="TextAppearance.SonidoSonic.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
+        <item name="fontFamily">@font/montserrat_medium</item>
+        <item name="android:fontFamily">@font/montserrat_medium</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="TextAppearance.SonidoSonic.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="fontFamily">@font/montserrat</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="TextAppearance.SonidoSonic.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="fontFamily">@font/montserrat</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="TextAppearance.SonidoSonic.BodySmall" parent="TextAppearance.Material3.BodySmall">
+        <item name="fontFamily">@font/montserrat</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="TextAppearance.SonidoSonic.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
+        <item name="fontFamily">@font/montserrat_medium</item>
+        <item name="android:fontFamily">@font/montserrat_medium</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="TextAppearance.SonidoSonic.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
+        <item name="fontFamily">@font/montserrat_medium</item>
+        <item name="android:fontFamily">@font/montserrat_medium</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="TextAppearance.SonidoSonic.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
+        <item name="fontFamily">@font/montserrat_medium</item>
+        <item name="android:fontFamily">@font/montserrat_medium</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+</resources>
