@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:text="@string/label_fecha_evento"
         android:textColor="?attr/colorOnSurfaceVariant"
-        android:textSize="12sp" />
+        android:textAppearance="?attr/textAppearanceBodySmall" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSeleccionarFechaReprog"
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:text="@string/label_horarios_disponibles"
         android:textColor="?attr/colorOnSurfaceVariant"
-        android:textSize="12sp" />
+        android:textAppearance="?attr/textAppearanceBodySmall" />
 
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/chipGroupHorariosReprog"
@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:text="@string/label_no_horarios_disponibles"
             android:textColor="?attr/colorError"
-            android:textSize="@dimen/text_body" />
+            android:textAppearance="?attr/textAppearanceBodyMedium" />
 
         <TextView
             android:layout_width="match_parent"
@@ -60,7 +60,7 @@
             android:layout_marginTop="@dimen/spacing_tiny"
             android:text="@string/label_alternativas_disponibles"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="12sp" />
+            android:textAppearance="?attr/textAppearanceBodySmall" />
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipGroupAlternativasReprog"

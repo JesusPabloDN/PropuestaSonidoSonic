@@ -19,11 +19,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_medium"
-            android:background="?attr/colorSurfaceVariant"
+            android:background="?attr/colorSurfaceContainerHighest"
             android:padding="@dimen/spacing_medium"
             android:text="@string/label_aviso_sin_paquetes"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="@dimen/text_body"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
             android:visibility="gone"
             tools:visibility="visible" />
 
@@ -67,7 +67,7 @@
             android:layout_height="wrap_content"
             android:text="@string/label_fecha_evento"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="12sp" />
+            android:textAppearance="?attr/textAppearanceBodySmall" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSeleccionarFecha"
@@ -87,7 +87,7 @@
             android:layout_height="wrap_content"
             android:text="@string/label_horarios_disponibles"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="12sp" />
+            android:textAppearance="?attr/textAppearanceBodySmall" />
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipGroupHorarios"
@@ -111,7 +111,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_no_horarios_disponibles"
                 android:textColor="?attr/colorError"
-                android:textSize="@dimen/text_body" />
+                android:textAppearance="?attr/textAppearanceBodyLarge" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -119,7 +119,7 @@
                 android:layout_marginTop="@dimen/spacing_tiny"
                 android:text="@string/label_alternativas_disponibles"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="12sp" />
+                android:textAppearance="?attr/textAppearanceBodySmall" />
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroupAlternativas"
@@ -152,9 +152,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/label_resumen_pedido"
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="@dimen/text_title"
-                    android:textStyle="bold" />
+                    android:textColor="?attr/colorOnSurface"
+                    android:textAppearance="?attr/textAppearanceTitleLarge" />
 
                 <TextView
                     android:id="@+id/tvResumenFin"
@@ -162,7 +161,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_tiny"
                     android:textColor="?attr/colorOnSurface"
-                    android:textSize="@dimen/text_body"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
                     tools:text="Fin del evento: 23:00" />
 
                 <TextView
@@ -170,7 +169,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="13sp"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
                     tools:text="Montaje desde: 17:30" />
 
                 <TextView
@@ -178,7 +177,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="13sp"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
                     tools:text="Desmontaje hasta: 01:00" />
 
                 <TextView
@@ -187,7 +186,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_tiny"
                     android:textColor="?attr/colorOnSurface"
-                    android:textSize="@dimen/text_body"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
                     tools:text="Personal asignado: Carlos (Socio)" />
 
                 <View
@@ -195,24 +194,22 @@
                     android:layout_height="1dp"
                     android:layout_marginTop="@dimen/spacing_small"
                     android:layout_marginBottom="@dimen/spacing_small"
-                    android:background="?attr/colorSurfaceVariant" />
+                    android:background="?attr/colorOutlineVariant" />
 
                 <TextView
                     android:id="@+id/tvResumenTotal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="?attr/colorOnSurface"
-                    android:textSize="@dimen/text_title"
-                    android:textStyle="bold"
+                    android:textAppearance="?attr/textAppearanceTitleLarge"
                     tools:text="Total: $3,500.00" />
 
                 <TextView
                     android:id="@+id/tvResumenAnticipo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="@dimen/text_body"
-                    android:textStyle="bold"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
                     tools:text="Anticipo requerido (30%): $1,050.00" />
 
             </LinearLayout>
@@ -223,7 +220,6 @@
         <!-- Nombre del evento -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilNombreEvento"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_medium"
@@ -243,7 +239,6 @@
         <!-- Nombre del cliente -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilNombreCliente"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_medium"
@@ -260,7 +255,6 @@
         <!-- Teléfono -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilTelefonoCliente"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_medium"
@@ -277,7 +271,6 @@
         <!-- Dirección -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilDireccion"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_medium"
@@ -294,7 +287,6 @@
         <!-- Notas adicionales -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilNotas"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_medium"
@@ -316,7 +308,7 @@
             android:layout_height="wrap_content"
             android:text="@string/label_origen_pedido"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="12sp" />
+            android:textAppearance="?attr/textAppearanceBodySmall" />
 
         <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/toggleOrigen"

@@ -31,7 +31,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/cd_mes_anterior"
                 app:srcCompat="@drawable/ic_chevron_left_24"
-                app:tint="?attr/colorOnSurface" />
+                app:tint="?attr/colorOnSurfaceVariant" />
 
             <TextView
                 android:id="@+id/tvMesFinanzas"
@@ -40,8 +40,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="18sp"
-                android:textStyle="bold"
+                android:textAppearance="?attr/textAppearanceTitleLarge"
                 tools:text="octubre de 2026" />
 
             <ImageButton
@@ -51,7 +50,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/cd_mes_siguiente"
                 app:srcCompat="@drawable/ic_chevron_right_24"
-                app:tint="?attr/colorOnSurface" />
+                app:tint="?attr/colorOnSurfaceVariant" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnMesActual"
@@ -74,11 +73,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_small"
-                android:layout_weight="1"
-                app:cardCornerRadius="@dimen/card_corner_radius"
-                app:cardElevation="1dp"
-                app:strokeColor="?attr/colorSurfaceVariant"
-                app:strokeWidth="1dp">
+                android:layout_weight="1">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -91,17 +86,15 @@
                         android:layout_height="wrap_content"
                         android:text="@string/kpi_cobrado"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textAppearance="?attr/textAppearanceLabelMedium" />
 
                     <TextView
                         android:id="@+id/tvKpiCobrado"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textAppearance="?attr/textAppearanceTitleLarge"
                         tools:text="$12,500.00" />
 
                 </LinearLayout>
@@ -112,11 +105,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_small"
-                android:layout_weight="1"
-                app:cardCornerRadius="@dimen/card_corner_radius"
-                app:cardElevation="1dp"
-                app:strokeColor="?attr/colorSurfaceVariant"
-                app:strokeWidth="1dp">
+                android:layout_weight="1">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -129,8 +118,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/kpi_reembolsos"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textAppearance="?attr/textAppearanceLabelMedium" />
 
                     <TextView
                         android:id="@+id/tvKpiReembolsos"
@@ -138,8 +126,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:textColor="?attr/colorError"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
+                        android:textAppearance="?attr/textAppearanceTitleLarge"
                         tools:text="$1,050.00" />
 
                 </LinearLayout>
@@ -159,11 +146,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_small"
-                android:layout_weight="1"
-                app:cardCornerRadius="@dimen/card_corner_radius"
-                app:cardElevation="1dp"
-                app:strokeColor="?attr/colorSurfaceVariant"
-                app:strokeWidth="1dp">
+                android:layout_weight="1">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -176,8 +159,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/kpi_neto"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textAppearance="?attr/textAppearanceLabelMedium" />
 
                     <TextView
                         android:id="@+id/tvKpiNeto"
@@ -185,8 +167,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
+                        android:textAppearance="?attr/textAppearanceTitleLarge"
                         tools:text="$11,450.00" />
 
                 </LinearLayout>
@@ -197,11 +178,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_small"
-                android:layout_weight="1"
-                app:cardCornerRadius="@dimen/card_corner_radius"
-                app:cardElevation="1dp"
-                app:strokeColor="?attr/colorSurfaceVariant"
-                app:strokeWidth="1dp">
+                android:layout_weight="1">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -214,8 +191,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/kpi_por_cobrar"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textAppearance="?attr/textAppearanceLabelMedium" />
 
                     <TextView
                         android:id="@+id/tvKpiPorCobrar"
@@ -223,8 +199,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
+                        android:textAppearance="?attr/textAppearanceTitleLarge"
                         tools:text="$4,900.00" />
 
                 </LinearLayout>
@@ -278,7 +253,7 @@
             android:gravity="center"
             android:text="@string/sin_movimientos_mes"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="@dimen/text_body"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
             android:visibility="gone"
             tools:visibility="visible" />
 

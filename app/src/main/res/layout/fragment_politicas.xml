@@ -20,11 +20,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_medium"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="1dp"
-            app:strokeColor="?attr/colorSurfaceVariant"
-            app:strokeWidth="1dp">
+            android:layout_marginBottom="@dimen/spacing_medium">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -33,16 +29,15 @@
                 android:padding="@dimen/spacing_large">
 
                 <TextView
-                    style="@style/TextAppearance.Material3.TitleMedium"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/politicas_seccion_reservas_anticipo"
-                    android:textColor="?attr/colorPrimary"
-                    android:textStyle="bold" />
+                    android:textColor="?attr/colorOnSurface" />
 
                 <TextView
                     android:id="@+id/tvPoliticasReservasDesc"
-                    style="@style/TextAppearance.Material3.BodyMedium"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_small"
@@ -57,11 +52,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_medium"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="1dp"
-            app:strokeColor="?attr/colorSurfaceVariant"
-            app:strokeWidth="1dp">
+            android:layout_marginBottom="@dimen/spacing_medium">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -70,16 +61,15 @@
                 android:padding="@dimen/spacing_large">
 
                 <TextView
-                    style="@style/TextAppearance.Material3.TitleMedium"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/politicas_seccion_cancelaciones_reembolsos"
-                    android:textColor="?attr/colorPrimary"
-                    android:textStyle="bold" />
+                    android:textColor="?attr/colorOnSurface" />
 
                 <TextView
                     android:id="@+id/tvPoliticasCancelacionesDesc"
-                    style="@style/TextAppearance.Material3.BodyMedium"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_small"
@@ -94,11 +84,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_medium"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="1dp"
-            app:strokeColor="?attr/colorSurfaceVariant"
-            app:strokeWidth="1dp">
+            android:layout_marginBottom="@dimen/spacing_medium">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -107,16 +93,15 @@
                 android:padding="@dimen/spacing_large">
 
                 <TextView
-                    style="@style/TextAppearance.Material3.TitleMedium"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/politicas_seccion_operacion"
-                    android:textColor="?attr/colorPrimary"
-                    android:textStyle="bold" />
+                    android:textColor="?attr/colorOnSurface" />
 
                 <TextView
                     android:id="@+id/tvPoliticasOperacionDesc"
-                    style="@style/TextAppearance.Material3.BodyMedium"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_small"
@@ -131,11 +116,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_medium"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="1dp"
-            app:strokeColor="?attr/colorSurfaceVariant"
-            app:strokeWidth="1dp">
+            android:layout_marginBottom="@dimen/spacing_medium">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -144,16 +125,15 @@
                 android:padding="@dimen/spacing_large">
 
                 <TextView
-                    style="@style/TextAppearance.Material3.TitleMedium"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/politicas_seccion_personal"
-                    android:textColor="?attr/colorPrimary"
-                    android:textStyle="bold" />
+                    android:textColor="?attr/colorOnSurface" />
 
                 <TextView
                     android:id="@+id/tvPoliticasPersonalDesc"
-                    style="@style/TextAppearance.Material3.BodyMedium"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_small"
@@ -168,11 +148,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_medium"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="1dp"
-            app:strokeColor="?attr/colorSurfaceVariant"
-            app:strokeWidth="1dp">
+            android:layout_marginBottom="@dimen/spacing_medium">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -181,16 +157,15 @@
                 android:padding="@dimen/spacing_large">
 
                 <TextView
-                    style="@style/TextAppearance.Material3.TitleMedium"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/politicas_seccion_pagos"
-                    android:textColor="?attr/colorPrimary"
-                    android:textStyle="bold" />
+                    android:textColor="?attr/colorOnSurface" />
 
                 <TextView
                     android:id="@+id/tvPoliticasPagosDesc"
-                    style="@style/TextAppearance.Material3.BodyMedium"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_small"
@@ -209,7 +184,7 @@
             android:gravity="center"
             android:text="@string/politicas_nota_final"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="13sp" />
+            android:textAppearance="?attr/textAppearanceBodyMedium" />
 
     </LinearLayout>
 

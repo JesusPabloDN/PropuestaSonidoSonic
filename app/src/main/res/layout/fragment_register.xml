@@ -41,7 +41,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_small"
             android:hint="@string/hint_nombre_completo"
-            app:boxBackgroundMode="outline"
             app:errorEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -49,9 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName|textCapWords"
-                android:minHeight="@dimen/touch_target_min"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="@dimen/text_body" />
+                android:minHeight="@dimen/touch_target_min" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Correo Electrónico -->
@@ -61,7 +58,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_small"
             android:hint="@string/hint_correo"
-            app:boxBackgroundMode="outline"
             app:errorEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -69,9 +65,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textEmailAddress"
-                android:minHeight="@dimen/touch_target_min"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="@dimen/text_body" />
+                android:minHeight="@dimen/touch_target_min" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Teléfono -->
@@ -81,7 +75,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_small"
             android:hint="@string/hint_telefono"
-            app:boxBackgroundMode="outline"
             app:errorEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -89,9 +82,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="phone"
-                android:minHeight="@dimen/touch_target_min"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="@dimen/text_body" />
+                android:minHeight="@dimen/touch_target_min" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Contraseña con helper visible de RN-14 -->
@@ -101,7 +92,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_small"
             android:hint="@string/hint_contrasena"
-            app:boxBackgroundMode="outline"
             app:endIconMode="password_toggle"
             app:errorEnabled="true"
             app:helperText="@string/helper_contrasena"
@@ -112,9 +102,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:minHeight="@dimen/touch_target_min"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="@dimen/text_body" />
+                android:minHeight="@dimen/touch_target_min" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Confirmar Contraseña -->
@@ -124,7 +112,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_large"
             android:hint="@string/hint_confirmar_contrasena"
-            app:boxBackgroundMode="outline"
             app:endIconMode="password_toggle"
             app:errorEnabled="true">
 
@@ -133,9 +120,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:minHeight="@dimen/touch_target_min"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="@dimen/text_body" />
+                android:minHeight="@dimen/touch_target_min" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Botón Registrarse -->
@@ -144,20 +129,15 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/button_height"
             android:layout_marginBottom="@dimen/spacing_medium"
-            android:text="@string/btn_registrarse"
-            android:textSize="@dimen/text_body" />
+            android:text="@string/btn_registrarse" />
 
         <!-- Enlace a Login -->
-        <TextView
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/tvIrALogin"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="@dimen/touch_target_min"
-            android:gravity="center"
-            android:padding="@dimen/spacing_small"
-            android:text="@string/link_ir_a_login"
-            android:textColor="?attr/colorPrimary"
-            android:textSize="@dimen/text_body" />
+            android:text="@string/link_ir_a_login" />
 
     </LinearLayout>
 

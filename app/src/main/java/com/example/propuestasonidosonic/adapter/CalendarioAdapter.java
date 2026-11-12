@@ -160,7 +160,7 @@ public class CalendarioAdapter extends RecyclerView.Adapter<CalendarioAdapter.Di
                             com.google.android.material.R.attr.colorOnSurface));
                 } else {
                     tvNumeroDia.setTextColor(MaterialColors.getColor(tvNumeroDia,
-                            com.google.android.material.R.attr.colorOutline));
+                            com.google.android.material.R.attr.colorOnSurfaceVariant));
                 }
             }
 
@@ -232,7 +232,7 @@ public class CalendarioAdapter extends RecyclerView.Adapter<CalendarioAdapter.Di
                 itemView.setAlpha(0.38f);
                 frameIndicadorDia.setBackground(null);
                 tvNumeroDia.setTextColor(MaterialColors.getColor(tvNumeroDia,
-                        com.google.android.material.R.attr.colorOutline));
+                        com.google.android.material.R.attr.colorOnSurface));
                 dotConfirmados.setVisibility(View.GONE);
                 itemView.setOnClickListener(null);
                 itemView.setContentDescription(fechaTexto + ", Día pasado");
@@ -257,7 +257,7 @@ public class CalendarioAdapter extends RecyclerView.Adapter<CalendarioAdapter.Di
                     frameIndicadorDia.setBackground(null);
                     tvNumeroDia.setTextColor(MaterialColors.getColor(tvNumeroDia,
                             esMesActual ? com.google.android.material.R.attr.colorOnSurface
-                                        : com.google.android.material.R.attr.colorOutline));
+                                        : com.google.android.material.R.attr.colorOnSurfaceVariant));
                     itemView.setContentDescription(fechaTexto + ", Con evento asignado");
                 }
             } else if (disponible) {
@@ -271,7 +271,7 @@ public class CalendarioAdapter extends RecyclerView.Adapter<CalendarioAdapter.Di
                 frameIndicadorDia.setBackground(null);
                 tvNumeroDia.setTextColor(MaterialColors.getColor(tvNumeroDia,
                         esMesActual ? com.google.android.material.R.attr.colorOnSurface
-                                    : com.google.android.material.R.attr.colorOutline));
+                                    : com.google.android.material.R.attr.colorOnSurfaceVariant));
                 itemView.setContentDescription(fechaTexto + ", No disponible");
             }
         }

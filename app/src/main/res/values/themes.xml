@@ -80,6 +80,14 @@
         <item name="bottomNavigationStyle">@style/Widget.SonidoSonic.BottomNavigationView</item>
         <item name="tabStyle">@style/Widget.SonidoSonic.TabLayout</item>
         <item name="materialDividerStyle">@style/Widget.SonidoSonic.MaterialDivider</item>
+        <item name="materialCardViewStyle">@style/Widget.SonidoSonic.CardView.Outlined</item>
+        <item name="floatingActionButtonStyle">@style/Widget.SonidoSonic.FloatingActionButton</item>
+        <item name="textInputStyle">@style/Widget.SonidoSonic.TextInputLayout</item>
+        <item name="snackbarStyle">@style/Widget.SonidoSonic.Snackbar</item>
+        <item name="snackbarTextViewStyle">@style/Widget.SonidoSonic.Snackbar.TextView</item>
+        <item name="snackbarButtonStyle">@style/Widget.SonidoSonic.Snackbar.Button</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.SonidoSonic.MaterialAlertDialog</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.SonidoSonic.BottomSheetDialog</item>
     </style>
 
     <style name="Theme.PropuestaSonidoSonic" parent="Base.Theme.PropuestaSonidoSonic">

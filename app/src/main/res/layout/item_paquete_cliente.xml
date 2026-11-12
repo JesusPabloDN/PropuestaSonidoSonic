@@ -11,10 +11,7 @@
     android:layout_marginBottom="@dimen/spacing_small"
     android:clickable="true"
     android:focusable="true"
-    app:cardCornerRadius="@dimen/card_corner_radius"
-    app:cardElevation="2dp"
-    app:strokeWidth="1dp"
-    app:strokeColor="?attr/colorSurfaceVariant">
+    style="@style/Widget.SonidoSonic.CardView.Elevated">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -40,8 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="18sp"
-                android:textStyle="bold"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
                 tools:text="Paquete Fiesta Pro" />
 
             <TextView
@@ -52,7 +48,7 @@
                 android:maxLines="2"
                 android:ellipsize="end"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="@dimen/text_body"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
                 tools:text="Sonido completo para eventos medianos de hasta 100 personas con iluminación." />
 
             <LinearLayout
@@ -67,9 +63,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textAppearance="?attr/textAppearanceTitleSmall"
                     tools:text="Desde $3,500.00 · 4 h incluidas" />
 
                 <com.google.android.material.chip.Chip
@@ -78,7 +73,6 @@
                     android:layout_height="wrap_content"
                     android:clickable="false"
                     android:focusable="false"
-                    android:textSize="12sp"
                     app:chipMinHeight="32dp"
                     tools:text="4 equipos" />
 

@@ -25,17 +25,16 @@
             android:src="@drawable/sonidosonic" />
 
         <TextView
-            style="@style/TextAppearance.Material3.HeadlineMedium"
+            android:textAppearance="?attr/textAppearanceHeadlineMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_medium"
             android:text="@string/app_name"
-            android:textColor="?attr/colorPrimary"
-            android:textStyle="bold" />
+            android:textColor="?attr/colorOnSurface" />
 
         <TextView
             android:id="@+id/tvAcercaDeVersion"
-            style="@style/TextAppearance.Material3.BodyMedium"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -43,7 +42,7 @@
             tools:text="Versión 1.0" />
 
         <TextView
-            style="@style/TextAppearance.Material3.BodyMedium"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_large"
@@ -55,11 +54,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_large"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="1dp"
-            app:strokeColor="?attr/colorSurfaceVariant"
-            app:strokeWidth="1dp">
+            android:layout_marginTop="@dimen/spacing_large">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -69,15 +64,14 @@
 
                 <!-- Equipo de desarrollo -->
                 <TextView
-                    style="@style/TextAppearance.Material3.LabelMedium"
+                    android:textAppearance="?attr/textAppearanceLabelMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/acerca_de_equipo_titulo"
-                    android:textColor="?attr/colorPrimary"
-                    android:textStyle="bold" />
+                    android:textColor="?attr/colorOnSurface" />
 
                 <TextView
-                    style="@style/TextAppearance.Material3.BodyLarge"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
@@ -89,19 +83,18 @@
                     android:layout_height="1dp"
                     android:layout_marginTop="@dimen/spacing_medium"
                     android:layout_marginBottom="@dimen/spacing_medium"
-                    android:background="?attr/colorSurfaceVariant" />
+                    android:background="?attr/colorOutlineVariant" />
 
                 <!-- Materia -->
                 <TextView
-                    style="@style/TextAppearance.Material3.LabelMedium"
+                    android:textAppearance="?attr/textAppearanceLabelMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/acerca_de_materia_titulo"
-                    android:textColor="?attr/colorPrimary"
-                    android:textStyle="bold" />
+                    android:textColor="?attr/colorOnSurface" />
 
                 <TextView
-                    style="@style/TextAppearance.Material3.BodyLarge"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
@@ -113,19 +106,18 @@
                     android:layout_height="1dp"
                     android:layout_marginTop="@dimen/spacing_medium"
                     android:layout_marginBottom="@dimen/spacing_medium"
-                    android:background="?attr/colorSurfaceVariant" />
+                    android:background="?attr/colorOutlineVariant" />
 
                 <!-- Institución -->
                 <TextView
-                    style="@style/TextAppearance.Material3.LabelMedium"
+                    android:textAppearance="?attr/textAppearanceLabelMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/acerca_de_institucion_titulo"
-                    android:textColor="?attr/colorPrimary"
-                    android:textStyle="bold" />
+                    android:textColor="?attr/colorOnSurface" />
 
                 <TextView
-                    style="@style/TextAppearance.Material3.BodyLarge"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
@@ -138,7 +130,7 @@
 
         <!-- Nota honesta sobre almacenamiento en memoria -->
         <TextView
-            style="@style/TextAppearance.Material3.BodySmall"
+            android:textAppearance="?attr/textAppearanceBodySmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_large"

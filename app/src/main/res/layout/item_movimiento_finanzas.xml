@@ -8,11 +8,7 @@
     android:layout_marginBottom="8dp"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?attr/selectableItemBackground"
-    app:cardCornerRadius="@dimen/card_corner_radius"
-    app:cardElevation="1dp"
-    app:strokeColor="?attr/colorSurfaceVariant"
-    app:strokeWidth="1dp">
+    android:foreground="?attr/selectableItemBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -37,9 +33,8 @@
                     android:id="@+id/tvMovimientoFolio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
+                    android:textColor="?attr/colorTertiary"
+                    android:textAppearance="?attr/textAppearanceLabelLarge"
                     tools:text="R-0001" />
 
                 <TextView
@@ -48,8 +43,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:textColor="?attr/colorOnSurface"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
+                    android:textAppearance="?attr/textAppearanceTitleSmall"
                     tools:text="Anticipo" />
 
             </LinearLayout>
@@ -62,7 +56,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="13sp"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
                 tools:text="Boda de Mariana y Carlos · Mariana Gómez" />
 
             <TextView
@@ -71,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="12sp"
+                android:textAppearance="?attr/textAppearanceBodySmall"
                 tools:text="12 oct 2026 14:30 · Efectivo" />
 
         </LinearLayout>
@@ -81,8 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:textSize="16sp"
-            android:textStyle="bold"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
             tools:text="+ $1,050.00" />
 
     </LinearLayout>

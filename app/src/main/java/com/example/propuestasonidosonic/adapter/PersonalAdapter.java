@@ -115,13 +115,13 @@ public class PersonalAdapter extends RecyclerView.Adapter<PersonalAdapter.Person
             // Badge Estado
             if (usuario.isCuentaActiva()) {
                 tvEstadoBadge.setText(R.string.badge_cuenta_activa);
-                int txtColor = ContextCompat.getColor(context, R.color.status_disponible);
-                int bgCol = ContextCompat.getColor(context, R.color.status_disponible_container);
+                int txtColor = BadgeUtils.colorAtributo(context, R.attr.colorEstadoDisponible);
+                int bgCol = BadgeUtils.colorAtributo(context, R.attr.colorEstadoDisponibleContainer);
                 BadgeUtils.pintar(tvEstadoBadge, txtColor, bgCol);
             } else {
                 tvEstadoBadge.setText(R.string.badge_cuenta_inactiva);
                 int txtColor = MaterialColors.getColor(tvEstadoBadge, com.google.android.material.R.attr.colorOnSurfaceVariant);
-                int bgCol = MaterialColors.getColor(tvEstadoBadge, com.google.android.material.R.attr.colorSurfaceVariant);
+                int bgCol = MaterialColors.getColor(tvEstadoBadge, com.google.android.material.R.attr.colorSurfaceContainerHighest);
                 BadgeUtils.pintar(tvEstadoBadge, txtColor, bgCol);
             }
 

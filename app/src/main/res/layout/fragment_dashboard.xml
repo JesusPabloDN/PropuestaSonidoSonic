@@ -22,9 +22,8 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_medium"
             android:text="@string/seccion_este_mes"
-            android:textColor="?attr/colorPrimary"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textColor="?attr/colorOnSurface"
+            android:textAppearance="?attr/textAppearanceTitleLarge" />
 
         <!-- Fila 1 Finanzas: Cobrado y Reembolsos -->
         <LinearLayout
@@ -37,11 +36,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_small"
-                android:layout_weight="1"
-                app:cardCornerRadius="@dimen/card_corner_radius"
-                app:cardElevation="1dp"
-                app:strokeColor="?attr/colorSurfaceVariant"
-                app:strokeWidth="1dp">
+                android:layout_weight="1">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -54,17 +49,15 @@
                         android:layout_height="wrap_content"
                         android:text="@string/kpi_cobrado"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textAppearance="?attr/textAppearanceLabelMedium" />
 
                     <TextView
                         android:id="@+id/tvDashCobrado"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textAppearance="?attr/textAppearanceTitleLarge"
                         tools:text="$12,500.00" />
 
                 </LinearLayout>
@@ -75,11 +68,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_small"
-                android:layout_weight="1"
-                app:cardCornerRadius="@dimen/card_corner_radius"
-                app:cardElevation="1dp"
-                app:strokeColor="?attr/colorSurfaceVariant"
-                app:strokeWidth="1dp">
+                android:layout_weight="1">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -92,8 +81,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/kpi_reembolsos"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textAppearance="?attr/textAppearanceLabelMedium" />
 
                     <TextView
                         android:id="@+id/tvDashReembolsos"
@@ -101,8 +89,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:textColor="?attr/colorError"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
+                        android:textAppearance="?attr/textAppearanceTitleLarge"
                         tools:text="$1,050.00" />
 
                 </LinearLayout>
@@ -122,11 +109,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_small"
-                android:layout_weight="1"
-                app:cardCornerRadius="@dimen/card_corner_radius"
-                app:cardElevation="1dp"
-                app:strokeColor="?attr/colorSurfaceVariant"
-                app:strokeWidth="1dp">
+                android:layout_weight="1">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -139,8 +122,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/kpi_neto"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textAppearance="?attr/textAppearanceLabelMedium" />
 
                     <TextView
                         android:id="@+id/tvDashNeto"
@@ -148,8 +130,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
+                        android:textAppearance="?attr/textAppearanceTitleLarge"
                         tools:text="$11,450.00" />
 
                 </LinearLayout>
@@ -160,11 +141,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_small"
-                android:layout_weight="1"
-                app:cardCornerRadius="@dimen/card_corner_radius"
-                app:cardElevation="1dp"
-                app:strokeColor="?attr/colorSurfaceVariant"
-                app:strokeWidth="1dp">
+                android:layout_weight="1">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -177,8 +154,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/kpi_por_cobrar"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textAppearance="?attr/textAppearanceLabelMedium" />
 
                     <TextView
                         android:id="@+id/tvDashPorCobrar"
@@ -186,8 +162,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
+                        android:textAppearance="?attr/textAppearanceTitleLarge"
                         tools:text="$4,900.00" />
 
                 </LinearLayout>
@@ -202,9 +177,8 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_medium"
             android:text="@string/seccion_operacion"
-            android:textColor="?attr/colorPrimary"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textColor="?attr/colorOnSurface"
+            android:textAppearance="?attr/textAppearanceTitleLarge" />
 
         <!-- Fila 1 Operación: Eventos hoy y Próximos 7 días -->
         <LinearLayout
@@ -217,11 +191,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_small"
-                android:layout_weight="1"
-                app:cardCornerRadius="@dimen/card_corner_radius"
-                app:cardElevation="1dp"
-                app:strokeColor="?attr/colorSurfaceVariant"
-                app:strokeWidth="1dp">
+                android:layout_weight="1">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -234,8 +204,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/kpi_eventos_hoy"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textAppearance="?attr/textAppearanceLabelMedium" />
 
                     <TextView
                         android:id="@+id/tvDashEventosHoy"
@@ -243,8 +212,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="22sp"
-                        android:textStyle="bold"
+                        android:textAppearance="?attr/textAppearanceHeadlineSmall"
                         tools:text="2" />
 
                 </LinearLayout>
@@ -255,11 +223,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_small"
-                android:layout_weight="1"
-                app:cardCornerRadius="@dimen/card_corner_radius"
-                app:cardElevation="1dp"
-                app:strokeColor="?attr/colorSurfaceVariant"
-                app:strokeWidth="1dp">
+                android:layout_weight="1">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -272,8 +236,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/kpi_proximos_7_dias"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textAppearance="?attr/textAppearanceLabelMedium" />
 
                     <TextView
                         android:id="@+id/tvDashProximos7Dias"
@@ -281,8 +244,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="22sp"
-                        android:textStyle="bold"
+                        android:textAppearance="?attr/textAppearanceHeadlineSmall"
                         tools:text="5" />
 
                 </LinearLayout>
@@ -301,11 +263,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_small"
-                android:layout_weight="1"
-                app:cardCornerRadius="@dimen/card_corner_radius"
-                app:cardElevation="1dp"
-                app:strokeColor="?attr/colorSurfaceVariant"
-                app:strokeWidth="1dp">
+                android:layout_weight="1">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -318,8 +276,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/kpi_apartados_por_pagar"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textAppearance="?attr/textAppearanceLabelMedium" />
 
                     <TextView
                         android:id="@+id/tvDashApartadosPorPagar"
@@ -327,8 +284,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="22sp"
-                        android:textStyle="bold"
+                        android:textAppearance="?attr/textAppearanceHeadlineSmall"
                         tools:text="1" />
 
                 </LinearLayout>
@@ -339,11 +295,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_small"
-                android:layout_weight="1"
-                app:cardCornerRadius="@dimen/card_corner_radius"
-                app:cardElevation="1dp"
-                app:strokeColor="?attr/colorSurfaceVariant"
-                app:strokeWidth="1dp">
+                android:layout_weight="1">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -356,8 +308,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/kpi_equipos_por_asignar"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textAppearance="?attr/textAppearanceLabelMedium" />
 
                     <TextView
                         android:id="@+id/tvDashEquiposPorAsignar"
@@ -365,8 +316,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="22sp"
-                        android:textStyle="bold"
+                        android:textAppearance="?attr/textAppearanceHeadlineSmall"
                         tools:text="0" />
 
                 </LinearLayout>
@@ -380,11 +330,7 @@
             android:id="@+id/cardDashPorRevisar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_small"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="1dp"
-            app:strokeColor="?attr/colorSurfaceVariant"
-            app:strokeWidth="1dp">
+            android:layout_marginTop="@dimen/spacing_small">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -397,8 +343,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/kpi_por_revisar"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:textAppearance="?attr/textAppearanceLabelMedium" />
 
                 <TextView
                     android:id="@+id/tvDashPorRevisar"
@@ -406,8 +351,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:textColor="?attr/colorOnSurface"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
+                    android:textAppearance="?attr/textAppearanceHeadlineSmall"
                     tools:text="0" />
 
             </LinearLayout>
@@ -421,17 +365,12 @@
             android:layout_marginTop="@dimen/spacing_large"
             android:layout_marginBottom="@dimen/spacing_medium"
             android:text="@string/seccion_lo_mas_reciente"
-            android:textColor="?attr/colorPrimary"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textColor="?attr/colorOnSurface"
+            android:textAppearance="?attr/textAppearanceTitleLarge" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="1dp"
-            app:strokeColor="?attr/colorSurfaceVariant"
-            app:strokeWidth="1dp">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -470,26 +409,24 @@
                         android:orientation="vertical">
 
                         <TextView
-                            style="@style/TextAppearance.Material3.LabelSmall"
+                            android:textAppearance="?attr/textAppearanceLabelSmall"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/nav_pedidos"
-                            android:textColor="?attr/colorPrimary"
-                            android:textStyle="bold" />
+                            android:textColor="?attr/colorOnSurface" />
 
                         <TextView
                             android:id="@+id/tvRecientePedidosTitulo"
-                            style="@style/TextAppearance.Material3.BodyMedium"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:textColor="?attr/colorOnSurface"
-                            android:textStyle="bold"
                             tools:text="Pedido #12 · Boda de Ana y Luis" />
 
                         <TextView
                             android:id="@+id/tvRecientePedidosSubtitulo"
-                            style="@style/TextAppearance.Material3.BodySmall"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
@@ -510,7 +447,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="?attr/colorSurfaceVariant" />
+                    android:background="?attr/colorOutlineVariant" />
 
                 <!-- Fila 2: Agenda -->
                 <LinearLayout
@@ -544,26 +481,24 @@
                         android:orientation="vertical">
 
                         <TextView
-                            style="@style/TextAppearance.Material3.LabelSmall"
+                            android:textAppearance="?attr/textAppearanceLabelSmall"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/nav_agenda"
-                            android:textColor="?attr/colorPrimary"
-                            android:textStyle="bold" />
+                            android:textColor="?attr/colorOnSurface" />
 
                         <TextView
                             android:id="@+id/tvRecienteAgendaTitulo"
-                            style="@style/TextAppearance.Material3.BodyMedium"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:textColor="?attr/colorOnSurface"
-                            android:textStyle="bold"
                             tools:text="XV Años de Andrea" />
 
                         <TextView
                             android:id="@+id/tvRecienteAgendaSubtitulo"
-                            style="@style/TextAppearance.Material3.BodySmall"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
@@ -584,7 +519,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="?attr/colorSurfaceVariant" />
+                    android:background="?attr/colorOutlineVariant" />
 
                 <!-- Fila 3: Inventario -->
                 <LinearLayout
@@ -618,26 +553,24 @@
                         android:orientation="vertical">
 
                         <TextView
-                            style="@style/TextAppearance.Material3.LabelSmall"
+                            android:textAppearance="?attr/textAppearanceLabelSmall"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/nav_inventario"
-                            android:textColor="?attr/colorPrimary"
-                            android:textStyle="bold" />
+                            android:textColor="?attr/colorOnSurface" />
 
                         <TextView
                             android:id="@+id/tvRecienteInventarioTitulo"
-                            style="@style/TextAppearance.Material3.BodyMedium"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:textColor="?attr/colorOnSurface"
-                            android:textStyle="bold"
                             tools:text="Bafle JBL EON715 (2)" />
 
                         <TextView
                             android:id="@+id/tvRecienteInventarioSubtitulo"
-                            style="@style/TextAppearance.Material3.BodySmall"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
@@ -658,7 +591,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="?attr/colorSurfaceVariant" />
+                    android:background="?attr/colorOutlineVariant" />
 
                 <!-- Fila 4: Finanzas -->
                 <LinearLayout
@@ -692,26 +625,24 @@
                         android:orientation="vertical">
 
                         <TextView
-                            style="@style/TextAppearance.Material3.LabelSmall"
+                            android:textAppearance="?attr/textAppearanceLabelSmall"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/nav_finanzas"
-                            android:textColor="?attr/colorPrimary"
-                            android:textStyle="bold" />
+                            android:textColor="?attr/colorOnSurface" />
 
                         <TextView
                             android:id="@+id/tvRecienteFinanzasTitulo"
-                            style="@style/TextAppearance.Material3.BodyMedium"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:textColor="?attr/colorOnSurface"
-                            android:textStyle="bold"
                             tools:text="Anticipo · $1,500.00" />
 
                         <TextView
                             android:id="@+id/tvRecienteFinanzasSubtitulo"
-                            style="@style/TextAppearance.Material3.BodySmall"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"

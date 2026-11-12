@@ -16,12 +16,11 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/spacing_medium"
         android:textColor="?attr/colorOnSurface"
-        android:textSize="@dimen/text_body"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
         tools:text="Se reembolsará $1,050.00 (100% de lo pagado)" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilMotivoRechazo"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/label_motivo_rechazo"

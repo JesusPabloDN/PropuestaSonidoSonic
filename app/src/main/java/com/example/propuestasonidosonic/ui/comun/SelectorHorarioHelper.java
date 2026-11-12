@@ -1,6 +1,7 @@
 package com.example.propuestasonidosonic.ui.comun;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
@@ -164,7 +165,7 @@ public class SelectorHorarioHelper {
                         fechaSeleccionadaMillis, duracionMin, 5);
 
                 for (Long altMillis : alternativas) {
-                    Chip altChip = new Chip(context);
+                    Chip altChip = (Chip) LayoutInflater.from(context).inflate(R.layout.item_chip_sugerencia, chipGroupAlternativas, false);
                     String textoAlt = FormatUtils.fechaHoraCorta(altMillis);
                     altChip.setText(textoAlt);
                     altChip.setCheckable(false);
@@ -183,7 +184,7 @@ public class SelectorHorarioHelper {
         chipGroupHorarios.setSingleSelection(true);
 
         for (Long hMillis : viables) {
-            Chip chip = new Chip(context);
+            Chip chip = (Chip) LayoutInflater.from(context).inflate(R.layout.item_chip_filtro, chipGroupHorarios, false);
             chip.setText(sdfHora.format(new Date(hMillis)));
             chip.setCheckable(true);
             chip.setClickable(true);

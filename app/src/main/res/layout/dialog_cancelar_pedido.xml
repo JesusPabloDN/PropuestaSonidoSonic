@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:text="@string/label_quien_cancela"
         android:textColor="?attr/colorOnSurfaceVariant"
-        android:textSize="12sp" />
+        android:textAppearance="?attr/textAppearanceBodySmall" />
 
     <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/toggleQuienCancela"
@@ -48,17 +48,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/spacing_medium"
-        android:background="?attr/colorSurfaceVariant"
+        android:background="@drawable/bg_aviso"
         android:padding="@dimen/spacing_medium"
         android:textColor="?attr/colorOnSurface"
-        android:textSize="@dimen/text_body"
-        android:textStyle="bold"
+        android:textAppearance="?attr/textAppearanceTitleMedium"
         tools:text="Reembolso a realizar: $1,050.00" />
 
     <!-- Motivo de cancelación -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilMotivoCancelacion"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/label_motivo_cancelacion">

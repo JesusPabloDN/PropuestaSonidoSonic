@@ -51,7 +51,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_medium"
             android:hint="@string/hint_correo"
-            app:boxBackgroundMode="outline"
             app:errorEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -59,9 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textEmailAddress"
-                android:minHeight="@dimen/touch_target_min"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="@dimen/text_body" />
+                android:minHeight="@dimen/touch_target_min" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Campo Contraseña -->
@@ -71,7 +68,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_large"
             android:hint="@string/hint_contrasena"
-            app:boxBackgroundMode="outline"
             app:endIconMode="password_toggle"
             app:errorEnabled="true">
 
@@ -81,9 +77,7 @@
                 android:layout_height="wrap_content"
                 android:imeOptions="actionDone"
                 android:inputType="textPassword"
-                android:minHeight="@dimen/touch_target_min"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="@dimen/text_body" />
+                android:minHeight="@dimen/touch_target_min" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Botón Iniciar Sesión (Único botón) -->
@@ -92,20 +86,15 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/button_height"
             android:layout_marginBottom="@dimen/spacing_medium"
-            android:text="@string/btn_iniciar_sesion"
-            android:textSize="@dimen/text_body" />
+            android:text="@string/btn_iniciar_sesion" />
 
         <!-- Enlace a Registro (visible solo para Cliente) -->
-        <TextView
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/tvIrARegistro"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="@dimen/touch_target_min"
-            android:gravity="center"
-            android:padding="@dimen/spacing_small"
-            android:text="@string/link_ir_a_registro"
-            android:textColor="?attr/colorPrimary"
-            android:textSize="@dimen/text_body" />
+            android:text="@string/link_ir_a_registro" />
 
     </LinearLayout>
 

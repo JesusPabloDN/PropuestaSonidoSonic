@@ -20,11 +20,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_medium"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="1dp"
-            app:strokeColor="?attr/colorSurfaceVariant"
-            app:strokeWidth="1dp">
+            android:layout_marginBottom="@dimen/spacing_medium">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -46,8 +42,7 @@
                         android:background="@drawable/bg_avatar_circle"
                         android:gravity="center"
                         android:textColor="?attr/colorOnPrimaryContainer"
-                        android:textSize="22sp"
-                        android:textStyle="bold"
+                        android:textAppearance="?attr/textAppearanceHeadlineSmall"
                         tools:text="SP" />
 
                     <LinearLayout
@@ -58,16 +53,15 @@
                         android:orientation="vertical">
 
                         <TextView
-                            style="@style/TextAppearance.Material3.TitleMedium"
+                            android:textAppearance="?attr/textAppearanceTitleMedium"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/perfil_seccion_datos_personales"
-                            android:textColor="?attr/colorPrimary"
-                            android:textStyle="bold" />
+                            android:textColor="?attr/colorOnSurface" />
 
                         <TextView
                             android:id="@+id/tvPerfilCuentaCreada"
-                            style="@style/TextAppearance.Material3.BodySmall"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
@@ -81,7 +75,6 @@
                 <!-- Nombre -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilPerfilNombre"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_large"
@@ -99,7 +92,6 @@
                 <!-- Teléfono -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilPerfilTelefono"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_medium"
@@ -117,7 +109,6 @@
                 <!-- Correo (Solo lectura) -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilPerfilCorreo"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_medium"
@@ -137,7 +128,6 @@
                 <!-- Rol (Solo lectura) -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilPerfilRol"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_medium"
@@ -171,11 +161,7 @@
         <!-- SECCIÓN 2: CAMBIAR CONTRASEÑA -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="1dp"
-            app:strokeColor="?attr/colorSurfaceVariant"
-            app:strokeWidth="1dp">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -184,15 +170,14 @@
                 android:padding="@dimen/spacing_large">
 
                 <TextView
-                    style="@style/TextAppearance.Material3.TitleMedium"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/perfil_seccion_cambiar_contrasena"
-                    android:textColor="?attr/colorPrimary"
-                    android:textStyle="bold" />
+                    android:textColor="?attr/colorOnSurface" />
 
                 <TextView
-                    style="@style/TextAppearance.Material3.BodySmall"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
@@ -202,7 +187,6 @@
                 <!-- Contraseña Actual -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilPerfilPasswordActual"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_medium"
@@ -221,7 +205,6 @@
                 <!-- Contraseña Nueva -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilPerfilPasswordNueva"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_medium"
@@ -240,7 +223,6 @@
                 <!-- Confirmar Contraseña Nueva -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilPerfilPasswordConfirmar"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_medium"

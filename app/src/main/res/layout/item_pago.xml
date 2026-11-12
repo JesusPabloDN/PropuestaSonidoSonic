@@ -25,9 +25,8 @@
                 android:id="@+id/tvPagoFolio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorPrimary"
-                android:textSize="13sp"
-                android:textStyle="bold"
+                android:textColor="?attr/colorTertiary"
+                android:textAppearance="?attr/textAppearanceLabelLarge"
                 tools:text="R-0001" />
 
             <TextView
@@ -36,8 +35,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="14sp"
-                android:textStyle="bold"
+                android:textAppearance="?attr/textAppearanceTitleSmall"
                 tools:text="Anticipo" />
 
         </LinearLayout>
@@ -48,7 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="12sp"
+            android:textAppearance="?attr/textAppearanceBodySmall"
             tools:text="12 oct 2026 14:30 · Efectivo" />
 
     </LinearLayout>
@@ -59,8 +57,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="4dp"
-        android:textSize="15sp"
-        android:textStyle="bold"
+        android:textAppearance="?attr/textAppearanceTitleSmall"
         tools:text="+ $1,050.00" />
 
     <com.google.android.material.button.MaterialButton
@@ -71,7 +68,6 @@
         android:minWidth="0dp"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
-        android:text="@string/btn_recibo"
-        android:textSize="13sp" />
+        android:text="@string/btn_recibo" />
 
 </LinearLayout>

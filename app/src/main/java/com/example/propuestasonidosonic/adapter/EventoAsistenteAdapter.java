@@ -110,8 +110,8 @@ public class EventoAsistenteAdapter extends RecyclerView.Adapter<EventoAsistente
                 tvBadgeHoy.setVisibility(View.VISIBLE);
                 tvBadgeHoy.setText(R.string.badge_hoy);
                 BadgeUtils.pintar(tvBadgeHoy,
-                        ContextCompat.getColor(ctx, R.color.status_disponible),
-                        ContextCompat.getColor(ctx, R.color.status_disponible_container));
+                        BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponible),
+                        BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponibleContainer));
             } else {
                 tvBadgeHoy.setVisibility(View.GONE);
             }
@@ -122,17 +122,17 @@ public class EventoAsistenteAdapter extends RecyclerView.Adapter<EventoAsistente
                 String estado = AsistenteUtils.estadoChecklist(ev != null ? ev.getChecklist() : null);
                 int colorTxt, colorBg;
                 if ("Completo".equals(estado)) {
-                    colorTxt = ContextCompat.getColor(ctx, R.color.status_disponible);
-                    colorBg = ContextCompat.getColor(ctx, R.color.status_disponible_container);
+                    colorTxt = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponible);
+                    colorBg = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponibleContainer);
                 } else if ("En evento".equals(estado)) {
-                    colorTxt = ContextCompat.getColor(ctx, R.color.status_rentado);
-                    colorBg = ContextCompat.getColor(ctx, R.color.status_rentado_container);
+                    colorTxt = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoRentado);
+                    colorBg = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoRentadoContainer);
                 } else if ("Pendiente".equals(estado)) {
-                    colorTxt = ContextCompat.getColor(ctx, R.color.status_pendiente);
-                    colorBg = ContextCompat.getColor(ctx, R.color.status_pendiente_container);
+                    colorTxt = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendiente);
+                    colorBg = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendienteContainer);
                 } else {
-                    colorTxt = ContextCompat.getColor(ctx, R.color.md_theme_light_onSurfaceVariant);
-                    colorBg = ContextCompat.getColor(ctx, R.color.md_theme_light_surfaceVariant);
+                    colorTxt = BadgeUtils.colorAtributo(ctx, com.google.android.material.R.attr.colorOnSurfaceVariant);
+                    colorBg = BadgeUtils.colorAtributo(ctx, com.google.android.material.R.attr.colorSurfaceContainerHighest);
                 }
                 tvBadgeChecklist.setVisibility(View.VISIBLE);
                 tvBadgeChecklist.setText(estado);

@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="?attr/colorSurface">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,13 +11,9 @@
         android:orientation="vertical"
         android:padding="@dimen/spacing_large">
 
-        <!-- Barra de arrastre visual del BottomSheet -->
-        <View
-            android:layout_width="40dp"
-            android:layout_height="4dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="@dimen/spacing_medium"
-            android:background="?attr/colorSurfaceVariant" />
+        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/tvTituloDialog"
@@ -27,8 +22,7 @@
             android:layout_marginBottom="@dimen/spacing_medium"
             android:text="@string/dialog_nuevo_personal_titulo"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="@dimen/text_headline"
-            android:textStyle="bold" />
+            android:textAppearance="?attr/textAppearanceHeadlineSmall" />
 
         <!-- Selector de Rol (Socio | Asistente) -->
         <TextView
@@ -38,7 +32,7 @@
             android:layout_marginBottom="@dimen/spacing_tiny"
             android:text="@string/label_rol_cuenta"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="@dimen/text_caption" />
+            android:textAppearance="?attr/textAppearanceBodyMedium" />
 
         <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/toggleRol"
@@ -77,7 +71,7 @@
             android:layout_marginBottom="@dimen/spacing_small"
             android:text="@string/aviso_correo_no_editable"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="@dimen/text_caption"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
             android:visibility="gone" />
 
         <!-- Nombre Completo -->
@@ -140,7 +134,7 @@
             android:layout_marginBottom="@dimen/spacing_medium"
             android:minHeight="@dimen/touch_target_min"
             android:text="@string/label_cuenta_activa"
-            android:textSize="@dimen/text_body"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
             android:visibility="gone" />
 
         <!-- Contraseña -->

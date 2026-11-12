@@ -112,12 +112,14 @@ public class PaqueteClienteAdapter extends RecyclerView.Adapter<PaqueteClienteAd
             if (paquete.getFotoUri() != null && !paquete.getFotoUri().trim().isEmpty()) {
                 Glide.with(context)
                         .load(Uri.parse(paquete.getFotoUri()))
+                        .theme(ivFoto.getContext().getTheme())
                         .centerCrop()
                         .error(fallbackDrawable)
                         .into(ivFoto);
             } else {
                 Glide.with(context)
                         .load(fallbackDrawable)
+                        .theme(ivFoto.getContext().getTheme())
                         .centerCrop()
                         .into(ivFoto);
             }

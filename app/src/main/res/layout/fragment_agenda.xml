@@ -32,7 +32,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/cd_mes_anterior"
                 app:srcCompat="@drawable/ic_chevron_left_24"
-                app:tint="?attr/colorOnSurface" />
+                app:tint="?attr/colorOnSurfaceVariant" />
 
             <TextView
                 android:id="@+id/tvMes"
@@ -41,8 +41,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="18sp"
-                android:textStyle="bold"
+                android:textAppearance="?attr/textAppearanceTitleLarge"
                 tools:text="octubre de 2026" />
 
             <ImageButton
@@ -52,7 +51,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/cd_mes_siguiente"
                 app:srcCompat="@drawable/ic_chevron_right_24"
-                app:tint="?attr/colorOnSurface" />
+                app:tint="?attr/colorOnSurfaceVariant" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnHoy"
@@ -60,8 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
-                android:text="@string/btn_hoy"
-                android:textColor="?attr/colorPrimary" />
+                android:text="@string/btn_hoy" />
 
         </LinearLayout>
 
@@ -81,8 +79,7 @@
                 android:gravity="center"
                 android:text="@string/dia_lunes_letra"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:textAppearance="?attr/textAppearanceLabelLarge" />
 
             <TextView
                 android:layout_width="0dp"
@@ -91,8 +88,7 @@
                 android:gravity="center"
                 android:text="@string/dia_martes_letra"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:textAppearance="?attr/textAppearanceLabelLarge" />
 
             <TextView
                 android:layout_width="0dp"
@@ -101,8 +97,7 @@
                 android:gravity="center"
                 android:text="@string/dia_miercoles_letra"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:textAppearance="?attr/textAppearanceLabelLarge" />
 
             <TextView
                 android:layout_width="0dp"
@@ -111,8 +106,7 @@
                 android:gravity="center"
                 android:text="@string/dia_jueves_letra"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:textAppearance="?attr/textAppearanceLabelLarge" />
 
             <TextView
                 android:layout_width="0dp"
@@ -121,8 +115,7 @@
                 android:gravity="center"
                 android:text="@string/dia_viernes_letra"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:textAppearance="?attr/textAppearanceLabelLarge" />
 
             <TextView
                 android:layout_width="0dp"
@@ -131,8 +124,7 @@
                 android:gravity="center"
                 android:text="@string/dia_sabado_letra"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:textAppearance="?attr/textAppearanceLabelLarge" />
 
             <TextView
                 android:layout_width="0dp"
@@ -141,8 +133,7 @@
                 android:gravity="center"
                 android:text="@string/dia_domingo_letra"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:textAppearance="?attr/textAppearanceLabelLarge" />
 
         </LinearLayout>
 
@@ -164,7 +155,7 @@
             android:layout_height="1dp"
             android:layout_marginTop="@dimen/spacing_small"
             android:layout_marginBottom="@dimen/spacing_medium"
-            android:background="?attr/colorSurfaceVariant" />
+            android:background="?attr/colorOutlineVariant" />
 
         <!-- 4. Selector de vista: Día | Mes -->
         <LinearLayout
@@ -213,8 +204,7 @@
             android:layout_marginEnd="@dimen/spacing_medium"
             android:layout_marginBottom="@dimen/spacing_small"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="16sp"
-            android:textStyle="bold"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
             tools:text="lunes 12 de octubre de 2026" />
 
         <!-- 6. Lista de eventos -->
@@ -242,7 +232,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="@dimen/text_body"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
                 tools:text="No hay eventos para esta fecha" />
 
         </LinearLayout>

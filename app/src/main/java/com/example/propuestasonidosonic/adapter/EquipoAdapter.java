@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.propuestasonidosonic.R;
+import com.example.propuestasonidosonic.util.BadgeUtils;
 import com.example.propuestasonidosonic.model.CategoriaEquipo;
 import com.example.propuestasonidosonic.model.Equipo;
 import com.example.propuestasonidosonic.model.Evento;
@@ -135,6 +136,7 @@ public class EquipoAdapter extends RecyclerView.Adapter<EquipoAdapter.EquipoView
             if (equipo.getFotoUri() != null && !equipo.getFotoUri().trim().isEmpty()) {
                 Glide.with(context)
                         .load(Uri.parse(equipo.getFotoUri()))
+                        .theme(ivFoto.getContext().getTheme())
                         .placeholder(fallbackDrawable)
                         .error(fallbackDrawable)
                         .centerCrop()
@@ -142,6 +144,7 @@ public class EquipoAdapter extends RecyclerView.Adapter<EquipoAdapter.EquipoView
             } else {
                 Glide.with(context)
                         .load(fallbackDrawable)
+                        .theme(ivFoto.getContext().getTheme())
                         .centerCrop()
                         .into(ivFoto);
             }
@@ -169,20 +172,20 @@ public class EquipoAdapter extends RecyclerView.Adapter<EquipoAdapter.EquipoView
             String texto;
 
             if (Equipo.ESTADO_RENTADO.equals(estado)) {
-                textColor = ContextCompat.getColor(context, R.color.status_rentado);
-                containerColor = ContextCompat.getColor(context, R.color.status_rentado_container);
+                textColor = BadgeUtils.colorAtributo(context, R.attr.colorEstadoRentado);
+                containerColor = BadgeUtils.colorAtributo(context, R.attr.colorEstadoRentadoContainer);
                 texto = context.getString(R.string.estado_rentado);
             } else if (Equipo.ESTADO_EN_REPARACION.equals(estado)) {
-                textColor = ContextCompat.getColor(context, R.color.status_en_reparacion);
-                containerColor = ContextCompat.getColor(context, R.color.status_en_reparacion_container);
+                textColor = BadgeUtils.colorAtributo(context, R.attr.colorEstadoPendiente);
+                containerColor = BadgeUtils.colorAtributo(context, R.attr.colorEstadoPendienteContainer);
                 texto = context.getString(R.string.estado_en_reparacion);
             } else if (Equipo.ESTADO_DANADO.equals(estado)) {
-                textColor = ContextCompat.getColor(context, R.color.status_danado);
-                containerColor = ContextCompat.getColor(context, R.color.status_danado_container);
+                textColor = BadgeUtils.colorAtributo(context, R.attr.colorEstadoDanado);
+                containerColor = BadgeUtils.colorAtributo(context, R.attr.colorEstadoDanadoContainer);
                 texto = context.getString(R.string.estado_danado);
             } else {
-                textColor = ContextCompat.getColor(context, R.color.status_disponible);
-                containerColor = ContextCompat.getColor(context, R.color.status_disponible_container);
+                textColor = BadgeUtils.colorAtributo(context, R.attr.colorEstadoDisponible);
+                containerColor = BadgeUtils.colorAtributo(context, R.attr.colorEstadoDisponibleContainer);
                 texto = context.getString(R.string.estado_disponible);
             }
 

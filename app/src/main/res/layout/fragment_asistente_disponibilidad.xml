@@ -24,7 +24,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/cd_mes_anterior"
             android:src="@drawable/ic_chevron_left_24"
-            app:tint="?attr/colorOnSurface" />
+            app:tint="?attr/colorOnSurfaceVariant" />
 
         <TextView
             android:id="@+id/tvMesAnio"
@@ -33,8 +33,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="@dimen/text_title"
-            android:textStyle="bold"
+            android:textAppearance="?attr/textAppearanceTitleLarge"
             tools:text="octubre de 2026" />
 
         <ImageButton
@@ -44,7 +43,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/cd_mes_siguiente"
             android:src="@drawable/ic_chevron_right_24"
-            app:tint="?attr/colorOnSurface" />
+            app:tint="?attr/colorOnSurfaceVariant" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnHoy"
@@ -64,74 +63,67 @@
         android:orientation="horizontal">
 
         <TextView
-            style="@style/TextAppearance.Material3.BodySmall"
+            android:textAppearance="?attr/textAppearanceBodySmall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/dia_lunes_letra"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:textStyle="bold" />
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
         <TextView
-            style="@style/TextAppearance.Material3.BodySmall"
+            android:textAppearance="?attr/textAppearanceBodySmall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/dia_martes_letra"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:textStyle="bold" />
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
         <TextView
-            style="@style/TextAppearance.Material3.BodySmall"
+            android:textAppearance="?attr/textAppearanceBodySmall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/dia_miercoles_letra"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:textStyle="bold" />
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
         <TextView
-            style="@style/TextAppearance.Material3.BodySmall"
+            android:textAppearance="?attr/textAppearanceBodySmall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/dia_jueves_letra"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:textStyle="bold" />
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
         <TextView
-            style="@style/TextAppearance.Material3.BodySmall"
+            android:textAppearance="?attr/textAppearanceBodySmall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/dia_viernes_letra"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:textStyle="bold" />
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
         <TextView
-            style="@style/TextAppearance.Material3.BodySmall"
+            android:textAppearance="?attr/textAppearanceBodySmall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/dia_sabado_letra"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:textStyle="bold" />
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
         <TextView
-            style="@style/TextAppearance.Material3.BodySmall"
+            android:textAppearance="?attr/textAppearanceBodySmall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/dia_domingo_letra"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:textStyle="bold" />
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
     </LinearLayout>
 
@@ -150,8 +142,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_medium"
         android:textColor="?attr/colorOnSurface"
-        android:textSize="@dimen/text_body"
-        android:textStyle="bold"
+        android:textAppearance="?attr/textAppearanceTitleMedium"
         tools:text="Días disponibles este mes: 8" />
 
     <!-- Botón para Marcar Fines de Semana -->

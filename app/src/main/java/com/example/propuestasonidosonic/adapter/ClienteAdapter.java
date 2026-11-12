@@ -92,8 +92,8 @@ public class ClienteAdapter extends RecyclerView.Adapter<ClienteAdapter.ClienteV
                 String saldoStr = FormatUtils.formatoMoneda(cliente.getSaldoPendiente());
                 tvClienteSaldoBadge.setText(ctx.getString(R.string.formato_cliente_saldo, saldoStr));
 
-                int colorTexto = ContextCompat.getColor(ctx, R.color.status_pendiente);
-                int colorFondo = ContextCompat.getColor(ctx, R.color.status_pendiente_container);
+                int colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendiente);
+                int colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendienteContainer);
                 BadgeUtils.pintar(tvClienteSaldoBadge, colorTexto, colorFondo);
             } else {
                 tvClienteSaldoBadge.setVisibility(View.GONE);

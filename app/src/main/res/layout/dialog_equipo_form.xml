@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="?attr/colorSurface">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,21 +11,16 @@
         android:orientation="vertical"
         android:padding="@dimen/spacing_large">
 
-        <!-- Barra de arrastre visual del BottomSheet -->
-        <View
-            android:layout_width="40dp"
-            android:layout_height="4dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="@dimen/spacing_medium"
-            android:background="?attr/colorSurfaceVariant" />
+        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/tvTituloDialog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/dialog_nuevo_equipo_titulo"
-            android:textSize="@dimen/text_headline"
-            android:textStyle="bold"
+            android:textAppearance="?attr/textAppearanceHeadlineSmall"
             android:textColor="?attr/colorOnSurface"
             android:layout_marginBottom="@dimen/spacing_medium" />
 
@@ -60,7 +54,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/btn_elegir_foto"
-                    android:textSize="@dimen/text_caption"
                     android:minHeight="@dimen/touch_target_min" />
 
                 <com.google.android.material.button.MaterialButton
@@ -69,7 +62,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/btn_quitar_foto"
-                    android:textSize="@dimen/text_caption"
                     android:minHeight="@dimen/touch_target_min"
                     android:visibility="gone"
                     tools:visibility="visible" />
@@ -84,34 +76,31 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_small"
-            android:hint="@string/hint_nombre_modelo"
-            app:boxBackgroundMode="outline">
+            android:hint="@string/hint_nombre_modelo">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etNombreEquipo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textCapWords"
-                android:textSize="@dimen/text_body" />
+                android:inputType="textCapWords" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Campo: Categoría (Spinner con label) -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/label_categoria"
-            android:textSize="@dimen/text_caption"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:layout_marginTop="@dimen/spacing_tiny"
-            android:layout_marginBottom="@dimen/spacing_tiny" />
-
-        <Spinner
-            android:id="@+id/spCategoriaDialog"
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/touch_target_min"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_small"
-            android:spinnerMode="dropdown" />
+            android:hint="@string/label_categoria">
+
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/spCategoriaDialog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Campo: Precio de renta -->
         <com.google.android.material.textfield.TextInputLayout
@@ -120,34 +109,31 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_small"
             android:hint="@string/hint_precio_renta"
-            app:prefixText="$"
-            app:boxBackgroundMode="outline">
+            app:prefixText="$">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etPrecioRenta"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="numberDecimal"
-                android:textSize="@dimen/text_body" />
+                android:inputType="numberDecimal" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Campo: Estado físico -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/label_estado_fisico"
-            android:textSize="@dimen/text_caption"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:layout_marginTop="@dimen/spacing_tiny"
-            android:layout_marginBottom="@dimen/spacing_tiny" />
-
-        <Spinner
-            android:id="@+id/spEstadoFisicoDialog"
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/touch_target_min"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_small"
-            android:spinnerMode="dropdown" />
+            android:hint="@string/label_estado_fisico">
+
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/spEstadoFisicoDialog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Campo: Cantidad de unidades (solo en creación) -->
         <com.google.android.material.textfield.TextInputLayout
@@ -155,16 +141,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_medium"
-            android:hint="@string/hint_cantidad_unidades"
-            app:boxBackgroundMode="outline">
+            android:hint="@string/hint_cantidad_unidades">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etCantidad"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:text="1"
-                android:textSize="@dimen/text_body" />
+                android:text="1" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -174,20 +158,14 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/button_height"
             android:text="@string/btn_guardar"
-            android:textSize="@dimen/text_body"
-            app:cornerRadius="@dimen/card_corner_radius"
             android:layout_marginBottom="@dimen/spacing_small" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnEliminarEquipo"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+            style="@style/Widget.SonidoSonic.Button.OutlinedButton.Destructivo"
             android:layout_width="match_parent"
             android:layout_height="@dimen/button_height"
             android:text="@string/btn_eliminar"
-            android:textColor="@color/status_danado"
-            app:strokeColor="@color/status_danado"
-            android:textSize="@dimen/text_body"
-            app:cornerRadius="@dimen/card_corner_radius"
             android:visibility="gone"
             tools:visibility="visible"
             android:layout_marginBottom="@dimen/spacing_small" />
@@ -197,8 +175,7 @@
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="@dimen/button_height"
-            android:text="@string/dialog_cancelar"
-            android:textSize="@dimen/text_body" />
+            android:text="@string/dialog_cancelar" />
 
     </LinearLayout>
 

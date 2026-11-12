@@ -9,11 +9,7 @@
     android:layout_marginEnd="@dimen/spacing_medium"
     android:layout_marginBottom="@dimen/spacing_tiny"
     android:clickable="true"
-    android:focusable="true"
-    app:cardCornerRadius="@dimen/card_corner_radius"
-    app:cardElevation="1dp"
-    app:strokeColor="?attr/colorSurfaceVariant"
-    app:strokeWidth="1dp">
+    android:focusable="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -33,8 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="16sp"
-                android:textStyle="bold"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
                 tools:text="Mariana Gómez" />
 
             <TextView
@@ -46,8 +41,7 @@
                 android:paddingTop="2dp"
                 android:paddingEnd="@dimen/spacing_small"
                 android:paddingBottom="2dp"
-                android:textSize="12sp"
-                android:textStyle="bold"
+                android:textAppearance="?attr/textAppearanceLabelMedium"
                 android:visibility="gone"
                 tools:text="Saldo $2,450.00"
                 tools:visibility="visible" />
@@ -60,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="13sp"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
             tools:text="(747) 123-4567" />
 
         <TextView
@@ -69,7 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_tiny"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="13sp"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
             tools:text="2 pedidos · Pagado $4,500.00" />
 
     </LinearLayout>

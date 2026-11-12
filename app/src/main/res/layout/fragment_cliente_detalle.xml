@@ -17,11 +17,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_medium"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="1dp"
-            app:strokeColor="?attr/colorSurfaceVariant"
-            app:strokeWidth="1dp">
+            android:layout_marginBottom="@dimen/spacing_medium">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -34,8 +30,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="?attr/colorOnSurface"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
+                    android:textAppearance="?attr/textAppearanceTitleLarge"
                     tools:text="Mariana Gómez" />
 
                 <TextView
@@ -44,7 +39,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_tiny"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="@dimen/text_body"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
                     tools:text="Tel: (747) 123-4567" />
 
                 <TextView
@@ -53,7 +48,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="@dimen/text_body"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
                     android:visibility="gone"
                     tools:text="mariana@example.com"
                     tools:visibility="visible" />
@@ -99,11 +94,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="4dp"
-                android:layout_weight="1"
-                app:cardCornerRadius="@dimen/card_corner_radius"
-                app:cardElevation="1dp"
-                app:strokeColor="?attr/colorSurfaceVariant"
-                app:strokeWidth="1dp">
+                android:layout_weight="1">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -116,8 +107,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/label_pedidos_cliente"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textAppearance="?attr/textAppearanceLabelSmall" />
 
                     <TextView
                         android:id="@+id/tvKpiPedidos"
@@ -125,8 +115,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
                         tools:text="2" />
 
                 </LinearLayout>
@@ -138,11 +127,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
-                android:layout_weight="1"
-                app:cardCornerRadius="@dimen/card_corner_radius"
-                app:cardElevation="1dp"
-                app:strokeColor="?attr/colorSurfaceVariant"
-                app:strokeWidth="1dp">
+                android:layout_weight="1">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -155,17 +140,15 @@
                         android:layout_height="wrap_content"
                         android:text="@string/label_pagado_cliente"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textAppearance="?attr/textAppearanceLabelSmall" />
 
                     <TextView
                         android:id="@+id/tvKpiPagado"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textAppearance="?attr/textAppearanceTitleSmall"
                         tools:text="$4,500" />
 
                 </LinearLayout>
@@ -176,11 +159,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:layout_weight="1"
-                app:cardCornerRadius="@dimen/card_corner_radius"
-                app:cardElevation="1dp"
-                app:strokeColor="?attr/colorSurfaceVariant"
-                app:strokeWidth="1dp">
+                android:layout_weight="1">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -193,8 +172,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/label_saldo_cliente"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textAppearance="?attr/textAppearanceLabelSmall" />
 
                     <TextView
                         android:id="@+id/tvKpiSaldo"
@@ -202,8 +180,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
+                        android:textAppearance="?attr/textAppearanceTitleSmall"
                         tools:text="$2,450" />
 
                 </LinearLayout>
@@ -218,9 +195,8 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_medium"
             android:text="@string/label_pedidos_cliente"
-            android:textColor="?attr/colorPrimary"
-            android:textSize="@dimen/text_title"
-            android:textStyle="bold" />
+            android:textColor="?attr/colorOnSurface"
+            android:textAppearance="?attr/textAppearanceTitleLarge" />
 
         <TextView
             android:id="@+id/tvSinPedidosCliente"
@@ -229,7 +205,7 @@
             android:layout_marginBottom="@dimen/spacing_medium"
             android:text="@string/sin_movimientos_mes"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="@dimen/text_body"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
             android:visibility="gone"
             tools:visibility="visible" />
 

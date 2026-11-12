@@ -28,4 +28,79 @@
     <style name="Widget.SonidoSonic.MaterialDivider" parent="Widget.Material3.MaterialDivider">
         <item name="dividerColor">?attr/colorOutlineVariant</item>
     </style>
+
+    <style name="Widget.SonidoSonic.CardView.Outlined" parent="Widget.Material3.CardView.Outlined">
+        <item name="cardBackgroundColor">?attr/colorSurface</item>
+        <item name="strokeColor">?attr/colorOutlineVariant</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardCornerRadius">@dimen/card_corner_radius</item>
+    </style>
+
+    <style name="Widget.SonidoSonic.CardView.Elevated" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">?attr/colorSurfaceContainerLow</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="cardElevation">1dp</item>
+        <item name="cardCornerRadius">@dimen/card_corner_radius</item>
+    </style>
+
+    <style name="Widget.SonidoSonic.CardView.Filled" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">?attr/colorSurfaceContainerHighest</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardCornerRadius">@dimen/card_corner_radius</item>
+    </style>
+
+    <style name="Widget.SonidoSonic.Button.OutlinedButton.Destructivo" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textColor">@color/selector_contenido_error</item>
+        <item name="iconTint">@color/selector_contenido_error</item>
+        <item name="strokeColor">@color/selector_borde_error</item>
+        <item name="rippleColor">@color/selector_ripple_error</item>
+    </style>
+
+    <style name="Widget.SonidoSonic.Button.TextButton.Destructivo" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">@color/selector_contenido_error</item>
+        <item name="iconTint">@color/selector_contenido_error</item>
+        <item name="rippleColor">@color/selector_ripple_error</item>
+    </style>
+
+    <style name="Widget.SonidoSonic.FloatingActionButton" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="backgroundTint">?attr/colorPrimary</item>
+        <item name="tint">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="Widget.SonidoSonic.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeErrorColor">?attr/colorError</item>
+        <item name="errorTextColor">?attr/colorError</item>
+        <item name="errorIconTint">?attr/colorError</item>
+    </style>
+
+    <style name="Widget.SonidoSonic.Snackbar" parent="Widget.Material3.Snackbar">
+        <item name="backgroundTint">?attr/colorSurfaceInverse</item>
+    </style>
+
+    <style name="Widget.SonidoSonic.Snackbar.TextView" parent="Widget.Material3.Snackbar.TextView">
+        <item name="android:textColor">?attr/colorOnSurfaceInverse</item>
+        <item name="android:textAppearance">?attr/textAppearanceBodyMedium</item>
+    </style>
+
+    <style name="Widget.SonidoSonic.Snackbar.Button" parent="Widget.Material3.Button.TextButton.Snackbar">
+        <item name="android:textColor">?attr/colorPrimaryInverse</item>
+    </style>
+
+    <style name="ThemeOverlay.SonidoSonic.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="alertDialogStyle">@style/MaterialAlertDialog.SonidoSonic</item>
+    </style>
+
+    <style name="MaterialAlertDialog.SonidoSonic" parent="MaterialAlertDialog.Material3">
+        <item name="backgroundTint">?attr/colorSurfaceContainerHigh</item>
+    </style>
+
+    <style name="ThemeOverlay.SonidoSonic.BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.SonidoSonic.BottomSheet</item>
+    </style>
+
+    <style name="Widget.SonidoSonic.BottomSheet" parent="Widget.Material3.BottomSheet.Modal">
+        <item name="backgroundTint">?attr/colorSurfaceContainerLow</item>
+    </style>
 </resources>

@@ -17,6 +17,7 @@ import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
 import com.example.propuestasonidosonic.R;
+import com.example.propuestasonidosonic.util.BadgeUtils;
 import com.example.propuestasonidosonic.SonidoSonicApp;
 import com.example.propuestasonidosonic.data.PaqueteRepository;
 import com.example.propuestasonidosonic.domain.MotorDisponibilidad;
@@ -108,12 +109,14 @@ public class PaqueteDetalleClienteFragment extends Fragment {
         if (paqueteActual.getFotoUri() != null && !paqueteActual.getFotoUri().trim().isEmpty()) {
             Glide.with(this)
                     .load(Uri.parse(paqueteActual.getFotoUri()))
+                    .theme(ivFotoDetalle.getContext().getTheme())
                     .centerCrop()
                     .error(fallbackDrawable)
                     .into(ivFotoDetalle);
         } else {
             Glide.with(this)
                     .load(fallbackDrawable)
+                    .theme(ivFotoDetalle.getContext().getTheme())
                     .centerCrop()
                     .into(ivFotoDetalle);
         }
@@ -125,7 +128,7 @@ public class PaqueteDetalleClienteFragment extends Fragment {
                 TextView tvItem = new TextView(requireContext());
                 tvItem.setTextSize(14);
                 tvItem.setPadding(0, 4, 0, 4);
-                tvItem.setTextColor(getResources().getColor(android.R.color.tab_indicator_text, null));
+                tvItem.setTextColor(BadgeUtils.colorAtributo(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant));
                 String texto = "• " + c.getCantidad() + " × " + c.getNombreModelo() + " (" + c.getCategoria() + ")";
                 tvItem.setText(texto);
                 llComponentesDetalle.addView(tvItem);

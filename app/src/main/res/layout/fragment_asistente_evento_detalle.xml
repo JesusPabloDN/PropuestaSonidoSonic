@@ -23,8 +23,7 @@
             android:gravity="center"
             android:text="@string/evento_no_disponible"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="@dimen/text_title"
-            android:textStyle="bold" />
+            android:textAppearance="?attr/textAppearanceTitleLarge" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnVolverNoDisponible"
@@ -54,11 +53,7 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_medium"
-                app:cardCornerRadius="@dimen/card_corner_radius"
-                app:cardElevation="1dp"
-                app:strokeColor="?attr/colorSurfaceVariant"
-                app:strokeWidth="1dp">
+                android:layout_marginBottom="@dimen/spacing_medium">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -70,9 +65,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/seccion_tu_evento"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="@dimen/text_title"
-                        android:textStyle="bold" />
+                        android:textColor="?attr/colorOnSurface"
+                        android:textAppearance="?attr/textAppearanceTitleLarge" />
 
                     <TextView
                         android:id="@+id/tvNombreEvento"
@@ -80,8 +74,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_tiny"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="@dimen/text_headline"
-                        android:textStyle="bold"
+                        android:textAppearance="?attr/textAppearanceHeadlineSmall"
                         tools:text="Boda de Carlos y Ana" />
 
                     <TextView
@@ -90,8 +83,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_tiny"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="@dimen/text_body"
-                        android:textStyle="bold"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
                         tools:text="sábado, 5 de diciembre de 2026" />
 
                     <TextView
@@ -99,9 +91,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="@dimen/text_body"
-                        android:textStyle="bold"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
                         tools:text="Llegada: 17:30 · Evento: 19:00–23:00" />
 
                     <TextView
@@ -110,7 +101,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_small"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="@dimen/text_body"
+                        android:textAppearance="?attr/textAppearanceBodyLarge"
                         tools:text="Salón Los Cedros, Av. Insurgentes 123" />
 
                     <com.google.android.material.button.MaterialButton
@@ -129,11 +120,7 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_medium"
-                app:cardCornerRadius="@dimen/card_corner_radius"
-                app:cardElevation="1dp"
-                app:strokeColor="?attr/colorSurfaceVariant"
-                app:strokeWidth="1dp">
+                android:layout_marginBottom="@dimen/spacing_medium">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -145,9 +132,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/seccion_paquete_equipo"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="@dimen/text_title"
-                        android:textStyle="bold" />
+                        android:textColor="?attr/colorOnSurface"
+                        android:textAppearance="?attr/textAppearanceTitleLarge" />
 
                     <TextView
                         android:id="@+id/tvPaqueteNombre"
@@ -155,8 +141,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_tiny"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="@dimen/text_body"
-                        android:textStyle="bold"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
                         tools:text="Paquete Básico" />
 
                     <TextView
@@ -166,7 +151,7 @@
                         android:layout_marginTop="@dimen/spacing_tiny"
                         android:lineSpacingExtra="4dp"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="13sp"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
                         tools:text="• 2 × Bocina 15\n• 1 × Mezcladora" />
 
                 </LinearLayout>
@@ -178,11 +163,7 @@
                 android:id="@+id/cardContactoCliente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_medium"
-                app:cardCornerRadius="@dimen/card_corner_radius"
-                app:cardElevation="1dp"
-                app:strokeColor="?attr/colorSurfaceVariant"
-                app:strokeWidth="1dp">
+                android:layout_marginBottom="@dimen/spacing_medium">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -194,9 +175,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/seccion_cliente"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="@dimen/text_title"
-                        android:textStyle="bold" />
+                        android:textColor="?attr/colorOnSurface"
+                        android:textAppearance="?attr/textAppearanceTitleLarge" />
 
                     <TextView
                         android:id="@+id/tvAvisoContactoNoDisponible"
@@ -205,7 +185,7 @@
                         android:layout_marginTop="@dimen/spacing_tiny"
                         android:text="@string/contacto_no_disponible_aviso"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="@dimen/text_body"
+                        android:textAppearance="?attr/textAppearanceBodyLarge"
                         android:visibility="gone"
                         tools:visibility="visible" />
 
@@ -221,8 +201,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textColor="?attr/colorOnSurface"
-                            android:textSize="@dimen/text_body"
-                            android:textStyle="bold"
+                            android:textAppearance="?attr/textAppearanceTitleMedium"
                             tools:text="María Rodríguez" />
 
                         <TextView
@@ -231,7 +210,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:textColor="?attr/colorOnSurfaceVariant"
-                            android:textSize="13sp"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
                             tools:text="747 123 4567" />
 
                         <com.google.android.material.button.MaterialButton
@@ -253,11 +232,7 @@
                 android:id="@+id/cardChecklist"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_medium"
-                app:cardCornerRadius="@dimen/card_corner_radius"
-                app:cardElevation="1dp"
-                app:strokeColor="?attr/colorSurfaceVariant"
-                app:strokeWidth="1dp">
+                android:layout_marginBottom="@dimen/spacing_medium">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -269,18 +244,16 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/seccion_equipo_checklist"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="@dimen/text_title"
-                        android:textStyle="bold" />
+                        android:textColor="?attr/colorOnSurface"
+                        android:textAppearance="?attr/textAppearanceTitleLarge" />
 
                     <TextView
                         android:id="@+id/tvResumenChecklistEncabezado"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_tiny"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="@dimen/text_body"
-                        android:textStyle="bold"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
                         tools:text="Salieron 5/6 · Regresaron 3/6" />
 
                     <TextView
@@ -290,8 +263,7 @@
                         android:layout_marginTop="@dimen/spacing_tiny"
                         android:text="@string/aviso_checklist_no_editable"
                         android:textColor="?attr/colorError"
-                        android:textSize="13sp"
-                        android:textStyle="bold"
+                        android:textAppearance="?attr/textAppearanceLabelLarge"
                         android:visibility="gone"
                         tools:visibility="visible" />
 

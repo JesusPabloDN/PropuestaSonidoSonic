@@ -162,7 +162,7 @@ public class ReservarFragment extends Fragment implements SelectorHorarioHelper.
         }
 
         ArrayAdapter<String> durAdapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_dropdown_item_1line, etiquetasDuracion);
+                R.layout.item_dropdown, etiquetasDuracion);
         actvDuracion.setAdapter(durAdapter);
 
         int pos = opcionesDuracionMin.indexOf(viewModel.getDuracionMin());

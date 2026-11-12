@@ -21,8 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="22sp"
-            android:textStyle="bold"
+            android:textAppearance="?attr/textAppearanceHeadlineSmall"
             tools:text="Hola, Juan" />
 
         <TextView
@@ -32,7 +31,7 @@
             android:layout_marginTop="2dp"
             android:text="Elige el paquete ideal para tu evento"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="@dimen/text_body" />
+            android:textAppearance="?attr/textAppearanceBodyLarge" />
 
     </LinearLayout>
 
@@ -67,8 +66,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/empty_catalogo"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="@dimen/text_headline"
-                android:textStyle="bold" />
+                android:textAppearance="?attr/textAppearanceHeadlineSmall" />
 
         </LinearLayout>
 

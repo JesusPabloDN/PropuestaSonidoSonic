@@ -16,8 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="?attr/colorOnSurface"
-        android:textSize="@dimen/text_headline"
-        android:textStyle="bold"
+        android:textAppearance="?attr/textAppearanceHeadlineSmall"
         tools:text="Hola, Carlos" />
 
     <!-- Selector Próximos | Pasados -->
@@ -79,7 +78,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="@dimen/text_body"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
                 tools:text="No tienes eventos próximos" />
 
         </LinearLayout>

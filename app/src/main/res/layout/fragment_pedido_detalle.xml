@@ -36,15 +36,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/titulo_requiere_revision"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textAppearance="?attr/textAppearanceTitleLarge" />
 
                 <TextView
                     android:id="@+id/tvRevisionMotivo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_tiny"
-                    android:textSize="@dimen/text_body"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
                     tools:text="Evento con menos de 48 horas de anticipación" />
 
                 <LinearLayout
@@ -79,11 +78,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_medium"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="1dp"
-            app:strokeColor="?attr/colorSurfaceVariant"
-            app:strokeWidth="1dp">
+            android:layout_marginBottom="@dimen/spacing_medium">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -103,8 +98,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
+                        android:textAppearance="?attr/textAppearanceTitleLarge"
                         tools:text="Boda de Mariana y Carlos" />
 
                     <TextView
@@ -113,9 +107,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/spacing_small"
                         android:layout_marginEnd="@dimen/spacing_small"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="@dimen/text_title"
-                        android:textStyle="bold"
+                        android:textColor="?attr/colorTertiary"
+                        android:textAppearance="?attr/textAppearanceTitleLarge"
                         tools:text="#1001" />
 
                     <TextView
@@ -126,8 +119,7 @@
                         android:paddingTop="2dp"
                         android:paddingEnd="@dimen/spacing_small"
                         android:paddingBottom="2dp"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
+                        android:textAppearance="?attr/textAppearanceLabelMedium"
                         tools:text="Apartado" />
 
                     <TextView
@@ -140,8 +132,7 @@
                         android:paddingEnd="@dimen/spacing_small"
                         android:paddingBottom="2dp"
                         android:text="@string/badge_liquidado"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
+                        android:textAppearance="?attr/textAppearanceLabelMedium"
                         android:visibility="gone"
                         tools:visibility="visible" />
 
@@ -153,7 +144,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_small"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="@dimen/text_body"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
                     tools:text="Vence en 23 h 10 min" />
 
             </LinearLayout>
@@ -164,11 +155,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_medium"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="1dp"
-            app:strokeColor="?attr/colorSurfaceVariant"
-            app:strokeWidth="1dp">
+            android:layout_marginBottom="@dimen/spacing_medium">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -180,9 +167,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/seccion_cliente"
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="@dimen/text_title"
-                    android:textStyle="bold" />
+                    android:textColor="?attr/colorOnSurface"
+                    android:textAppearance="?attr/textAppearanceTitleLarge" />
 
                 <TextView
                     android:id="@+id/tvClienteNombre"
@@ -193,8 +179,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:textColor="?attr/colorPrimary"
-                    android:textSize="@dimen/text_body"
-                    android:textStyle="bold"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
                     tools:text="Mariana Gómez" />
 
                 <TextView
@@ -202,7 +187,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="@dimen/text_body"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
                     tools:text="Tel: 555-123-4567" />
 
                 <TextView
@@ -210,7 +195,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="@dimen/text_body"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
                     tools:text="Dirección: Av. Revolución 123" />
 
                 <TextView
@@ -219,7 +204,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="13sp"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
                     tools:text="Origen: WhatsApp" />
 
                 <TextView
@@ -228,7 +213,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_tiny"
                     android:textColor="?attr/colorOnSurface"
-                    android:textSize="13sp"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:textStyle="italic"
                     tools:text="Notas: Entrada por portón trasero" />
 
@@ -240,11 +225,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_medium"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="1dp"
-            app:strokeColor="?attr/colorSurfaceVariant"
-            app:strokeWidth="1dp">
+            android:layout_marginBottom="@dimen/spacing_medium">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -256,9 +237,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/seccion_paquete_equipo"
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="@dimen/text_title"
-                    android:textStyle="bold" />
+                    android:textColor="?attr/colorOnSurface"
+                    android:textAppearance="?attr/textAppearanceTitleLarge" />
 
                 <TextView
                     android:id="@+id/tvPaqueteNombre"
@@ -266,8 +246,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_tiny"
                     android:textColor="?attr/colorOnSurface"
-                    android:textSize="@dimen/text_body"
-                    android:textStyle="bold"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
                     tools:text="Paquete Básico" />
 
                 <TextView
@@ -277,7 +256,7 @@
                     android:layout_marginTop="@dimen/spacing_tiny"
                     android:lineSpacingExtra="4dp"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="13sp"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
                     tools:text="• 2 × Bocina JBL 15&quot;\n• 1 × Mezcladora\n• 2 × Micrófono" />
 
             </LinearLayout>
@@ -288,11 +267,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_medium"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="1dp"
-            app:strokeColor="?attr/colorSurfaceVariant"
-            app:strokeWidth="1dp">
+            android:layout_marginBottom="@dimen/spacing_medium">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -304,9 +279,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/seccion_horario"
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="@dimen/text_title"
-                    android:textStyle="bold" />
+                    android:textColor="?attr/colorOnSurface"
+                    android:textAppearance="?attr/textAppearanceTitleLarge" />
 
                 <TextView
                     android:id="@+id/tvHorarioFecha"
@@ -314,8 +288,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_tiny"
                     android:textColor="?attr/colorOnSurface"
-                    android:textSize="@dimen/text_body"
-                    android:textStyle="bold"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
                     tools:text="sábado, 5 de diciembre de 2026" />
 
                 <TextView
@@ -323,7 +296,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="?attr/colorOnSurface"
-                    android:textSize="@dimen/text_body"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
                     tools:text="Evento: 19:00–23:00 (4 h)" />
 
                 <TextView
@@ -331,7 +304,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="13sp"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
                     tools:text="Montaje desde: 17:30" />
 
                 <TextView
@@ -339,7 +312,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="13sp"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
                     tools:text="Desmontaje hasta: 01:00" />
 
             </LinearLayout>
@@ -350,11 +323,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_medium"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="1dp"
-            app:strokeColor="?attr/colorSurfaceVariant"
-            app:strokeWidth="1dp">
+            android:layout_marginBottom="@dimen/spacing_medium">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -366,9 +335,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/seccion_personal"
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="@dimen/text_title"
-                    android:textStyle="bold" />
+                    android:textColor="?attr/colorOnSurface"
+                    android:textAppearance="?attr/textAppearanceTitleLarge" />
 
                 <TextView
                     android:id="@+id/tvPersonalAsignado"
@@ -376,7 +344,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_tiny"
                     android:textColor="?attr/colorOnSurface"
-                    android:textSize="@dimen/text_body"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
                     tools:text="Carlos (Socio)" />
 
             </LinearLayout>
@@ -390,10 +358,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_medium"
             android:visibility="gone"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="1dp"
-            app:strokeColor="?attr/colorSurfaceVariant"
-            app:strokeWidth="1dp"
             tools:visibility="visible">
 
             <LinearLayout
@@ -406,9 +370,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/seccion_equipo_asignado"
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="@dimen/text_title"
-                    android:textStyle="bold" />
+                    android:textColor="?attr/colorOnSurface"
+                    android:textAppearance="?attr/textAppearanceTitleLarge" />
 
                 <TextView
                     android:id="@+id/tvAvisoAsignacionIncompleta"
@@ -417,8 +380,7 @@
                     android:layout_marginTop="@dimen/spacing_tiny"
                     android:text="@string/aviso_asignacion_incompleta"
                     android:textColor="?attr/colorError"
-                    android:textSize="@dimen/text_body"
-                    android:textStyle="bold"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
                     android:visibility="gone"
                     tools:visibility="visible" />
 
@@ -429,7 +391,7 @@
                     android:layout_marginTop="@dimen/spacing_tiny"
                     android:lineSpacingExtra="4dp"
                     android:textColor="?attr/colorOnSurface"
-                    android:textSize="@dimen/text_body"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
                     tools:text="• Bocina JBL 15&quot; · unidades 1, 2" />
 
                 <TextView
@@ -438,8 +400,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_small"
                     android:textColor="?attr/colorOnSurface"
-                    android:textSize="@dimen/text_body"
-                    android:textStyle="bold"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
                     android:visibility="gone"
                     tools:text="Checklist: salieron 5/6 · regresaron 3/6"
                     tools:visibility="visible" />
@@ -451,8 +412,7 @@
                     android:layout_marginTop="@dimen/spacing_tiny"
                     android:text="@string/checklist_observaciones_titulo"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
+                    android:textAppearance="?attr/textAppearanceLabelLarge"
                     android:visibility="gone"
                     tools:visibility="visible" />
 
@@ -463,7 +423,7 @@
                     android:layout_marginTop="2dp"
                     android:lineSpacingExtra="2dp"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="13sp"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:visibility="gone"
                     tools:text="• Bocina 15 (1): Raspón en la base"
                     tools:visibility="visible" />
@@ -476,11 +436,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_medium"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="1dp"
-            app:strokeColor="?attr/colorSurfaceVariant"
-            app:strokeWidth="1dp">
+            android:layout_marginBottom="@dimen/spacing_medium">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -492,9 +448,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/seccion_dinero"
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="@dimen/text_title"
-                    android:textStyle="bold" />
+                    android:textColor="?attr/colorOnSurface"
+                    android:textAppearance="?attr/textAppearanceTitleLarge" />
 
                 <TextView
                     android:id="@+id/tvTotal"
@@ -502,8 +457,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_tiny"
                     android:textColor="?attr/colorOnSurface"
-                    android:textSize="@dimen/text_title"
-                    android:textStyle="bold"
+                    android:textAppearance="?attr/textAppearanceTitleLarge"
                     tools:text="Total: $3,500.00" />
 
                 <TextView
@@ -511,16 +465,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="@dimen/text_body"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
                     tools:text="Anticipo requerido (30%): $1,050.00" />
 
                 <TextView
                     android:id="@+id/tvAnticipoPagado"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="@dimen/text_body"
-                    android:textStyle="bold"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
                     tools:text="Anticipo pagado: $1,050.00 (Efectivo el 5 dic 2026)" />
 
                 <TextView
@@ -528,7 +481,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="?attr/colorOnSurface"
-                    android:textSize="@dimen/text_body"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
                     tools:text="Saldo pendiente: $2,450.00" />
 
                 <TextView
@@ -537,8 +490,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_tiny"
                     android:textColor="?attr/colorError"
-                    android:textSize="@dimen/text_body"
-                    android:textStyle="bold"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
                     android:visibility="gone"
                     tools:text="Reembolso: $1,050.00 (simulado)"
                     tools:visibility="visible" />
@@ -552,11 +504,7 @@
             android:id="@+id/cardHistorialPagos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_medium"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="1dp"
-            app:strokeColor="?attr/colorSurfaceVariant"
-            app:strokeWidth="1dp">
+            android:layout_marginBottom="@dimen/spacing_medium">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -568,9 +516,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/seccion_historial_pagos"
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="@dimen/text_title"
-                    android:textStyle="bold" />
+                    android:textColor="?attr/colorOnSurface"
+                    android:textAppearance="?attr/textAppearanceTitleLarge" />
 
                 <TextView
                     android:id="@+id/tvHistorialVacio"
@@ -579,7 +526,7 @@
                     android:layout_marginTop="@dimen/spacing_tiny"
                     android:text="@string/sin_pagos_registrados"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="@dimen/text_body"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
                     android:visibility="gone"
                     tools:visibility="visible" />
 
@@ -601,11 +548,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_medium"
             android:visibility="gone"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="1dp"
-            app:strokeColor="?attr/colorError"
-            app:strokeWidth="1dp"
-            tools:visibility="visible">
+            tools:visibility="visible"
+            style="@style/Widget.SonidoSonic.CardView.Filled"
+            app:cardBackgroundColor="?attr/colorErrorContainer">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -618,25 +563,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/seccion_cancelacion"
-                    android:textColor="?attr/colorError"
-                    android:textSize="@dimen/text_title"
-                    android:textStyle="bold" />
+                    android:textColor="?attr/colorOnErrorContainer"
+                    android:textAppearance="?attr/textAppearanceTitleLarge" />
 
                 <TextView
                     android:id="@+id/tvCanceladoPor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_tiny"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="@dimen/text_body"
+                    android:textColor="?attr/colorOnErrorContainer"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
                     tools:text="Cancelado por: Cliente" />
 
                 <TextView
                     android:id="@+id/tvMotivoCancelacion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="@dimen/text_body"
+                    android:textColor="?attr/colorOnErrorContainer"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
                     tools:text="Motivo: Cambio de fecha del cliente" />
 
             </LinearLayout>
@@ -681,11 +625,10 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCancelar"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/Widget.SonidoSonic.Button.TextButton.Destructivo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/button_height"
-                android:textColor="?attr/colorError"
                 android:text="@string/btn_cancelar_apartado" />
 
         </LinearLayout>

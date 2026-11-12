@@ -25,10 +25,7 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="@dimen/card_corner_radius"
-                app:cardElevation="2dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="?attr/colorSurfaceVariant">
+                style="@style/Widget.SonidoSonic.CardView.Elevated">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -41,8 +38,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
+                        android:textAppearance="?attr/textAppearanceTitleLarge"
                         tools:text="Boda de Ana y Luis" />
 
                     <TextView
@@ -51,7 +47,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="@dimen/text_body"
+                        android:textAppearance="?attr/textAppearanceBodyLarge"
                         tools:text="Viernes 20 de Noviembre · 16:00" />
 
                     <View
@@ -59,14 +55,14 @@
                         android:layout_height="1dp"
                         android:layout_marginTop="@dimen/spacing_small"
                         android:layout_marginBottom="@dimen/spacing_small"
-                        android:background="?attr/colorSurfaceVariant" />
+                        android:background="?attr/colorOutlineVariant" />
 
                     <TextView
                         android:id="@+id/tvResumenPagoTotal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="@dimen/text_body"
+                        android:textAppearance="?attr/textAppearanceBodyLarge"
                         tools:text="Total del pedido: $3,500.00" />
 
                     <TextView
@@ -74,9 +70,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textAppearance="?attr/textAppearanceTitleLarge"
                         tools:text="Anticipo a pagar: $1,050.00" />
 
                     <TextView
@@ -84,12 +79,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:background="?attr/colorSurfaceVariant"
+                        android:background="?attr/colorSurfaceContainerHighest"
                         android:padding="8dp"
                         android:textAlignment="center"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
+                        android:textAppearance="?attr/textAppearanceTitleSmall"
                         tools:text="Tu reserva vence en 27:41" />
 
                 </LinearLayout>
@@ -103,8 +97,7 @@
                 android:layout_marginTop="@dimen/spacing_large"
                 android:text="Datos de la tarjeta"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textAppearance="?attr/textAppearanceTitleMedium" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilTitular"
@@ -188,7 +181,7 @@
                 android:layout_marginTop="@dimen/spacing_small"
                 android:text="@string/nota_pago_prueba"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="@dimen/text_caption" />
+                android:textAppearance="?attr/textAppearanceBodyMedium" />
 
             <!-- Mensaje de error/rechazo -->
             <TextView
@@ -196,13 +189,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_small"
-                android:background="#FFEBEE"
-                android:padding="8dp"
-                android:textColor="#C62828"
-                android:textSize="14sp"
+                android:background="@drawable/bg_aviso"
+                android:padding="@dimen/spacing_medium"
+                android:textColor="?attr/colorOnErrorContainer"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
                 android:visibility="gone"
                 tools:text="La tarjeta fue rechazada por el banco"
-                tools:visibility="visible" />
+                tools:visibility="visible"
+                android:backgroundTint="?attr/colorErrorContainer" />
 
             <ProgressBar
                 android:id="@+id/progressBarPago"
@@ -219,9 +213,6 @@
                 android:layout_marginTop="@dimen/spacing_medium"
                 android:enabled="false"
                 android:text="Pagar"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:cornerRadius="@dimen/button_corner_radius"
                 tools:text="Pagar $1,050.00" />
 
         </LinearLayout>
@@ -252,8 +243,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_medium"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="22sp"
-            android:textStyle="bold"
+            android:textAppearance="?attr/textAppearanceHeadlineSmall"
             tools:text="¡Reserva confirmada!" />
 
         <TextView
@@ -261,9 +251,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:textColor="?attr/colorPrimary"
-            android:textSize="16sp"
-            android:textStyle="bold"
+            android:textColor="?attr/colorTertiary"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
             tools:text="Pedido #1001" />
 
         <TextView
@@ -273,7 +262,7 @@
             android:layout_marginTop="8dp"
             android:textAlignment="center"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="@dimen/text_body"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
             tools:text="Boda de Ana y Luis\nViernes 20 de Noviembre · 16:00" />
 
         <TextView
@@ -282,8 +271,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="16sp"
-            android:textStyle="bold"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
             tools:text="Anticipo pagado: $1,050.00" />
 
         <TextView
@@ -293,7 +281,7 @@
             android:layout_marginTop="12dp"
             android:textAlignment="center"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="14sp"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
             tools:text="El saldo restante de $2,450.00 se paga el día del evento" />
 
         <com.google.android.material.button.MaterialButton
@@ -301,8 +289,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/touch_target_min"
             android:layout_marginTop="@dimen/spacing_xlarge"
-            android:text="@string/btn_volver_catalogo"
-            app:cornerRadius="@dimen/button_corner_radius" />
+            android:text="@string/btn_volver_catalogo" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnVerMisPedidosResultado"
@@ -310,8 +297,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/touch_target_min"
             android:layout_marginTop="@dimen/spacing_medium"
-            android:text="@string/btn_ver_mis_pedidos"
-            app:cornerRadius="@dimen/button_corner_radius" />
+            android:text="@string/btn_ver_mis_pedidos" />
 
     </LinearLayout>
 
@@ -332,8 +318,7 @@
             android:text="@string/reserva_no_disponible"
             android:textAlignment="center"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textAppearance="?attr/textAppearanceTitleLarge" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -342,15 +327,14 @@
             android:text="El tiempo de apartado ha expirado o el pedido ya fue procesado."
             android:textAlignment="center"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="@dimen/text_body" />
+            android:textAppearance="?attr/textAppearanceBodyLarge" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnVolverCatalogoNoDisponible"
             android:layout_width="match_parent"
             android:layout_height="@dimen/touch_target_min"
             android:layout_marginTop="@dimen/spacing_large"
-            android:text="@string/btn_volver_catalogo"
-            app:cornerRadius="@dimen/button_corner_radius" />
+            android:text="@string/btn_volver_catalogo" />
 
     </LinearLayout>
 

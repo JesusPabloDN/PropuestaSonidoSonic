@@ -1,8 +1,11 @@
 package com.example.propuestasonidosonic.util;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.widget.TextView;
+
+import com.google.android.material.color.MaterialColors;
 
 public final class BadgeUtils {
     private BadgeUtils() {}
@@ -19,11 +22,11 @@ public final class BadgeUtils {
     }
 
     public static int colorError(Context context) {
-        if (context == null) return 0xFFC53030;
-        android.util.TypedValue tv = new android.util.TypedValue();
-        if (context.getTheme().resolveAttribute(androidx.appcompat.R.attr.colorError, tv, true)) {
-            return tv.data;
-        }
-        return androidx.core.content.ContextCompat.getColor(context, com.example.propuestasonidosonic.R.color.status_danado);
+        if (context == null) return Color.TRANSPARENT;
+        return colorAtributo(context, androidx.appcompat.R.attr.colorError);
+    }
+
+    public static int colorAtributo(Context context, int atributo) {
+        return MaterialColors.getColor(context, atributo, Color.TRANSPARENT);
     }
 }

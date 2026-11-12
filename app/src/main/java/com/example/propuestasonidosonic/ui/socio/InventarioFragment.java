@@ -11,7 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.propuestasonidosonic.R;
+import com.example.propuestasonidosonic.util.DropdownUtils;
 import com.example.propuestasonidosonic.SonidoSonicApp;
 import com.example.propuestasonidosonic.adapter.EquipoAdapter;
 import com.example.propuestasonidosonic.adapter.PaqueteAdapter;
@@ -54,7 +55,8 @@ public class InventarioFragment extends Fragment implements EquipoAdapter.OnEqui
     private TabLayout tabsInventario;
     private MaterialCardView cardBarraBusqueda;
     private EditText etBuscarNombre;
-    private Spinner spCategoriaFiltro;
+    private MaterialAutoCompleteTextView spCategoriaFiltro;
+    private int posCategoriaFiltro = 0;
 
     private FrameLayout frameListaEquipos;
     private RecyclerView rvEquipos;
@@ -127,7 +129,7 @@ public class InventarioFragment extends Fragment implements EquipoAdapter.OnEqui
 
             etBuscarNombre.setText(queryPendiente);
             if (catPosPendiente >= 0 && catPosPendiente < categoriasFiltro.size()) {
-                spCategoriaFiltro.setSelection(catPosPendiente);
+                posCategoriaFiltro = DropdownUtils.seleccionar(spCategoriaFiltro, catPosPendiente);
             }
         }
 
@@ -197,18 +199,14 @@ public class InventarioFragment extends Fragment implements EquipoAdapter.OnEqui
         categoriasFiltro.addAll(CategoriaEquipo.TODAS_LAS_CATEGORIAS);
 
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_spinner_dropdown_item, categoriasFiltro);
+                R.layout.item_dropdown, categoriasFiltro);
         spCategoriaFiltro.setAdapter(spinnerAdapter);
 
-        spCategoriaFiltro.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                aplicarFiltroEquipos();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+        spCategoriaFiltro.setOnItemClickListener((parent, v, position, id) -> {
+            posCategoriaFiltro = position;
+            aplicarFiltroEquipos();
         });
+        posCategoriaFiltro = DropdownUtils.seleccionar(spCategoriaFiltro, posCategoriaFiltro);
     }
 
     private void configurarBusqueda() {
@@ -278,7 +276,7 @@ public class InventarioFragment extends Fragment implements EquipoAdapter.OnEqui
 
     private void aplicarFiltroEquipos() {
         String query = etBuscarNombre.getText() != null ? FormatUtils.quitarAcentos(etBuscarNombre.getText().toString()) : "";
-        int selectedPos = spCategoriaFiltro.getSelectedItemPosition();
+        int selectedPos = posCategoriaFiltro;
         String categoriaSeleccionada = (selectedPos >= 0 && selectedPos < categoriasFiltro.size())
                 ? categoriasFiltro.get(selectedPos) : getString(R.string.categoria_todas);
 
@@ -351,7 +349,7 @@ public class InventarioFragment extends Fragment implements EquipoAdapter.OnEqui
             outState.putString(KEY_SEARCH_QUERY, etBuscarNombre.getText().toString());
         }
         if (spCategoriaFiltro != null) {
-            outState.putInt(KEY_SELECTED_CAT_POS, spCategoriaFiltro.getSelectedItemPosition());
+            outState.putInt(KEY_SELECTED_CAT_POS, posCategoriaFiltro);
         }
     }
 }

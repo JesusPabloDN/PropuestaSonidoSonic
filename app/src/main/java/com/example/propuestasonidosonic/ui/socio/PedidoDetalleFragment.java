@@ -243,8 +243,8 @@ public class PedidoDetalleFragment extends Fragment {
         // 0. Alerta de Revisión
         if (Pedido.ESTADO_EN_REVISION.equals(pedido.getEstado())) {
             cardRevision.setVisibility(View.VISIBLE);
-            int colorAmbarContainer = ContextCompat.getColor(ctx, R.color.status_pendiente_container);
-            int colorAmbarTexto = ContextCompat.getColor(ctx, R.color.status_pendiente);
+            int colorAmbarContainer = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendienteContainer);
+            int colorAmbarTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendiente);
             cardRevision.setCardBackgroundColor(colorAmbarContainer);
             cardRevision.setStrokeColor(colorAmbarTexto);
             tvRevisionTitulo.setTextColor(colorAmbarTexto);
@@ -278,8 +278,8 @@ public class PedidoDetalleFragment extends Fragment {
         if (pedido.estaLiquidado() && !Pedido.ESTADO_CANCELADO.equals(pedido.getEstado())) {
             tvLiquidadoBadge.setVisibility(View.VISIBLE);
             BadgeUtils.pintar(tvLiquidadoBadge,
-                    ContextCompat.getColor(ctx, R.color.status_disponible),
-                    ContextCompat.getColor(ctx, R.color.status_disponible_container));
+                    BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponible),
+                    BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponibleContainer));
         } else {
             tvLiquidadoBadge.setVisibility(View.GONE);
         }
@@ -289,7 +289,7 @@ public class PedidoDetalleFragment extends Fragment {
             tvVencimiento.setVisibility(View.VISIBLE);
             tvVencimiento.setText(ctx.getString(R.string.vence_en_formato, FormatUtils.tiempoRestante(restanteMs)));
             if (restanteMs < 2 * 3600_000L) {
-                tvVencimiento.setTextColor(ContextCompat.getColor(ctx, R.color.status_danado));
+                tvVencimiento.setTextColor(BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanado));
             } else {
                 tvVencimiento.setTextColor(MaterialColors.getColor(tvVencimiento,
                         com.google.android.material.R.attr.colorOnSurfaceVariant));
@@ -631,7 +631,7 @@ public class PedidoDetalleFragment extends Fragment {
                 tvPagoMonto.setTextColor(com.example.propuestasonidosonic.util.BadgeUtils.colorError(ctx));
             } else {
                 tvPagoMonto.setText("+ " + FormatUtils.formatoMoneda(pago.getMonto()));
-                tvPagoMonto.setTextColor(ContextCompat.getColor(ctx, R.color.status_disponible));
+                tvPagoMonto.setTextColor(BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponible));
             }
 
             btnRecibo.setOnClickListener(v -> compartirReciboPdf(pedido, pago, lista));
@@ -974,44 +974,44 @@ public class PedidoDetalleFragment extends Fragment {
         switch (estado) {
             case Pedido.ESTADO_APARTADO:
                 textoRes = R.string.badge_apartado;
-                colorTexto = ContextCompat.getColor(ctx, R.color.status_pendiente);
-                colorFondo = ContextCompat.getColor(ctx, R.color.status_pendiente_container);
+                colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendiente);
+                colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendienteContainer);
                 break;
             case Pedido.ESTADO_EN_REVISION:
                 textoRes = R.string.badge_en_revision;
-                colorTexto = ContextCompat.getColor(ctx, R.color.status_pendiente);
-                colorFondo = ContextCompat.getColor(ctx, R.color.status_pendiente_container);
+                colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendiente);
+                colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendienteContainer);
                 break;
             case Pedido.ESTADO_CONFIRMADO:
                 textoRes = R.string.badge_confirmado;
-                colorTexto = ContextCompat.getColor(ctx, R.color.status_disponible);
-                colorFondo = ContextCompat.getColor(ctx, R.color.status_disponible_container);
+                colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponible);
+                colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponibleContainer);
                 break;
             case Pedido.ESTADO_PAGADO:
                 textoRes = R.string.badge_pagado;
-                colorTexto = ContextCompat.getColor(ctx, R.color.status_disponible);
-                colorFondo = ContextCompat.getColor(ctx, R.color.status_disponible_container);
+                colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponible);
+                colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponibleContainer);
                 break;
             case Pedido.ESTADO_COMPLETADO:
                 textoRes = R.string.badge_completado;
-                colorTexto = ContextCompat.getColor(ctx, R.color.status_rentado);
-                colorFondo = ContextCompat.getColor(ctx, R.color.status_rentado_container);
+                colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoRentado);
+                colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoRentadoContainer);
                 break;
             case Pedido.ESTADO_CANCELADO:
                 textoRes = R.string.badge_cancelado;
-                colorTexto = ContextCompat.getColor(ctx, R.color.status_danado);
-                colorFondo = ContextCompat.getColor(ctx, R.color.status_danado_container);
+                colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanado);
+                colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanadoContainer);
                 break;
             case Pedido.ESTADO_RECHAZADO:
                 textoRes = R.string.badge_rechazado;
-                colorTexto = ContextCompat.getColor(ctx, R.color.status_danado);
-                colorFondo = ContextCompat.getColor(ctx, R.color.status_danado_container);
+                colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanado);
+                colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanadoContainer);
                 break;
             case Pedido.ESTADO_VENCIDO:
             default:
                 textoRes = R.string.badge_vencido;
                 colorTexto = MaterialColors.getColor(tvEstadoBadge, com.google.android.material.R.attr.colorOnSurfaceVariant);
-                colorFondo = MaterialColors.getColor(tvEstadoBadge, com.google.android.material.R.attr.colorSurfaceVariant);
+                colorFondo = MaterialColors.getColor(tvEstadoBadge, com.google.android.material.R.attr.colorSurfaceContainerHighest);
                 break;
         }
 

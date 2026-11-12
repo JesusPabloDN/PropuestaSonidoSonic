@@ -20,8 +20,7 @@
             android:id="@+id/tvComponenteNombre"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/text_body"
-            android:textStyle="bold"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
             android:textColor="?attr/colorOnSurface"
             tools:text="Bocina JBL 15&quot;" />
 
@@ -29,7 +28,7 @@
             android:id="@+id/tvComponenteStock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/text_caption"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="?attr/colorOnSurfaceVariant"
             tools:text="Bocinas · Hay 4 en inventario" />
 
@@ -42,7 +41,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_remove_24"
         android:contentDescription="@string/desc_disminuir_cantidad"
-        app:tint="?attr/colorOnSurface" />
+        app:tint="?attr/colorOnSurfaceVariant" />
 
     <TextView
         android:id="@+id/tvComponenteCantidad"
@@ -50,8 +49,7 @@
         android:layout_height="wrap_content"
         android:minWidth="32dp"
         android:gravity="center"
-        android:textSize="@dimen/text_body"
-        android:textStyle="bold"
+        android:textAppearance="?attr/textAppearanceTitleMedium"
         android:textColor="?attr/colorOnSurface"
         tools:text="2" />
 
@@ -62,7 +60,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_add_24"
         android:contentDescription="@string/desc_aumentar_cantidad"
-        app:tint="?attr/colorOnSurface" />
+        app:tint="?attr/colorOnSurfaceVariant" />
 
     <ImageButton
         android:id="@+id/btnComponenteQuitar"
@@ -71,6 +69,6 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_delete_24"
         android:contentDescription="@string/desc_quitar_componente"
-        app:tint="@color/status_danado" />
+        app:tint="?attr/colorError" />
 
 </LinearLayout>

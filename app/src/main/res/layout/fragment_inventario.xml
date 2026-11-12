@@ -28,10 +28,9 @@
             android:layout_marginEnd="@dimen/spacing_medium"
             android:layout_marginTop="@dimen/spacing_small"
             android:layout_marginBottom="@dimen/spacing_small"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="2dp"
-            app:strokeWidth="1dp"
-            app:strokeColor="?attr/colorSurfaceVariant">
+            style="@style/Widget.SonidoSonic.CardView.Filled"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerHigh"
+            app:cardCornerRadius="28dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -59,7 +58,7 @@
                     android:layout_marginEnd="@dimen/spacing_tiny"
                     android:background="@null"
                     android:hint="@string/hint_buscar_por_nombre"
-                    android:textSize="@dimen/text_caption"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
                     android:textColor="?attr/colorOnSurface"
                     android:textColorHint="?attr/colorOnSurfaceVariant"
                     android:singleLine="true"
@@ -71,14 +70,25 @@
                     android:layout_height="24dp"
                     android:layout_marginStart="@dimen/spacing_tiny"
                     android:layout_marginEnd="@dimen/spacing_tiny"
-                    android:background="?attr/colorSurfaceVariant" />
+                    android:background="?attr/colorOutlineVariant" />
 
-                <Spinner
-                    android:id="@+id/spCategoriaFiltro"
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
                     android:layout_width="wrap_content"
-                    android:layout_height="@dimen/touch_target_min"
-                    android:minWidth="130dp"
-                    android:spinnerMode="dropdown" />
+                    android:layout_height="wrap_content"
+                    android:minWidth="150dp"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="0dp"
+                    app:hintEnabled="false">
+
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:id="@+id/spCategoriaFiltro"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:textAppearance="?attr/textAppearanceLabelLarge" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
 
@@ -116,7 +126,7 @@
                     android:layout_width="64dp"
                     android:layout_height="64dp"
                     android:src="@drawable/ic_equipo_generico"
-                    app:tint="?attr/colorOutline"
+                    app:tint="?attr/colorOnSurfaceVariant"
                     android:contentDescription="@null" />
 
                 <TextView
@@ -127,7 +137,7 @@
                     android:gravity="center"
                     android:text="@string/empty_inventario"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="@dimen/text_body" />
+                    android:textAppearance="?attr/textAppearanceBodyLarge" />
 
             </LinearLayout>
 
@@ -166,7 +176,7 @@
                     android:layout_width="64dp"
                     android:layout_height="64dp"
                     android:src="@drawable/ic_equipo_generico"
-                    app:tint="?attr/colorOutline"
+                    app:tint="?attr/colorOnSurfaceVariant"
                     android:contentDescription="@null" />
 
                 <TextView
@@ -177,7 +187,7 @@
                     android:gravity="center"
                     android:text="@string/empty_paquetes"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="@dimen/text_body" />
+                    android:textAppearance="?attr/textAppearanceBodyLarge" />
 
             </LinearLayout>
 
@@ -193,8 +203,6 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/spacing_medium"
         android:contentDescription="@string/dialog_nuevo_equipo_titulo"
-        android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="?attr/colorPrimary"
-        app:tint="?attr/colorOnPrimary" />
+        android:src="@android:drawable/ic_input_add" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

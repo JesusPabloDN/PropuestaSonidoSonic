@@ -197,7 +197,7 @@ public class NuevoPedidoFragment extends Fragment implements SelectorHorarioHelp
         }
 
         ArrayAdapter<String> durAdapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_dropdown_item_1line, etiquetasDuracion);
+                R.layout.item_dropdown, etiquetasDuracion);
         actvDuracion.setAdapter(durAdapter);
 
         // Preseleccionar duración inicial
@@ -228,7 +228,7 @@ public class NuevoPedidoFragment extends Fragment implements SelectorHorarioHelp
         }
 
         ArrayAdapter<String> horasAdapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_dropdown_item_1line, etiquetas);
+                R.layout.item_dropdown, etiquetas);
         actvRetenerHoras.setAdapter(horasAdapter);
         actvRetenerHoras.setText(etiquetas.get(defaultPos), false);
 
@@ -275,7 +275,7 @@ public class NuevoPedidoFragment extends Fragment implements SelectorHorarioHelp
             }
             if (isAdded()) {
                 ArrayAdapter<String> sugerenciasAdapter = new ArrayAdapter<>(requireContext(),
-                        android.R.layout.simple_dropdown_item_1line, etiquetas);
+                        R.layout.item_dropdown, etiquetas);
                 etNombreCliente.setAdapter(sugerenciasAdapter);
             }
         };
@@ -380,7 +380,7 @@ public class NuevoPedidoFragment extends Fragment implements SelectorHorarioHelp
             btnApartar.setEnabled(true);
 
             ArrayAdapter<String> paqAdapter = new ArrayAdapter<>(requireContext(),
-                    android.R.layout.simple_dropdown_item_1line, items);
+                    R.layout.item_dropdown, items);
             actvPaquete.setAdapter(paqAdapter);
 
             // Restaurar paquete seleccionado si existe

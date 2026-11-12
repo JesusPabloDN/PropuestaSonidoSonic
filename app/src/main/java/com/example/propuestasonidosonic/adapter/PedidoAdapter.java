@@ -114,11 +114,11 @@ public class PedidoAdapter extends RecyclerView.Adapter<PedidoAdapter.PedidoView
                 String restanteTexto = FormatUtils.tiempoRestante(restanteMs);
                 if (restanteMs <= 0) {
                     tvVencimiento.setText(R.string.badge_vencido);
-                    tvVencimiento.setTextColor(ContextCompat.getColor(ctx, R.color.status_danado));
+                    tvVencimiento.setTextColor(BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanado));
                 } else {
                     tvVencimiento.setText(ctx.getString(R.string.vence_en_formato, restanteTexto));
                     if (restanteMs < 2 * 3600_000L) {
-                        tvVencimiento.setTextColor(ContextCompat.getColor(ctx, R.color.status_danado));
+                        tvVencimiento.setTextColor(BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanado));
                     } else {
                         tvVencimiento.setTextColor(MaterialColors.getColor(tvVencimiento,
                                 com.google.android.material.R.attr.colorOnSurfaceVariant));
@@ -151,44 +151,44 @@ public class PedidoAdapter extends RecyclerView.Adapter<PedidoAdapter.PedidoView
             switch (estado) {
                 case Pedido.ESTADO_APARTADO:
                     textoRes = R.string.badge_apartado;
-                    colorTexto = ContextCompat.getColor(ctx, R.color.status_pendiente);
-                    colorFondo = ContextCompat.getColor(ctx, R.color.status_pendiente_container);
+                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendiente);
+                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendienteContainer);
                     break;
                 case Pedido.ESTADO_EN_REVISION:
                     textoRes = R.string.badge_en_revision;
-                    colorTexto = ContextCompat.getColor(ctx, R.color.status_pendiente);
-                    colorFondo = ContextCompat.getColor(ctx, R.color.status_pendiente_container);
+                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendiente);
+                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendienteContainer);
                     break;
                 case Pedido.ESTADO_CONFIRMADO:
                     textoRes = R.string.badge_confirmado;
-                    colorTexto = ContextCompat.getColor(ctx, R.color.status_disponible);
-                    colorFondo = ContextCompat.getColor(ctx, R.color.status_disponible_container);
+                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponible);
+                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponibleContainer);
                     break;
                 case Pedido.ESTADO_PAGADO:
                     textoRes = R.string.badge_pagado;
-                    colorTexto = ContextCompat.getColor(ctx, R.color.status_disponible);
-                    colorFondo = ContextCompat.getColor(ctx, R.color.status_disponible_container);
+                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponible);
+                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponibleContainer);
                     break;
                 case Pedido.ESTADO_COMPLETADO:
                     textoRes = R.string.badge_completado;
-                    colorTexto = ContextCompat.getColor(ctx, R.color.status_rentado);
-                    colorFondo = ContextCompat.getColor(ctx, R.color.status_rentado_container);
+                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoRentado);
+                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoRentadoContainer);
                     break;
                 case Pedido.ESTADO_CANCELADO:
                     textoRes = R.string.badge_cancelado;
-                    colorTexto = ContextCompat.getColor(ctx, R.color.status_danado);
-                    colorFondo = ContextCompat.getColor(ctx, R.color.status_danado_container);
+                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanado);
+                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanadoContainer);
                     break;
                 case Pedido.ESTADO_RECHAZADO:
                     textoRes = R.string.badge_rechazado;
-                    colorTexto = ContextCompat.getColor(ctx, R.color.status_danado);
-                    colorFondo = ContextCompat.getColor(ctx, R.color.status_danado_container);
+                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanado);
+                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanadoContainer);
                     break;
                 case Pedido.ESTADO_VENCIDO:
                 default:
                     textoRes = R.string.badge_vencido;
                     colorTexto = MaterialColors.getColor(tvEstadoBadge, com.google.android.material.R.attr.colorOnSurfaceVariant);
-                    colorFondo = MaterialColors.getColor(tvEstadoBadge, com.google.android.material.R.attr.colorSurfaceVariant);
+                    colorFondo = MaterialColors.getColor(tvEstadoBadge, com.google.android.material.R.attr.colorSurfaceContainerHighest);
                     break;
             }
 

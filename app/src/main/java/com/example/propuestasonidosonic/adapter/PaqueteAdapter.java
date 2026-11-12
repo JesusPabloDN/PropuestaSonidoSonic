@@ -137,13 +137,13 @@ public class PaqueteAdapter extends RecyclerView.Adapter<PaqueteAdapter.PaqueteV
             // Estado Activo / Inactivo
             if (paquete.isActivo()) {
                 tvEstado.setText(R.string.badge_paquete_activo);
-                int txtColor = ContextCompat.getColor(context, R.color.status_disponible);
-                int bgCol = ContextCompat.getColor(context, R.color.status_disponible_container);
+                int txtColor = BadgeUtils.colorAtributo(context, R.attr.colorEstadoDisponible);
+                int bgCol = BadgeUtils.colorAtributo(context, R.attr.colorEstadoDisponibleContainer);
                 BadgeUtils.pintar(tvEstado, txtColor, bgCol);
             } else {
                 tvEstado.setText(R.string.badge_paquete_inactivo);
                 int txtColor = MaterialColors.getColor(tvEstado, com.google.android.material.R.attr.colorOnSurfaceVariant);
-                int bgCol = MaterialColors.getColor(tvEstado, com.google.android.material.R.attr.colorSurfaceVariant);
+                int bgCol = MaterialColors.getColor(tvEstado, com.google.android.material.R.attr.colorSurfaceContainerHighest);
                 BadgeUtils.pintar(tvEstado, txtColor, bgCol);
             }
 
@@ -188,14 +188,15 @@ public class PaqueteAdapter extends RecyclerView.Adapter<PaqueteAdapter.PaqueteV
             int drawableId = CategoriaEquipo.getImagenPorDefecto(categoriaMayorPrecio);
             Glide.with(context)
                     .load(drawableId)
+                    .theme(ivImagen.getContext().getTheme())
                     .centerCrop()
                     .into(ivImagen);
 
             // Regla de Stock insuficiente
             if (modeloFaltante != null) {
                 tvAlerta.setText(context.getString(R.string.alerta_stock_insuficiente_formato, modeloFaltante));
-                int txtColor = ContextCompat.getColor(context, R.color.status_pendiente);
-                int bgCol = ContextCompat.getColor(context, R.color.status_pendiente_container);
+                int txtColor = BadgeUtils.colorAtributo(context, R.attr.colorEstadoPendiente);
+                int bgCol = BadgeUtils.colorAtributo(context, R.attr.colorEstadoPendienteContainer);
                 BadgeUtils.pintar(tvAlerta, txtColor, bgCol);
                 tvAlerta.setVisibility(View.VISIBLE);
             } else {

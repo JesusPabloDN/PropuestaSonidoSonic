@@ -30,16 +30,14 @@
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/touch_target_min"
-                android:text="@string/tab_activos"
-                android:textSize="14sp" />
+                android:text="@string/tab_activos" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnTabHistorial"
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/touch_target_min"
-                android:text="@string/tab_historial"
-                android:textSize="14sp" />
+                android:text="@string/tab_historial" />
 
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
@@ -77,16 +75,14 @@
                 android:text="@string/empty_pedidos_cliente_activos"
                 android:textAlignment="center"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="@dimen/text_body"
-                android:textStyle="bold" />
+                android:textAppearance="?attr/textAppearanceTitleMedium" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnVerCatalogo"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/touch_target_min"
                 android:layout_marginTop="@dimen/spacing_large"
-                android:text="@string/btn_ver_catalogo"
-                app:cornerRadius="@dimen/button_corner_radius" />
+                android:text="@string/btn_ver_catalogo" />
 
         </LinearLayout>
 

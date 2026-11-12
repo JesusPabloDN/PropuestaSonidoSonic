@@ -9,7 +9,6 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilBuscarCliente"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/spacing_medium"
@@ -57,7 +56,7 @@
                 android:layout_height="72dp"
                 android:contentDescription="@string/empty_clientes"
                 android:src="@drawable/ic_contacts_24"
-                app:tint="?attr/colorSurfaceVariant" />
+                app:tint="?attr/colorOnSurfaceVariant" />
 
             <TextView
                 android:id="@+id/tvEmptyClientes"
@@ -67,7 +66,7 @@
                 android:text="@string/empty_clientes"
                 android:textAlignment="center"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="16sp" />
+                android:textAppearance="?attr/textAppearanceBodyLarge" />
 
         </LinearLayout>
 

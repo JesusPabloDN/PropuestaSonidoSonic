@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Spinner;
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +25,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.bumptech.glide.Glide;
 import com.example.propuestasonidosonic.R;
+import com.example.propuestasonidosonic.util.DropdownUtils;
 import com.example.propuestasonidosonic.SonidoSonicApp;
 import com.example.propuestasonidosonic.data.AppContainer;
 import com.example.propuestasonidosonic.data.Callback;
@@ -72,10 +73,12 @@ public class EquipoFormBottomSheet extends BottomSheetDialogFragment {
     private MaterialButton btnQuitarFoto;
     private TextInputLayout tilNombreEquipo;
     private TextInputEditText etNombreEquipo;
-    private Spinner spCategoria;
+    private MaterialAutoCompleteTextView spCategoria;
+    private int posCategoria = 0;
     private TextInputLayout tilPrecioRenta;
     private TextInputEditText etPrecioRenta;
-    private Spinner spEstadoFisico;
+    private MaterialAutoCompleteTextView spEstadoFisico;
+    private int posEstado = 0;
     private TextInputLayout tilCantidad;
     private TextInputEditText etCantidad;
     private MaterialButton btnGuardar;
@@ -174,7 +177,7 @@ public class EquipoFormBottomSheet extends BottomSheetDialogFragment {
     private void configurarSpinners() {
         // Spinner Categoría
         ArrayAdapter<String> adapterCat = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_spinner_dropdown_item, CategoriaEquipo.TODAS_LAS_CATEGORIAS);
+                R.layout.item_dropdown, CategoriaEquipo.TODAS_LAS_CATEGORIAS);
         spCategoria.setAdapter(adapterCat);
 
         // Spinner Estado Físico
@@ -184,8 +187,10 @@ public class EquipoFormBottomSheet extends BottomSheetDialogFragment {
                 getString(R.string.estado_danado)
         );
         ArrayAdapter<String> adapterEstado = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_spinner_dropdown_item, nombresEstados);
+                R.layout.item_dropdown, nombresEstados);
         spEstadoFisico.setAdapter(adapterEstado);
+        posCategoria = DropdownUtils.seleccionar(spCategoria, 0);
+        posEstado = DropdownUtils.seleccionar(spEstadoFisico, 0);
     }
 
     private void configurarListeners() {
@@ -200,17 +205,14 @@ public class EquipoFormBottomSheet extends BottomSheetDialogFragment {
             actualizarPreviewFoto();
         });
 
-        spCategoria.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (fotoUriActual == null) {
-                    actualizarPreviewFoto();
-                }
+        spCategoria.setOnItemClickListener((parent, v, position, id) -> {
+            posCategoria = position;
+            if (fotoUriActual == null) {
+                actualizarPreviewFoto();
             }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
         });
+
+        spEstadoFisico.setOnItemClickListener((parent, v, position, id) -> posEstado = position);
 
         btnCancelar.setOnClickListener(v -> dismiss());
 
@@ -241,10 +243,10 @@ public class EquipoFormBottomSheet extends BottomSheetDialogFragment {
                 fotoUriActual = e.getFotoUri();
 
                 int catPos = CategoriaEquipo.TODAS_LAS_CATEGORIAS.indexOf(e.getCategoria());
-                if (catPos >= 0) spCategoria.setSelection(catPos);
+                if (catPos >= 0) posCategoria = DropdownUtils.seleccionar(spCategoria, catPos);
 
                 int estadoPos = opcionesEstado.indexOf(e.getEstadoFisico());
-                if (estadoPos >= 0) spEstadoFisico.setSelection(estadoPos);
+                if (estadoPos >= 0) posEstado = DropdownUtils.seleccionar(spEstadoFisico, estadoPos);
 
                 actualizarPreviewFoto();
             }
@@ -262,12 +264,13 @@ public class EquipoFormBottomSheet extends BottomSheetDialogFragment {
     private void actualizarPreviewFoto() {
         if (!isAdded()) return;
 
-        String catSeleccionada = (String) spCategoria.getSelectedItem();
+        String catSeleccionada = CategoriaEquipo.TODAS_LAS_CATEGORIAS.get(posCategoria);
         int fallback = CategoriaEquipo.getImagenPorDefecto(catSeleccionada);
 
         if (fotoUriActual != null && !fotoUriActual.trim().isEmpty()) {
             Glide.with(this)
                     .load(Uri.parse(fotoUriActual))
+                    .theme(ivFotoPreview.getContext().getTheme())
                     .placeholder(fallback)
                     .error(fallback)
                     .centerCrop()
@@ -276,6 +279,7 @@ public class EquipoFormBottomSheet extends BottomSheetDialogFragment {
         } else {
             Glide.with(this)
                     .load(fallback)
+                    .theme(ivFotoPreview.getContext().getTheme())
                     .centerCrop()
                     .into(ivFotoPreview);
             btnQuitarFoto.setVisibility(View.GONE);
@@ -306,8 +310,8 @@ public class EquipoFormBottomSheet extends BottomSheetDialogFragment {
             return;
         }
 
-        String categoria = (String) spCategoria.getSelectedItem();
-        int estadoIndex = spEstadoFisico.getSelectedItemPosition();
+        String categoria = CategoriaEquipo.TODAS_LAS_CATEGORIAS.get(posCategoria);
+        int estadoIndex = posEstado;
         String estadoFisico = (estadoIndex >= 0 && estadoIndex < opcionesEstado.size())
                 ? opcionesEstado.get(estadoIndex) : Equipo.ESTADO_DISPONIBLE;
 
@@ -458,13 +462,13 @@ public class EquipoFormBottomSheet extends BottomSheetDialogFragment {
             outState.putString(KEY_NOMBRE, etNombreEquipo.getText() != null ? etNombreEquipo.getText().toString() : "");
         }
         if (spCategoria != null) {
-            outState.putInt(KEY_CATEGORIA, spCategoria.getSelectedItemPosition());
+            outState.putInt(KEY_CATEGORIA, posCategoria);
         }
         if (etPrecioRenta != null) {
             outState.putString(KEY_PRECIO, etPrecioRenta.getText() != null ? etPrecioRenta.getText().toString() : "");
         }
         if (spEstadoFisico != null) {
-            outState.putInt(KEY_ESTADO, spEstadoFisico.getSelectedItemPosition());
+            outState.putInt(KEY_ESTADO, posEstado);
         }
         if (etCantidad != null) {
             outState.putString(KEY_CANTIDAD, etCantidad.getText() != null ? etCantidad.getText().toString() : "");
@@ -476,11 +480,12 @@ public class EquipoFormBottomSheet extends BottomSheetDialogFragment {
         String nombre = state.getString(KEY_NOMBRE);
         if (nombre != null) etNombreEquipo.setText(nombre);
         int catPos = state.getInt(KEY_CATEGORIA, 0);
-        spCategoria.setSelection(catPos);
+        posCategoria = DropdownUtils.seleccionar(spCategoria, catPos);
         String precio = state.getString(KEY_PRECIO);
         if (precio != null) etPrecioRenta.setText(precio);
         int estadoPos = state.getInt(KEY_ESTADO, 0);
-        spEstadoFisico.setSelection(estadoPos);
+        posEstado = DropdownUtils.seleccionar(spEstadoFisico, estadoPos);
+        actualizarPreviewFoto();
         String cantidad = state.getString(KEY_CANTIDAD);
         if (cantidad != null) etCantidad.setText(cantidad);
 

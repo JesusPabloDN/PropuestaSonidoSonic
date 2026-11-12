@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.propuestasonidosonic.R;
+import com.example.propuestasonidosonic.util.BadgeUtils;
 import com.example.propuestasonidosonic.SonidoSonicApp;
 import com.example.propuestasonidosonic.data.PagoRepository;
 import com.example.propuestasonidosonic.data.PedidoRepository;
@@ -272,7 +273,7 @@ public class FinanzasFragment extends Fragment {
                 tvMonto.setTextColor(com.example.propuestasonidosonic.util.BadgeUtils.colorError(ctx));
             } else {
                 tvMonto.setText("+ " + FormatUtils.formatoMoneda(pago.getMonto()));
-                tvMonto.setTextColor(ContextCompat.getColor(ctx, R.color.status_disponible));
+                tvMonto.setTextColor(BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponible));
             }
 
             itemView.setOnClickListener(v -> {

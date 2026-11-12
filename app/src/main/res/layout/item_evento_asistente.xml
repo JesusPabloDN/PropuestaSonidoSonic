@@ -7,11 +7,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/spacing_medium"
     android:clickable="true"
-    android:focusable="true"
-    app:cardCornerRadius="@dimen/card_corner_radius"
-    app:cardElevation="1dp"
-    app:strokeColor="?attr/colorSurfaceVariant"
-    app:strokeWidth="1dp">
+    android:focusable="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,8 +28,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="@dimen/text_title"
-                android:textStyle="bold"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
                 tools:text="Boda de Carlos y Ana" />
 
             <TextView
@@ -47,8 +42,7 @@
                 android:paddingEnd="@dimen/spacing_small"
                 android:paddingBottom="2dp"
                 android:text="@string/badge_hoy"
-                android:textSize="12sp"
-                android:textStyle="bold"
+                android:textAppearance="?attr/textAppearanceLabelMedium"
                 android:visibility="gone"
                 tools:visibility="visible" />
 
@@ -62,8 +56,7 @@
                 android:paddingTop="2dp"
                 android:paddingEnd="@dimen/spacing_small"
                 android:paddingBottom="2dp"
-                android:textSize="12sp"
-                android:textStyle="bold"
+                android:textAppearance="?attr/textAppearanceLabelMedium"
                 android:visibility="gone"
                 tools:text="Pendiente"
                 tools:visibility="visible" />
@@ -77,8 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_tiny"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="@dimen/text_body"
-            android:textStyle="bold"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
             tools:text="sábado, 5 de diciembre de 2026" />
 
         <!-- Llegada y Evento -->
@@ -87,9 +79,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:textColor="?attr/colorPrimary"
-            android:textSize="@dimen/text_body"
-            android:textStyle="bold"
+            android:textColor="?attr/colorOnSurface"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
             tools:text="Llegada: 17:30 · Evento: 19:00–23:00" />
 
         <!-- Dirección -->
@@ -99,7 +90,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_tiny"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="13sp"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
             tools:text="Salón Los Cedros, Av. Insurgentes 123" />
 
         <!-- Paquete -->
@@ -109,7 +100,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="13sp"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
             tools:text="Paquete Básico" />
 
     </LinearLayout>

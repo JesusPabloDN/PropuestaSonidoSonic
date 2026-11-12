@@ -4,11 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/spacing_medium"
-    app:cardCornerRadius="@dimen/card_corner_radius"
-    app:cardElevation="1dp"
-    app:strokeColor="?attr/colorSurfaceVariant"
-    app:strokeWidth="1dp">
+    android:layout_marginBottom="@dimen/spacing_medium">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -33,13 +29,11 @@
 
             <TextView
                 android:id="@+id/tvPreguntaTitulo"
-                style="@style/TextAppearance.Material3.TitleSmall"
+                android:textAppearance="?attr/textAppearanceTitleSmall"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="15sp"
-                android:textStyle="bold"
                 tools:text="¿Cómo registrar un pedido?" />
 
             <ImageView
@@ -69,16 +63,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginBottom="@dimen/spacing_small"
-                android:background="?attr/colorSurfaceVariant" />
+                android:background="?attr/colorOutlineVariant" />
 
             <TextView
                 android:id="@+id/tvRespuestaTexto"
-                style="@style/TextAppearance.Material3.BodyMedium"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:lineSpacingExtra="3dp"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="14sp"
                 tools:text="En la pestaña Pedidos, pulsa el botón..." />
 
         </LinearLayout>

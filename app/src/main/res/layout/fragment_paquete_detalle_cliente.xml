@@ -36,8 +36,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="?attr/colorOnSurface"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
+                    android:textAppearance="?attr/textAppearanceHeadlineSmall"
                     tools:text="Paquete Fiesta Pro" />
 
                 <TextView
@@ -45,9 +44,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textAppearance="?attr/textAppearanceTitleLarge"
                     tools:text="$3,500.00" />
 
                 <TextView
@@ -56,18 +54,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_small"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="@dimen/text_body"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
                     tools:text="El paquete más completo para bodas, graduaciones y eventos sociales de mediano alcance." />
 
                 <!-- Card Incluye -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_medium"
-                    app:cardCornerRadius="@dimen/card_corner_radius"
-                    app:cardElevation="1dp"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="?attr/colorSurfaceVariant">
+                    android:layout_marginTop="@dimen/spacing_medium">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -80,8 +74,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/paquete_detalle_incluye_titulo"
                             android:textColor="?attr/colorOnSurface"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
+                            android:textAppearance="?attr/textAppearanceTitleMedium" />
 
                         <LinearLayout
                             android:id="@+id/llComponentesDetalle"
@@ -95,14 +88,14 @@
                             android:layout_height="1dp"
                             android:layout_marginTop="@dimen/spacing_small"
                             android:layout_marginBottom="@dimen/spacing_small"
-                            android:background="?attr/colorSurfaceVariant" />
+                            android:background="?attr/colorOutlineVariant" />
 
                         <TextView
                             android:id="@+id/tvDuracionDetalle"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textColor="?attr/colorOnSurface"
-                            android:textSize="@dimen/text_body"
+                            android:textAppearance="?attr/textAppearanceBodyLarge"
                             tools:text="4 horas de servicio incluidas" />
 
                         <TextView
@@ -111,7 +104,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:textColor="?attr/colorOnSurfaceVariant"
-                            android:textSize="@dimen/text_body"
+                            android:textAppearance="?attr/textAppearanceBodyLarge"
                             tools:text="+$500.00 por hora extra" />
 
                         <TextView
@@ -120,7 +113,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:textColor="?attr/colorOnSurfaceVariant"
-                            android:textSize="@dimen/text_body"
+                            android:textAppearance="?attr/textAppearanceBodyLarge"
                             tools:text="Anticipo: 30% ($1,050.00)" />
 
                     </LinearLayout>
@@ -131,11 +124,7 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_medium"
-                    app:cardCornerRadius="@dimen/card_corner_radius"
-                    app:cardElevation="1dp"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="?attr/colorSurfaceVariant">
+                    android:layout_marginTop="@dimen/spacing_medium">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -148,8 +137,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/paquete_detalle_cancelaciones_titulo"
                             android:textColor="?attr/colorOnSurface"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
+                            android:textAppearance="?attr/textAppearanceTitleMedium" />
 
                         <TextView
                             android:layout_width="match_parent"
@@ -157,7 +145,7 @@
                             android:layout_marginTop="@dimen/spacing_small"
                             android:text="@string/cancelacion_politica_100"
                             android:textColor="?attr/colorOnSurfaceVariant"
-                            android:textSize="@dimen/text_body" />
+                            android:textAppearance="?attr/textAppearanceBodyLarge" />
 
                         <TextView
                             android:layout_width="match_parent"
@@ -165,7 +153,7 @@
                             android:layout_marginTop="6dp"
                             android:text="@string/cancelacion_politica_50"
                             android:textColor="?attr/colorOnSurfaceVariant"
-                            android:textSize="@dimen/text_body" />
+                            android:textAppearance="?attr/textAppearanceBodyLarge" />
 
                         <TextView
                             android:layout_width="match_parent"
@@ -173,7 +161,7 @@
                             android:layout_marginTop="6dp"
                             android:text="@string/cancelacion_politica_0"
                             android:textColor="?attr/colorOnSurfaceVariant"
-                            android:textSize="@dimen/text_body" />
+                            android:textAppearance="?attr/textAppearanceBodyLarge" />
 
                     </LinearLayout>
 
@@ -190,10 +178,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:cardElevation="8dp"
-        app:strokeWidth="0dp"
         app:cardCornerRadius="0dp"
-        android:background="?attr/colorSurface">
+        style="@style/Widget.SonidoSonic.CardView.Elevated"
+        app:cardBackgroundColor="?attr/colorSurfaceContainer"
+        app:cardElevation="3dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -204,10 +192,7 @@
                 android:id="@+id/btnReservar"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/touch_target_min"
-                android:text="@string/btn_reservar"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:cornerRadius="@dimen/button_corner_radius" />
+                android:text="@string/btn_reservar" />
 
         </LinearLayout>
 

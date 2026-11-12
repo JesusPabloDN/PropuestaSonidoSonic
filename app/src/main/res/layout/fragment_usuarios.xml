@@ -61,9 +61,7 @@
                 android:layout_gravity="bottom|end"
                 android:layout_margin="@dimen/spacing_large"
                 android:contentDescription="@string/desc_nuevo_personal"
-                android:src="@drawable/ic_add_24"
-                app:backgroundTint="?attr/colorPrimary"
-                app:tint="?attr/colorOnPrimary" />
+                android:src="@drawable/ic_add_24" />
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
@@ -93,7 +91,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/desc_dia_anterior"
                     android:src="@drawable/ic_chevron_left_24"
-                    app:tint="?attr/colorOnSurface" />
+                    app:tint="?attr/colorOnSurfaceVariant" />
 
                 <TextView
                     android:id="@+id/tvFechaSeleccionada"
@@ -107,8 +105,7 @@
                     android:minHeight="@dimen/touch_target_min"
                     android:padding="@dimen/spacing_small"
                     android:textColor="?attr/colorOnSurface"
-                    android:textSize="@dimen/text_body"
-                    android:textStyle="bold"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
                     tools:text="sábado 14 de noviembre de 2026" />
 
                 <ImageButton
@@ -118,7 +115,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/desc_dia_siguiente"
                     android:src="@drawable/ic_chevron_right_24"
-                    app:tint="?attr/colorOnSurface" />
+                    app:tint="?attr/colorOnSurfaceVariant" />
 
             </LinearLayout>
 
@@ -130,11 +127,11 @@
                 android:layout_marginStart="@dimen/spacing_medium"
                 android:layout_marginEnd="@dimen/spacing_medium"
                 android:layout_marginBottom="@dimen/spacing_tiny"
-                android:background="?attr/colorSurfaceVariant"
+                android:background="?attr/colorSurfaceContainerHighest"
                 android:padding="@dimen/spacing_small"
                 android:text="@string/aviso_dia_pasado"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="@dimen/text_caption"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
                 android:visibility="gone" />
 
             <!-- Resumen de Personal Disponible -->
@@ -146,9 +143,8 @@
                 android:layout_marginTop="@dimen/spacing_tiny"
                 android:layout_marginEnd="@dimen/spacing_medium"
                 android:layout_marginBottom="@dimen/spacing_small"
-                android:textColor="?attr/colorPrimary"
-                android:textSize="@dimen/text_body"
-                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
                 tools:text="Personal disponible ese día: 2" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -169,7 +165,7 @@
                 android:gravity="center"
                 android:text="@string/empty_disponibilidad_sin_asistentes"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="@dimen/text_body"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
                 android:visibility="gone" />
 
         </LinearLayout>
