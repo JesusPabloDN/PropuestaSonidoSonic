@@ -233,7 +233,7 @@
                         android:background="@drawable/bg_aviso"
                         android:padding="@dimen/spacing_medium"
                         android:text="@string/aviso_evento_urgente_revision"
-                        android:textColor="?attr/colorEstadoPendiente"
+                        android:textColor="?attr/colorOnEstadoPendienteContainer"
                         android:textAppearance="?attr/textAppearanceBodyMedium"
                         android:visibility="gone"
                         tools:visibility="visible"

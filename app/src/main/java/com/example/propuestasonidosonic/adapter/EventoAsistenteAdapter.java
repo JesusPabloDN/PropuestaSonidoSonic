@@ -110,7 +110,7 @@ public class EventoAsistenteAdapter extends RecyclerView.Adapter<EventoAsistente
                 tvBadgeHoy.setVisibility(View.VISIBLE);
                 tvBadgeHoy.setText(R.string.badge_hoy);
                 BadgeUtils.pintar(tvBadgeHoy,
-                        BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponible),
+                        BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDisponibleContainer),
                         BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponibleContainer));
             } else {
                 tvBadgeHoy.setVisibility(View.GONE);
@@ -122,13 +122,13 @@ public class EventoAsistenteAdapter extends RecyclerView.Adapter<EventoAsistente
                 String estado = AsistenteUtils.estadoChecklist(ev != null ? ev.getChecklist() : null);
                 int colorTxt, colorBg;
                 if ("Completo".equals(estado)) {
-                    colorTxt = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponible);
+                    colorTxt = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDisponibleContainer);
                     colorBg = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponibleContainer);
                 } else if ("En evento".equals(estado)) {
-                    colorTxt = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoRentado);
+                    colorTxt = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoRentadoContainer);
                     colorBg = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoRentadoContainer);
                 } else if ("Pendiente".equals(estado)) {
-                    colorTxt = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendiente);
+                    colorTxt = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoPendienteContainer);
                     colorBg = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendienteContainer);
                 } else {
                     colorTxt = BadgeUtils.colorAtributo(ctx, com.google.android.material.R.attr.colorOnSurfaceVariant);

@@ -144,15 +144,23 @@
 
     <!-- Estados de equipo y pedidos (versión oscura) -->
     <!-- Verde = disponible / confirmado -->
-    <color name="status_disponible">#48BB78</color>
-    <color name="status_disponible_container">#1C4532</color>
+    <color name="status_disponible">#7CDA9B</color>
+    <color name="status_disponible_container">#00522B</color>
+    <color name="status_on_disponible">#00391C</color>
+    <color name="status_on_disponible_container">#98F7B5</color>
     <!-- Amarillo/Ámbar = en reparación / pendiente -->
-    <color name="status_pendiente">#ECC94B</color>
-    <color name="status_pendiente_container">#5F370E</color>
+    <color name="status_pendiente">#FFB95F</color>
+    <color name="status_pendiente_container">#653E00</color>
+    <color name="status_on_pendiente">#472A00</color>
+    <color name="status_on_pendiente_container">#FFDDB8</color>
     <!-- Rojo = dañado / cancelado -->
-    <color name="status_danado">#FC8181</color>
-    <color name="status_danado_container">#63171B</color>
+    <color name="status_danado">#FFB3AD</color>
+    <color name="status_danado_container">#920212</color>
+    <color name="status_on_danado">#680009</color>
+    <color name="status_on_danado_container">#FFDAD6</color>
     <!-- Azul = rentado / entregado -->
-    <color name="status_rentado">#63B3ED</color>
-    <color name="status_rentado_container">#2A4365</color>
+    <color name="status_rentado">#A2C9FF</color>
+    <color name="status_rentado_container">#004881</color>
+    <color name="status_on_rentado">#00315C</color>
+    <color name="status_on_rentado_container">#D3E4FF</color>
 </resources>

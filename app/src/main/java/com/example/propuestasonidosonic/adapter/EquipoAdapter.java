@@ -172,19 +172,19 @@ public class EquipoAdapter extends RecyclerView.Adapter<EquipoAdapter.EquipoView
             String texto;
 
             if (Equipo.ESTADO_RENTADO.equals(estado)) {
-                textColor = BadgeUtils.colorAtributo(context, R.attr.colorEstadoRentado);
+                textColor = BadgeUtils.colorAtributo(context, R.attr.colorOnEstadoRentadoContainer);
                 containerColor = BadgeUtils.colorAtributo(context, R.attr.colorEstadoRentadoContainer);
                 texto = context.getString(R.string.estado_rentado);
             } else if (Equipo.ESTADO_EN_REPARACION.equals(estado)) {
-                textColor = BadgeUtils.colorAtributo(context, R.attr.colorEstadoPendiente);
+                textColor = BadgeUtils.colorAtributo(context, R.attr.colorOnEstadoPendienteContainer);
                 containerColor = BadgeUtils.colorAtributo(context, R.attr.colorEstadoPendienteContainer);
                 texto = context.getString(R.string.estado_en_reparacion);
             } else if (Equipo.ESTADO_DANADO.equals(estado)) {
-                textColor = BadgeUtils.colorAtributo(context, R.attr.colorEstadoDanado);
+                textColor = BadgeUtils.colorAtributo(context, R.attr.colorOnEstadoDanadoContainer);
                 containerColor = BadgeUtils.colorAtributo(context, R.attr.colorEstadoDanadoContainer);
                 texto = context.getString(R.string.estado_danado);
             } else {
-                textColor = BadgeUtils.colorAtributo(context, R.attr.colorEstadoDisponible);
+                textColor = BadgeUtils.colorAtributo(context, R.attr.colorOnEstadoDisponibleContainer);
                 containerColor = BadgeUtils.colorAtributo(context, R.attr.colorEstadoDisponibleContainer);
                 texto = context.getString(R.string.estado_disponible);
             }

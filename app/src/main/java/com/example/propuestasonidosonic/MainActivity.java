@@ -74,7 +74,10 @@ public class MainActivity extends AppCompatActivity {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.drawerLayout), (v, windowInsets) -> {
             Insets systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
             findViewById(R.id.main_content).setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
-            findViewById(R.id.bottomNavigationView).setPadding(0, 0, 0, systemBars.bottom);
+            View barraInferior = findViewById(R.id.bottomNavigationView);
+            android.view.ViewGroup.MarginLayoutParams margenesBarra = (android.view.ViewGroup.MarginLayoutParams) barraInferior.getLayoutParams();
+            margenesBarra.bottomMargin = systemBars.bottom + getResources().getDimensionPixelSize(R.dimen.spacing_small);
+            barraInferior.setLayoutParams(margenesBarra);
 
             // Bajar el encabezado del drawer para que no quede pegado a la barra de estado
             int extraTopSpacing = getResources().getDimensionPixelSize(R.dimen.spacing_xlarge);

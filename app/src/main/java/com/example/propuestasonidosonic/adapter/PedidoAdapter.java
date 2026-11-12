@@ -151,37 +151,37 @@ public class PedidoAdapter extends RecyclerView.Adapter<PedidoAdapter.PedidoView
             switch (estado) {
                 case Pedido.ESTADO_APARTADO:
                     textoRes = R.string.badge_apartado;
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendiente);
+                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoPendienteContainer);
                     colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendienteContainer);
                     break;
                 case Pedido.ESTADO_EN_REVISION:
                     textoRes = R.string.badge_en_revision;
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendiente);
+                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoPendienteContainer);
                     colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendienteContainer);
                     break;
                 case Pedido.ESTADO_CONFIRMADO:
                     textoRes = R.string.badge_confirmado;
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponible);
+                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDisponibleContainer);
                     colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponibleContainer);
                     break;
                 case Pedido.ESTADO_PAGADO:
                     textoRes = R.string.badge_pagado;
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponible);
+                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDisponibleContainer);
                     colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponibleContainer);
                     break;
                 case Pedido.ESTADO_COMPLETADO:
                     textoRes = R.string.badge_completado;
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoRentado);
+                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoRentadoContainer);
                     colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoRentadoContainer);
                     break;
                 case Pedido.ESTADO_CANCELADO:
                     textoRes = R.string.badge_cancelado;
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanado);
+                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDanadoContainer);
                     colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanadoContainer);
                     break;
                 case Pedido.ESTADO_RECHAZADO:
                     textoRes = R.string.badge_rechazado;
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanado);
+                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDanadoContainer);
                     colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanadoContainer);
                     break;
                 case Pedido.ESTADO_VENCIDO:

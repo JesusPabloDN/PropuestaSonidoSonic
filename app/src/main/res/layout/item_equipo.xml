@@ -60,7 +60,7 @@
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
                     android:background="@drawable/bg_badge_rounded"
-                    android:textColor="?attr/colorEstadoDisponible"
+                    android:textColor="?attr/colorOnEstadoDisponibleContainer"
                     tools:text="Disponible" />
 
             </LinearLayout>

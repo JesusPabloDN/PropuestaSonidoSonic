@@ -2,6 +2,7 @@
 <resources>
     <style name="Widget.SonidoSonic.Toolbar" parent="Widget.Material3.Toolbar.Surface">
         <item name="android:background">?attr/colorSurface</item>
+        <item name="titleCentered">true</item>
         <item name="titleTextAppearance">?attr/textAppearanceTitleLarge</item>
         <item name="titleTextColor">?attr/colorOnSurface</item>
         <item name="subtitleTextAppearance">?attr/textAppearanceTitleSmall</item>
@@ -10,7 +11,14 @@
     </style>
 
     <style name="Widget.SonidoSonic.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
-        <item name="backgroundTint">?attr/colorSurfaceContainer</item>
+        <item name="android:background">@drawable/bg_barra_inferior</item>
+        <item name="backgroundTint">@null</item>
+        <item name="elevation">3dp</item>
+        <item name="itemIconTint">@color/selector_icono_barra</item>
+        <item name="itemTextColor">@color/selector_texto_barra</item>
+        <item name="itemPaddingTop">10dp</item>
+        <item name="itemPaddingBottom">12dp</item>
+        <item name="activeIndicatorLabelPadding">4dp</item>
         <item name="itemActiveIndicatorStyle">@style/Widget.SonidoSonic.BottomNavigationView.ActiveIndicator</item>
         <item name="itemTextAppearanceActive">?attr/textAppearanceLabelMedium</item>
         <item name="itemTextAppearanceInactive">?attr/textAppearanceLabelMedium</item>
@@ -18,9 +26,13 @@
 
     <style name="Widget.SonidoSonic.BottomNavigationView.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
         <item name="android:color">?attr/colorSecondaryContainer</item>
+        <item name="android:width">48dp</item>
+        <item name="android:height">48dp</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.Full</item>
     </style>
 
     <style name="Widget.SonidoSonic.TabLayout" parent="Widget.Material3.TabLayout">
+        <item name="android:background">?attr/colorSurface</item>
         <item name="tabIndicatorColor">?attr/colorPrimary</item>
         <item name="tabTextAppearance">?attr/textAppearanceTitleSmall</item>
     </style>
@@ -41,7 +53,7 @@
         <item name="cardBackgroundColor">?attr/colorSurfaceContainerLow</item>
         <item name="strokeWidth">0dp</item>
         <item name="cardElevation">1dp</item>
-        <item name="cardCornerRadius">@dimen/card_corner_radius</item>
+        <item name="cardCornerRadius">@dimen/card_corner_radius_grande</item>
     </style>
 
     <style name="Widget.SonidoSonic.CardView.Filled" parent="Widget.Material3.CardView.Filled">
@@ -65,8 +77,8 @@
     </style>
 
     <style name="Widget.SonidoSonic.FloatingActionButton" parent="Widget.Material3.FloatingActionButton.Primary">
-        <item name="backgroundTint">?attr/colorPrimary</item>
-        <item name="tint">?attr/colorOnPrimary</item>
+        <item name="backgroundTint">?attr/colorPrimaryContainer</item>
+        <item name="tint">?attr/colorOnPrimaryContainer</item>
     </style>
 
     <style name="Widget.SonidoSonic.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
@@ -102,5 +114,9 @@
 
     <style name="Widget.SonidoSonic.BottomSheet" parent="Widget.Material3.BottomSheet.Modal">
         <item name="backgroundTint">?attr/colorSurfaceContainerLow</item>
+    </style>
+
+    <style name="Widget.SonidoSonic.Toolbar.Navegacion" parent="Widget.AppCompat.Toolbar.Button.Navigation">
+        <item name="android:background">@drawable/bg_boton_circular</item>
     </style>
 </resources>

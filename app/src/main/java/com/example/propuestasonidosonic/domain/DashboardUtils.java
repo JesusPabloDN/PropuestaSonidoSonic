@@ -86,4 +86,90 @@ public final class DashboardUtils {
         }
         return count;
     }
+
+    /** Índice del día actual dentro de la semana, con el lunes como 0 y el domingo como 6. */
+    public static int indiceDiaSemana(long ahora) {
+        Calendar cal = getCalendar();
+        cal.setTimeInMillis(ahora);
+        return (cal.get(Calendar.DAY_OF_WEEK) + 5) % 7;
+    }
+
+    /**
+     * Cuenta los eventos programados para cada día de la semana actual (lunes a domingo).
+     * Solo cuenta pedidos que aparecen en la agenda, por lo que excluye cancelados,
+     * rechazados y apartados vencidos.
+     */
+    public static int[] eventosPorDiaSemana(List<Pedido> pedidos, long ahora) {
+        int[] conteo = new int[7];
+        if (pedidos == null) return conteo;
+
+        Calendar cal = getCalendar();
+        cal.setTimeInMillis(TiempoUtils.inicioDelDia(ahora));
+        cal.add(Calendar.DAY_OF_MONTH, -indiceDiaSemana(ahora));
+        long[] limites = new long[8];
+        for (int i = 0; i < 8; i++) {
+            limites[i] = cal.getTimeInMillis();
+            cal.add(Calendar.DAY_OF_MONTH, 1);
+        }
+
+        for (Pedido p : pedidos) {
+            if (p == null || !AgendaUtils.apareceEnAgenda(p, ahora)) continue;
+            long ini = p.getInicioMillis();
+            for (int i = 0; i < 7; i++) {
+                if (ini >= limites[i] && ini < limites[i + 1]) {
+                    conteo[i]++;
+                    break;
+                }
+            }
+        }
+        return conteo;
+    }
+
+    /** Paquete y número de veces que se ha rentado. */
+    public static class ConteoPaquete {
+        public final String nombre;
+        public final int cantidad;
+
+        ConteoPaquete(String nombre, int cantidad) {
+            this.nombre = nombre;
+            this.cantidad = cantidad;
+        }
+    }
+
+    /**
+     * Paquetes con más pedidos cuyo evento ocurre a partir de {@code desdeMillis}.
+     * Excluye cancelados, rechazados y apartados vencidos.
+     */
+    public static List<ConteoPaquete> paquetesMasRentados(List<Pedido> pedidos, long desdeMillis, long ahora, int limite) {
+        java.util.Map<String, Integer> conteo = new java.util.LinkedHashMap<>();
+        if (pedidos != null) {
+            for (Pedido p : pedidos) {
+                if (p == null || !AgendaUtils.apareceEnAgenda(p, ahora)) continue;
+                if (p.getInicioMillis() < desdeMillis) continue;
+                String nombre = p.getPaqueteNombre();
+                if (nombre == null || nombre.trim().isEmpty()) nombre = "Sin paquete";
+                Integer actual = conteo.get(nombre);
+                conteo.put(nombre, actual == null ? 1 : actual + 1);
+            }
+        }
+        List<ConteoPaquete> lista = new java.util.ArrayList<>();
+        for (java.util.Map.Entry<String, Integer> e : conteo.entrySet()) {
+            lista.add(new ConteoPaquete(e.getKey(), e.getValue()));
+        }
+        java.util.Collections.sort(lista, (a, b) -> Integer.compare(b.cantidad, a.cantidad));
+        return lista.size() > limite ? new java.util.ArrayList<>(lista.subList(0, limite)) : lista;
+    }
+
+    /** Apartados vigentes ordenados por su vencimiento más cercano. */
+    public static List<Pedido> apartadosVigentes(List<Pedido> pedidos, long ahora) {
+        List<Pedido> lista = new java.util.ArrayList<>();
+        if (pedidos == null) return lista;
+        for (Pedido p : pedidos) {
+            if (p != null && Pedido.ESTADO_APARTADO.equals(p.getEstado()) && p.getVencimientoApartadoMillis() > ahora) {
+                lista.add(p);
+            }
+        }
+        java.util.Collections.sort(lista, (a, b) -> Long.compare(a.getVencimientoApartadoMillis(), b.getVencimientoApartadoMillis()));
+        return lista;
+    }
 }

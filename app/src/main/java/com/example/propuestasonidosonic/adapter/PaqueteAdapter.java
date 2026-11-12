@@ -137,7 +137,7 @@ public class PaqueteAdapter extends RecyclerView.Adapter<PaqueteAdapter.PaqueteV
             // Estado Activo / Inactivo
             if (paquete.isActivo()) {
                 tvEstado.setText(R.string.badge_paquete_activo);
-                int txtColor = BadgeUtils.colorAtributo(context, R.attr.colorEstadoDisponible);
+                int txtColor = BadgeUtils.colorAtributo(context, R.attr.colorOnEstadoDisponibleContainer);
                 int bgCol = BadgeUtils.colorAtributo(context, R.attr.colorEstadoDisponibleContainer);
                 BadgeUtils.pintar(tvEstado, txtColor, bgCol);
             } else {
@@ -195,7 +195,7 @@ public class PaqueteAdapter extends RecyclerView.Adapter<PaqueteAdapter.PaqueteV
             // Regla de Stock insuficiente
             if (modeloFaltante != null) {
                 tvAlerta.setText(context.getString(R.string.alerta_stock_insuficiente_formato, modeloFaltante));
-                int txtColor = BadgeUtils.colorAtributo(context, R.attr.colorEstadoPendiente);
+                int txtColor = BadgeUtils.colorAtributo(context, R.attr.colorOnEstadoPendienteContainer);
                 int bgCol = BadgeUtils.colorAtributo(context, R.attr.colorEstadoPendienteContainer);
                 BadgeUtils.pintar(tvAlerta, txtColor, bgCol);
                 tvAlerta.setVisibility(View.VISIBLE);

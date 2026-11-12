@@ -75,12 +75,23 @@
         <item name="colorEstadoDanadoContainer">@color/status_danado_container</item>
         <item name="colorEstadoRentado">@color/status_rentado</item>
         <item name="colorEstadoRentadoContainer">@color/status_rentado_container</item>
+        <item name="colorOnEstadoDisponible">@color/status_on_disponible</item>
+        <item name="colorOnEstadoDisponibleContainer">@color/status_on_disponible_container</item>
+        <item name="colorOnEstadoPendiente">@color/status_on_pendiente</item>
+        <item name="colorOnEstadoPendienteContainer">@color/status_on_pendiente_container</item>
+        <item name="colorOnEstadoDanado">@color/status_on_danado</item>
+        <item name="colorOnEstadoDanadoContainer">@color/status_on_danado_container</item>
+        <item name="colorOnEstadoRentado">@color/status_on_rentado</item>
+        <item name="colorOnEstadoRentadoContainer">@color/status_on_rentado_container</item>
+
+        <item name="android:windowBackground">?attr/colorSurface</item>
 
         <item name="toolbarStyle">@style/Widget.SonidoSonic.Toolbar</item>
+        <item name="toolbarNavigationButtonStyle">@style/Widget.SonidoSonic.Toolbar.Navegacion</item>
         <item name="bottomNavigationStyle">@style/Widget.SonidoSonic.BottomNavigationView</item>
         <item name="tabStyle">@style/Widget.SonidoSonic.TabLayout</item>
         <item name="materialDividerStyle">@style/Widget.SonidoSonic.MaterialDivider</item>
-        <item name="materialCardViewStyle">@style/Widget.SonidoSonic.CardView.Outlined</item>
+        <item name="materialCardViewStyle">@style/Widget.SonidoSonic.CardView.Elevated</item>
         <item name="floatingActionButtonStyle">@style/Widget.SonidoSonic.FloatingActionButton</item>
         <item name="textInputStyle">@style/Widget.SonidoSonic.TextInputLayout</item>
         <item name="snackbarStyle">@style/Widget.SonidoSonic.Snackbar</item>

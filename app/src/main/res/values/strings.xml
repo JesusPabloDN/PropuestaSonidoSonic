@@ -664,4 +664,46 @@
         <item>El teléfono y los datos de contacto del cliente están visibles en el detalle del evento para que puedas comunicarte en caso de dudas sobre la llegada o ubicación.</item>
         <item>En el detalle del evento asignado, marca cada unidad como \"Salió\" al cargar el equipo y como \"Regresó\" al finalizar. Si hay un daño o faltante, añade una observación.</item>
     </string-array>
+    <!-- Dashboard estilo BBVA -->
+    <string name="dash_avisos_contador">%1$d de %2$d</string>
+    <string name="dash_aviso_anterior">Aviso anterior</string>
+    <string name="dash_aviso_siguiente">Aviso siguiente</string>
+    <string name="dash_aviso_proximo_evento">Próximo evento</string>
+    <string name="dash_aviso_proximo_detalle">%1$s · %2$s · %3$s</string>
+    <string name="dash_aviso_ver_pedido">Ver pedido</string>
+    <string name="dash_aviso_revision_etiqueta">Requiere tu atención</string>
+    <plurals name="dash_aviso_revision_titulo">
+        <item quantity="one">%d pedido por revisar</item>
+        <item quantity="other">%d pedidos por revisar</item>
+    </plurals>
+    <string name="dash_aviso_revision_detalle">Revísalos para confirmarlos o rechazarlos a tiempo.</string>
+    <string name="dash_aviso_ir_pedidos">Ir a pedidos</string>
+    <string name="dash_aviso_apartados_etiqueta">Apartados por vencer</string>
+    <plurals name="dash_aviso_apartados_titulo">
+        <item quantity="one">%d apartado sin anticipo</item>
+        <item quantity="other">%d apartados sin anticipo</item>
+    </plurals>
+    <string name="dash_aviso_apartados_detalle">El primero vence el %1$s a las %2$s.</string>
+    <string name="dash_aviso_al_dia_etiqueta">Todo al día</string>
+    <string name="dash_aviso_al_dia_titulo">No hay pendientes</string>
+    <string name="dash_aviso_al_dia_detalle">Aquí verás tus próximos eventos y los pedidos que necesiten atención.</string>
+    <string name="dash_ver_agenda">Ver agenda</string>
+    <string name="dash_ver_finanzas">Ver finanzas</string>
+    <string name="dash_ver_paquetes">Ver paquetes</string>
+    <string name="dash_eventos_semana_titulo">Eventos de esta semana</string>
+    <plurals name="dash_eventos_semana_total">
+        <item quantity="one">%d evento programado de lunes a domingo</item>
+        <item quantity="other">%d eventos programados de lunes a domingo</item>
+    </plurals>
+    <string name="dash_pendientes_titulo">Pendientes</string>
+    <string name="dash_ingresos_seccion">Ingresos netos</string>
+    <string name="dash_ultimos_6_meses">Últimos 6 meses</string>
+    <string name="dash_ingresos_periodo">Total del periodo: %1$s</string>
+    <string name="dash_paquetes_seccion">Paquetes más rentados</string>
+    <string name="dash_paquetes_subtitulo">Los 5 paquetes con más pedidos</string>
+    <string name="dash_paquetes_vacio">Todavía no hay pedidos en este periodo.</string>
+    <plurals name="dash_paquetes_rentas">
+        <item quantity="one">%d pedido</item>
+        <item quantity="other">%d pedidos</item>
+    </plurals>
 </resources>

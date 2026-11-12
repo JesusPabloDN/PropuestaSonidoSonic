@@ -8,4 +8,12 @@
     <attr name="colorEstadoDanadoContainer" format="color" />
     <attr name="colorEstadoRentado" format="color" />
     <attr name="colorEstadoRentadoContainer" format="color" />
+    <attr name="colorOnEstadoDisponible" format="color" />
+    <attr name="colorOnEstadoDisponibleContainer" format="color" />
+    <attr name="colorOnEstadoPendiente" format="color" />
+    <attr name="colorOnEstadoPendienteContainer" format="color" />
+    <attr name="colorOnEstadoDanado" format="color" />
+    <attr name="colorOnEstadoDanadoContainer" format="color" />
+    <attr name="colorOnEstadoRentado" format="color" />
+    <attr name="colorOnEstadoRentadoContainer" format="color" />
 </resources>

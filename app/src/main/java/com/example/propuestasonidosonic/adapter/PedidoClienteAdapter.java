@@ -170,21 +170,21 @@ public class PedidoClienteAdapter extends RecyclerView.Adapter<PedidoClienteAdap
             switch (estado) {
                 case Pedido.ESTADO_APARTADO:
                 case Pedido.ESTADO_EN_REVISION:
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendiente);
+                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoPendienteContainer);
                     colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendienteContainer);
                     break;
                 case Pedido.ESTADO_CONFIRMADO:
                 case Pedido.ESTADO_PAGADO:
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponible);
+                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDisponibleContainer);
                     colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponibleContainer);
                     break;
                 case Pedido.ESTADO_COMPLETADO:
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoRentado);
+                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoRentadoContainer);
                     colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoRentadoContainer);
                     break;
                 case Pedido.ESTADO_CANCELADO:
                 case Pedido.ESTADO_RECHAZADO:
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanado);
+                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDanadoContainer);
                     colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanadoContainer);
                     break;
                 default:
