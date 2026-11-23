@@ -173,9 +173,13 @@ public class RegisterFragment extends Fragment {
                 if (getContext() != null) {
                     Toast.makeText(getContext(), R.string.registro_exitoso, Toast.LENGTH_LONG).show();
                 }
-                if (getView() != null) {
-                    Navigation.findNavController(getView()).popBackStack();
-                }
+                if (getContext() == null || getView() == null) return;
+                // El cliente queda con la sesión iniciada y guardada
+                SonidoSonicApp.getApp(getContext()).getAppContainer().getSessionManager().iniciarSesion(usuario);
+                androidx.navigation.NavOptions opciones = new androidx.navigation.NavOptions.Builder()
+                        .setPopUpTo(R.id.loginFragment, true)
+                        .build();
+                Navigation.findNavController(getView()).navigate(R.id.cliente_graph, null, opciones);
             }
 
             @Override

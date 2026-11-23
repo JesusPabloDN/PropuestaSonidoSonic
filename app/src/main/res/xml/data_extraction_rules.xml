@@ -4,16 +4,11 @@
    for details.
 -->
 <data-extraction-rules>
+    <!-- La sesión guardada no se respalda ni se transfiere a otro dispositivo -->
     <cloud-backup>
-        <!-- TODO: Use <include> and <exclude> to control what is backed up.
-        <include .../>
-        <exclude .../>
-        -->
+        <exclude domain="sharedpref" path="sonido_sonic_sesion.xml"/>
     </cloud-backup>
-    <!--
     <device-transfer>
-        <include .../>
-        <exclude .../>
+        <exclude domain="sharedpref" path="sonido_sonic_sesion.xml"/>
     </device-transfer>
-    -->
 </data-extraction-rules>

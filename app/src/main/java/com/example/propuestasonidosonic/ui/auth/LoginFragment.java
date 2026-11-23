@@ -24,7 +24,6 @@ import com.example.propuestasonidosonic.data.Callback;
 import com.example.propuestasonidosonic.data.SessionManager;
 import com.example.propuestasonidosonic.data.UsuarioRepository;
 import com.example.propuestasonidosonic.model.Usuario;
-import com.example.propuestasonidosonic.util.Config;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputEditText;
@@ -81,12 +80,6 @@ public class LoginFragment extends Fragment {
 
         configurarTabs();
         configurarLimpiezaErrores();
-
-        // Prellenar credenciales fijas de Socio en la primera apertura si aún no hay texto
-        if (savedInstanceState == null && (etCorreo.getText() == null || etCorreo.getText().toString().isEmpty())) {
-            etCorreo.setText(Config.CUENTA_SOCIO_CORREO);
-            etContrasena.setText(Config.CUENTA_SOCIO_CONTRASENA);
-        }
 
         btnIniciarSesion.setOnClickListener(v -> intentarLogin());
 
@@ -238,7 +231,12 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onError(String mensaje) {
-                tilContrasena.setError(getString(R.string.error_credenciales_invalidas));
+                if (UsuarioRepository.ERROR_CUENTA_DESHABILITADA.equals(mensaje)
+                        || sessionManager.esCorreoDeshabilitado(correo)) {
+                    tilCorreo.setError(getString(R.string.error_cuenta_inactiva));
+                } else {
+                    tilContrasena.setError(getString(R.string.error_credenciales_invalidas));
+                }
             }
         });
     }

@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.example.propuestasonidosonic.data.AppContainer;
+import com.example.propuestasonidosonic.data.SessionManager;
 import com.example.propuestasonidosonic.util.ThemeHelper;
 import com.google.android.material.color.ColorContrast;
 import com.google.android.material.color.ColorContrastOptions;
@@ -28,6 +29,8 @@ public class SonidoSonicApp extends Application {
     public void onCreate() {
         super.onCreate();
         FirebaseApp.initializeApp(this);
+        // Recuperar la sesión guardada en SharedPreferences antes de crear los repositorios
+        SessionManager.getInstance().inicializar(this);
         appContainer = new AppContainer();
         appContainer.conectarFirestore();
         ThemeHelper.applySavedTheme(this);

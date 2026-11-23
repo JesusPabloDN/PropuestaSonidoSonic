@@ -196,6 +196,38 @@ public class MainActivity extends AppCompatActivity {
         configurarNavegacionVisibilidad();
         configurarDrawer();
         configurarBackPressed();
+
+        // Si la sesión quedó guardada, se entra directo a la sección del rol
+        if (savedInstanceState == null) {
+            restaurarSesionGuardada();
+        }
+    }
+
+    /** Si hay una sesión guardada, abre la sección de su rol en lugar del login. */
+    private void restaurarSesionGuardada() {
+        Usuario usuario = sessionManager.getUsuarioActual();
+        if (usuario == null || navController == null || navController.getCurrentDestination() == null
+                || navController.getCurrentDestination().getId() != R.id.loginFragment) {
+            return;
+        }
+        if (Usuario.ROL_SOCIO.equals(usuario.getRol())) {
+            navController.navigate(R.id.action_login_to_socio_graph);
+        } else if (Usuario.ROL_CLIENTE.equals(usuario.getRol())) {
+            navController.navigate(R.id.action_login_to_cliente_graph);
+        } else if (Usuario.ROL_ASISTENTE.equals(usuario.getRol())) {
+            navController.navigate(R.id.action_login_to_asistente_graph);
+        }
+    }
+
+    /** Regresa al login cuando la sesión se cierra, desde el menú o porque la cuenta fue deshabilitada. */
+    private void irAlLoginSiNoHaySesion() {
+        if (navController == null || navController.getCurrentDestination() == null) return;
+        int actual = navController.getCurrentDestination().getId();
+        if (actual == R.id.loginFragment || actual == R.id.registerFragment) return;
+        NavOptions navOptions = new NavOptions.Builder()
+                .setPopUpTo(R.id.nav_graph, true)
+                .build();
+        navController.navigate(R.id.loginFragment, null, navOptions);
     }
 
     private void configurarNavegacionVisibilidad() {
@@ -368,6 +400,7 @@ public class MainActivity extends AppCompatActivity {
                 drawerItemPerfil.setVisibility(View.GONE);
                 drawerItemPoliticas.setVisibility(View.GONE);
                 bottomNavigationView.getMenu().clear();
+                irAlLoginSiNoHaySesion();
             }
 
             if (navController != null && navController.getCurrentDestination() != null) {
@@ -398,11 +431,8 @@ public class MainActivity extends AppCompatActivity {
                     .setNegativeButton(R.string.dialog_cancelar, null)
                     .setPositiveButton(R.string.dialog_confirmar, (dialog, which) -> {
                         drawerLayout.closeDrawer(GravityCompat.START);
+                        // Borra la sesión guardada; el observador de la sesión regresa al login
                         sessionManager.cerrarSesion();
-                        NavOptions navOptions = new NavOptions.Builder()
-                                .setPopUpTo(R.id.nav_graph, true)
-                                .build();
-                        navController.navigate(R.id.loginFragment, null, navOptions);
                     })
                     .show();
         });

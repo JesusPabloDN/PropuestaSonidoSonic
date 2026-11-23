@@ -10,6 +10,7 @@ import com.example.propuestasonidosonic.model.Usuario;
 import com.example.propuestasonidosonic.util.Config;
 import com.example.propuestasonidosonic.util.PasswordValidator;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.MetadataChanges;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public class InMemoryUsuarioRepository implements UsuarioRepository {
         if (db == null || this.firestore != null) return;
         this.firestore = db;
         this.firestore.collection(COLECCION_USUARIOS)
-                .addSnapshotListener((snapshots, error) -> {
+                .addSnapshotListener(MetadataChanges.INCLUDE, (snapshots, error) -> {
                     if (error != null || snapshots == null) {
                         return;
                     }
@@ -84,11 +85,20 @@ public class InMemoryUsuarioRepository implements UsuarioRepository {
 
                         if (sessionManager != null && sessionManager.getUsuarioActual() != null) {
                             String actualId = sessionManager.getUsuarioActual().getId();
+                            Usuario encontrado = null;
                             for (Usuario u : usuarios) {
                                 if (u.getId().equals(actualId)) {
-                                    sessionManager.refrescarUsuario(u);
+                                    encontrado = u;
                                     break;
                                 }
+                            }
+                            // Solo se cierra la sesión con datos confirmados por el servidor, no con la caché local
+                            boolean confirmadoPorServidor = !snapshots.getMetadata().isFromCache();
+                            if (encontrado != null && encontrado.isCuentaActiva()) {
+                                sessionManager.refrescarUsuario(encontrado);
+                            } else if (confirmadoPorServidor) {
+                                // La cuenta fue eliminada o desactivada: se cierra la sesión guardada
+                                sessionManager.cerrarSesionPorCuentaDeshabilitada();
                             }
                         }
                     }
@@ -226,7 +236,7 @@ public class InMemoryUsuarioRepository implements UsuarioRepository {
         for (Usuario u : usuarios) {
             if (correo.trim().equalsIgnoreCase(u.getCorreo()) && contrasena.equals(u.getContrasena())) {
                 if (!u.isCuentaActiva()) {
-                    if (callback != null) callback.onError("Esta cuenta se encuentra desactivada");
+                    if (callback != null) callback.onError(ERROR_CUENTA_DESHABILITADA);
                     return;
                 }
                 if (callback != null) callback.onSuccess(new Usuario(u));

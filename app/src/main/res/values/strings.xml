@@ -19,7 +19,7 @@
     <string name="helper_contrasena">Mínimo 8 caracteres, al menos una mayúscula, un número y un carácter especial</string>
     <string name="btn_registrarse">Registrarse</string>
     <string name="link_ir_a_login">¿Ya tienes cuenta? Inicia sesión</string>
-    <string name="registro_exitoso">Cuenta creada exitosamente. Inicia sesión.</string>
+    <string name="registro_exitoso">Cuenta creada exitosamente. ¡Bienvenido a Sonido Sonic!</string>
 
     <!-- Validaciones y Errores -->
     <string name="error_campo_obligatorio">Este campo es obligatorio</string>
@@ -31,7 +31,7 @@
     <string name="error_rol_no_coincide_socio">Credenciales inválidas</string>
     <string name="error_rol_no_coincide_cliente">Credenciales inválidas</string>
     <string name="error_rol_no_coincide_asistente">Credenciales inválidas</string>
-    <string name="error_cuenta_inactiva">Error de autenticación E012</string>
+    <string name="error_cuenta_inactiva">Tu cuenta ha sido deshabilitada. Comunícate con el negocio para más información.</string>
     <string name="error_correo_ya_registrado">Este correo ya está registrado</string>
 
     <!-- Drawer Lateral -->

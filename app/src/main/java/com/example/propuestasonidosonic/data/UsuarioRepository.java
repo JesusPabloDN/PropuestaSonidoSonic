@@ -5,6 +5,8 @@ import com.example.propuestasonidosonic.model.Usuario;
 import java.util.List;
 
 public interface UsuarioRepository {
+    String ERROR_CUENTA_DESHABILITADA = "Esta cuenta se encuentra desactivada";
+
     LiveData<List<Usuario>> getUsuarios();
     Usuario getUsuarioPorId(String id);
     void getUsuarioPorId(String id, Callback<Usuario> callback);
