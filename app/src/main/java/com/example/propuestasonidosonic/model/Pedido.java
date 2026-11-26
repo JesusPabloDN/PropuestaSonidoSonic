@@ -1,8 +1,5 @@
 package com.example.propuestasonidosonic.model;
 
-import com.example.propuestasonidosonic.domain.MoneyUtils;
-import com.google.firebase.firestore.Exclude;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -16,22 +13,25 @@ public class Pedido {
     public static final String ORIGEN_PRESENCIAL = "PRESENCIAL";
 
     // Constantes de estado
-    public static final String ESTADO_APARTADO = "APARTADO";
-    public static final String ESTADO_PAGADO = "PAGADO";
+    // Solicitud hecha desde la app; espera que un socio la apruebe o rechace
+    public static final String ESTADO_POR_APROBAR = "POR_APROBAR";
+    // Pedido aceptado (aprobado por un socio o registrado directamente por él)
     public static final String ESTADO_CONFIRMADO = "CONFIRMADO";
-    public static final String ESTADO_EN_REVISION = "EN_REVISION";
+    // El evento ya terminó y el socio todavía no confirma que recibió el pago
+    public static final String ESTADO_POR_COBRAR = "POR_COBRAR";
+    // El evento terminó y el pago ya fue confirmado
+    public static final String ESTADO_FINALIZADO = "FINALIZADO";
     public static final String ESTADO_RECHAZADO = "RECHAZADO";
     public static final String ESTADO_CANCELADO = "CANCELADO";
+    // Solicitud que nadie aprobó antes de la fecha del evento
     public static final String ESTADO_VENCIDO = "VENCIDO";
-    public static final String ESTADO_COMPLETADO = "COMPLETADO";
 
     // Motivos de revision
     public static final String MOTIVO_URGENTE = "URGENTE";
 
-    // Metodos de pago de anticipo
+    // Métodos con los que se recibe el pago
     public static final String METODO_EFECTIVO = "EFECTIVO";
     public static final String METODO_TRANSFERENCIA = "TRANSFERENCIA";
-    public static final String METODO_TARJETA = "TARJETA";
 
     // Cancelado por
     public static final String CANCELA_CLIENTE = "CLIENTE";
@@ -64,24 +64,24 @@ public class Pedido {
     private String direccion;
     private String notas;
 
-    // Dinero
+    // Dinero: monto que el cliente debe pagar por el paquete
     private double total;
-    private double anticipoRequerido;
-    private double anticipoPagado;
 
-    // Anticipo y cancelación
-    private String metodoAnticipo;
-    private long fechaAnticipo;
+    // Confirmación del pago (la registra un socio cuando recibe el dinero)
+    private boolean pagoConfirmado;
+    private String metodoPago;
+    private long fechaPagoMillis;
+    private String pagoConfirmadoPorId;
+    private String pagoConfirmadoPorNombre;
+
+    // Cancelación, rechazo y reprogramación
     private String canceladoPor;
     private String motivoCancelacion;
     private String motivoRechazo;
-    private double reembolsoMonto;
     private int reprogramaciones;
 
-    // Ciclo de vida y revisión
+    // Ciclo de vida
     private String estado;
-    private long vencimientoApartadoMillis;
-    private boolean requiereRevision;
     private List<String> motivosRevision;
     private long fechaCreacion;
     private long fechaActualizacion;
@@ -91,8 +91,6 @@ public class Pedido {
     private String nombreEvento;
     private List<Partida> partidas;
     private List<String> equipoIds;
-    private boolean cobrado;
-    private long fechaCobro;
     private boolean asignacionIncompleta;
 
     public Pedido() {
@@ -103,10 +101,10 @@ public class Pedido {
         this.motivosRevision = new ArrayList<>();
         this.partidas = new ArrayList<>();
         this.equipoIds = new ArrayList<>();
-        this.estado = ESTADO_APARTADO;
+        this.estado = ESTADO_CONFIRMADO;
         this.fechaCreacion = System.currentTimeMillis();
         this.fechaActualizacion = System.currentTimeMillis();
-        this.cobrado = false;
+        this.pagoConfirmado = false;
         this.asignacionIncompleta = false;
     }
 
@@ -119,7 +117,7 @@ public class Pedido {
             this.motivosRevision = new ArrayList<>();
             this.partidas = new ArrayList<>();
             this.equipoIds = new ArrayList<>();
-            this.estado = ESTADO_APARTADO;
+            this.estado = ESTADO_CONFIRMADO;
             this.fechaCreacion = System.currentTimeMillis();
             this.fechaActualizacion = System.currentTimeMillis();
             return;
@@ -149,29 +147,25 @@ public class Pedido {
         this.direccion = otro.direccion;
         this.notas = otro.notas;
         this.total = otro.total;
-        this.anticipoRequerido = otro.anticipoRequerido;
-        this.anticipoPagado = otro.anticipoPagado;
+        this.pagoConfirmado = otro.pagoConfirmado;
+        this.metodoPago = otro.metodoPago;
+        this.fechaPagoMillis = otro.fechaPagoMillis;
+        this.pagoConfirmadoPorId = otro.pagoConfirmadoPorId;
+        this.pagoConfirmadoPorNombre = otro.pagoConfirmadoPorNombre;
         this.estado = otro.estado;
-        this.vencimientoApartadoMillis = otro.vencimientoApartadoMillis;
-        this.requiereRevision = otro.requiereRevision;
         this.motivosRevision = otro.motivosRevision != null ? new ArrayList<>(otro.motivosRevision) : new ArrayList<>();
         this.fechaCreacion = otro.fechaCreacion;
         this.fechaActualizacion = otro.fechaActualizacion;
 
-        this.metodoAnticipo = otro.metodoAnticipo;
-        this.fechaAnticipo = otro.fechaAnticipo;
         this.canceladoPor = otro.canceladoPor;
         this.motivoCancelacion = otro.motivoCancelacion;
         this.motivoRechazo = otro.motivoRechazo;
-        this.reembolsoMonto = otro.reembolsoMonto;
         this.reprogramaciones = otro.reprogramaciones;
 
         this.eventoId = otro.eventoId;
         this.nombreEvento = otro.nombreEvento;
         this.partidas = otro.partidas != null ? new ArrayList<>(otro.partidas) : new ArrayList<>();
         this.equipoIds = otro.equipoIds != null ? new ArrayList<>(otro.equipoIds) : new ArrayList<>();
-        this.cobrado = otro.cobrado;
-        this.fechaCobro = otro.fechaCobro;
         this.asignacionIncompleta = otro.asignacionIncompleta;
     }
 
@@ -319,30 +313,44 @@ public class Pedido {
         this.total = total;
     }
 
-    public double getAnticipoRequerido() {
-        return anticipoRequerido;
+    public boolean isPagoConfirmado() {
+        return pagoConfirmado;
     }
 
-    public void setAnticipoRequerido(double anticipoRequerido) {
-        this.anticipoRequerido = anticipoRequerido;
+    public void setPagoConfirmado(boolean pagoConfirmado) {
+        this.pagoConfirmado = pagoConfirmado;
     }
 
-    public double getAnticipoPagado() {
-        return anticipoPagado;
+    public String getMetodoPago() {
+        return metodoPago;
     }
 
-    public void setAnticipoPagado(double anticipoPagado) {
-        this.anticipoPagado = anticipoPagado;
+    public void setMetodoPago(String metodoPago) {
+        this.metodoPago = metodoPago;
     }
 
-    @Exclude
-    public double getSaldoPendiente() {
-        return MoneyUtils.redondear2(Math.max(0.0, total - anticipoPagado));
+    public long getFechaPagoMillis() {
+        return fechaPagoMillis;
     }
 
-    @Exclude
-    public boolean estaLiquidado() {
-        return MoneyUtils.iguales(getSaldoPendiente(), 0.0);
+    public void setFechaPagoMillis(long fechaPagoMillis) {
+        this.fechaPagoMillis = fechaPagoMillis;
+    }
+
+    public String getPagoConfirmadoPorId() {
+        return pagoConfirmadoPorId;
+    }
+
+    public void setPagoConfirmadoPorId(String pagoConfirmadoPorId) {
+        this.pagoConfirmadoPorId = pagoConfirmadoPorId;
+    }
+
+    public String getPagoConfirmadoPorNombre() {
+        return pagoConfirmadoPorNombre;
+    }
+
+    public void setPagoConfirmadoPorNombre(String pagoConfirmadoPorNombre) {
+        this.pagoConfirmadoPorNombre = pagoConfirmadoPorNombre;
     }
 
     public String getEstado() {
@@ -351,22 +359,6 @@ public class Pedido {
 
     public void setEstado(String estado) {
         this.estado = estado;
-    }
-
-    public long getVencimientoApartadoMillis() {
-        return vencimientoApartadoMillis;
-    }
-
-    public void setVencimientoApartadoMillis(long vencimientoApartadoMillis) {
-        this.vencimientoApartadoMillis = vencimientoApartadoMillis;
-    }
-
-    public boolean isRequiereRevision() {
-        return requiereRevision;
-    }
-
-    public void setRequiereRevision(boolean requiereRevision) {
-        this.requiereRevision = requiereRevision;
     }
 
     public List<String> getMotivosRevision() {
@@ -425,38 +417,6 @@ public class Pedido {
         this.equipoIds = equipoIds != null ? equipoIds : new ArrayList<>();
     }
 
-    public boolean isCobrado() {
-        return cobrado;
-    }
-
-    public void setCobrado(boolean cobrado) {
-        this.cobrado = cobrado;
-    }
-
-    public long getFechaCobro() {
-        return fechaCobro;
-    }
-
-    public void setFechaCobro(long fechaCobro) {
-        this.fechaCobro = fechaCobro;
-    }
-
-    public String getMetodoAnticipo() {
-        return metodoAnticipo;
-    }
-
-    public void setMetodoAnticipo(String metodoAnticipo) {
-        this.metodoAnticipo = metodoAnticipo;
-    }
-
-    public long getFechaAnticipo() {
-        return fechaAnticipo;
-    }
-
-    public void setFechaAnticipo(long fechaAnticipo) {
-        this.fechaAnticipo = fechaAnticipo;
-    }
-
     public String getCanceladoPor() {
         return canceladoPor;
     }
@@ -479,14 +439,6 @@ public class Pedido {
 
     public void setMotivoRechazo(String motivoRechazo) {
         this.motivoRechazo = motivoRechazo;
-    }
-
-    public double getReembolsoMonto() {
-        return reembolsoMonto;
-    }
-
-    public void setReembolsoMonto(double reembolsoMonto) {
-        this.reembolsoMonto = reembolsoMonto;
     }
 
     public int getReprogramaciones() {

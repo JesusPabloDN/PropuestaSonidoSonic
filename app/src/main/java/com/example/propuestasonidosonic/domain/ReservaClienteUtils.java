@@ -18,22 +18,6 @@ public final class ReservaClienteUtils {
         return inicioMillis > ahora && (inicioMillis - ahora) < anticipacionMillis;
     }
 
-    public static long segundosRestantes(long vencimientoMillis, long ahora) {
-        if (vencimientoMillis <= ahora) {
-            return 0L;
-        }
-        return (vencimientoMillis - ahora) / 1000L;
-    }
-
-    public static String formatoCuentaRegresiva(long segundos) {
-        if (segundos < 0) {
-            segundos = 0;
-        }
-        long minutos = segundos / 60;
-        long segs = segundos % 60;
-        return String.format(Locale.ROOT, "%02d:%02d", minutos, segs);
-    }
-
     public static String mensajeAmigable(String motivoONoViable) {
         if (motivoONoViable == null) {
             return "Ese horario ya no está disponible. Elige otro, por favor.";
@@ -43,7 +27,7 @@ public final class ReservaClienteUtils {
         if (motivoONoViable.contains("nombre")
                 || motivoONoViable.contains("teléfono")
                 || motivoONoViable.contains("dirección")
-                || motivoONoViable.contains("pendiente de pago")
+                || motivoONoViable.contains("solicitud por aprobar")
                 || motivoONoViable.contains("obligatorio")
                 || motivoONoViable.contains("caracteres")
                 || motivoONoViable.contains("dígitos")) {

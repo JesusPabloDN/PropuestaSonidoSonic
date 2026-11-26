@@ -432,7 +432,7 @@ public class Etapa4BUnitTest {
         paqRepo.guardarPaquete(pkg, noop());
 
         SolicitudReserva sol = new SolicitudReserva("pkg-test", ini, 240, Pedido.ORIGEN_APP,
-                "Evento", "cli-1", "Cliente", "5551234567", "Direccion valida 123", "", null);
+                "Evento", "cli-1", "Cliente", "5551234567", "Direccion valida 123", "");
 
         AtomicReference<Pedido> pedCreado = new AtomicReference<>();
         pedidoRepo.crearReserva(sol, new Callback<Pedido>() {
@@ -503,7 +503,7 @@ public class Etapa4BUnitTest {
 
         // Primera reserva simultánea -> viable
         SolicitudReserva sol1 = new SolicitudReserva("pkg-test", ini, 240, Pedido.ORIGEN_APP,
-                "Evento 1", "cli-1", "Cliente 1", "5551234567", "Direccion valida 123", "", null);
+                "Evento 1", "cli-1", "Cliente 1", "5551234567", "Direccion valida 123", "");
         AtomicBoolean ok1 = new AtomicBoolean(false);
         pedidoRepo.crearReserva(sol1, new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) { ok1.set(true); }
@@ -513,7 +513,7 @@ public class Etapa4BUnitTest {
 
         // Segunda reserva simultánea -> viable (con el segundo Socio)
         SolicitudReserva sol2 = new SolicitudReserva("pkg-test", ini, 240, Pedido.ORIGEN_APP,
-                "Evento 2", "cli-2", "Cliente 2", "5551234567", "Direccion valida 123", "", null);
+                "Evento 2", "cli-2", "Cliente 2", "5551234567", "Direccion valida 123", "");
         AtomicBoolean ok2 = new AtomicBoolean(false);
         pedidoRepo.crearReserva(sol2, new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) { ok2.set(true); }
@@ -523,7 +523,7 @@ public class Etapa4BUnitTest {
 
         // Tercera reserva simultánea -> falla porque solo hay 2 Socios
         SolicitudReserva sol3 = new SolicitudReserva("pkg-test", ini, 240, Pedido.ORIGEN_APP,
-                "Evento 3", "cli-3", "Cliente 3", "5551234567", "Direccion valida 123", "", null);
+                "Evento 3", "cli-3", "Cliente 3", "5551234567", "Direccion valida 123", "");
         AtomicReference<String> err3 = new AtomicReference<>();
         pedidoRepo.crearReserva(sol3, new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) {}
@@ -558,7 +558,7 @@ public class Etapa4BUnitTest {
 
         // Cuarta reserva simultánea debe fallar porque los 3 operadores están ocupados
         SolicitudReserva sol4 = new SolicitudReserva("pkg-test", ini, 240, Pedido.ORIGEN_APP,
-                "Evento 4", "cli-4", "Cliente 4", "5551234567", "Direccion valida 123", "", null);
+                "Evento 4", "cli-4", "Cliente 4", "5551234567", "Direccion valida 123", "");
         AtomicReference<String> err4 = new AtomicReference<>();
         pedidoRepo.crearReserva(sol4, new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) {}
@@ -579,7 +579,7 @@ public class Etapa4BUnitTest {
 
         // Ahora reintentar la tercera reserva debe fallar porque solo hay 2 Socios disponibles y ambos están en sol1 y sol2
         SolicitudReserva solReintento = new SolicitudReserva("pkg-test", ini, 240, Pedido.ORIGEN_APP,
-                "Evento Reintento", "cli-reintento", "Cliente Reintento", "5551234567", "Direccion valida 123", "", null);
+                "Evento Reintento", "cli-reintento", "Cliente Reintento", "5551234567", "Direccion valida 123", "");
         AtomicReference<String> errReintento = new AtomicReference<>();
         pedidoRepo.crearReserva(solReintento, new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) {}

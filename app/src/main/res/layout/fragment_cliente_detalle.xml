@@ -83,7 +83,7 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- 2. Tres Tarjetas KPI: Pedidos, Pagado, Saldo pendiente -->
+        <!-- 2. Tres Tarjetas KPI: Pedidos, Pagado, Por pagar -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

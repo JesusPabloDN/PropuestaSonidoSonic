@@ -10,18 +10,10 @@
     android:paddingBottom="@dimen/spacing_small">
 
     <TextView
-        android:id="@+id/tvMensajeReembolso"
+        android:id="@+id/tvMensajeCancelacion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="?attr/colorOnSurface"
-        android:textAppearance="?attr/textAppearanceBodyMedium" />
-
-    <TextView
-        android:id="@+id/tvDetallePolitica"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_small"
-        android:textColor="?attr/colorOnSurfaceVariant"
         android:textAppearance="?attr/textAppearanceBodyMedium" />
 
     <com.google.android.material.textfield.TextInputLayout

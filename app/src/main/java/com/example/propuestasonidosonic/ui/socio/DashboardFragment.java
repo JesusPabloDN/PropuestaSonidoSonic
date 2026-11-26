@@ -18,13 +18,12 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.example.propuestasonidosonic.R;
 import com.example.propuestasonidosonic.SonidoSonicApp;
 import com.example.propuestasonidosonic.data.EquipoRepository;
-import com.example.propuestasonidosonic.data.PagoRepository;
 import com.example.propuestasonidosonic.data.PedidoRepository;
 import com.example.propuestasonidosonic.domain.ActividadRecienteUtils;
 import com.example.propuestasonidosonic.domain.DashboardUtils;
+import com.example.propuestasonidosonic.domain.EstadosPedido;
 import com.example.propuestasonidosonic.domain.FinanzasUtils;
 import com.example.propuestasonidosonic.model.Equipo;
-import com.example.propuestasonidosonic.model.Pago;
 import com.example.propuestasonidosonic.model.Pedido;
 import com.example.propuestasonidosonic.ui.comun.GraficaBarrasHorizontalView;
 import com.example.propuestasonidosonic.ui.comun.GraficaBarrasView;
@@ -49,7 +48,6 @@ public class DashboardFragment extends Fragment {
     private static final String[] DIAS_SEMANA = {"Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"};
     private static final Locale LOCALE_MX = new Locale("es", "MX");
 
-    private PagoRepository pagoRepository;
     private PedidoRepository pedidoRepository;
     private EquipoRepository equipoRepository;
 
@@ -62,16 +60,16 @@ public class DashboardFragment extends Fragment {
 
     // Este mes
     private TextView tvDashCobrado;
-    private TextView tvDashReembolsos;
-    private TextView tvDashNeto;
-    private TextView tvDashPorCobrar;
+    private TextView tvDashPorCobrarMes;
+    private TextView tvDashEfectivo;
+    private TextView tvDashTransferencia;
 
     // Operación
     private TextView tvEventosSemanaTotal;
     private GraficaBarrasView graficaEventosSemana;
-    private TextView tvDashApartadosPorPagar;
+    private TextView tvDashPorAprobar;
     private TextView tvDashEquiposPorAsignar;
-    private TextView tvDashPorRevisar;
+    private TextView tvDashPedidosPorCobrar;
 
     // Ingresos y paquetes
     private TextView tvIngresosPeriodo;
@@ -93,7 +91,6 @@ public class DashboardFragment extends Fragment {
     private TextView tvRecienteFinanzasTitulo;
     private TextView tvRecienteFinanzasSubtitulo;
 
-    private List<Pago> todosLosPagos = new ArrayList<>();
     private List<Pedido> todosLosPedidos = new ArrayList<>();
     private List<Equipo> todosLosEquipos = new ArrayList<>();
 
@@ -127,7 +124,6 @@ public class DashboardFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        pagoRepository = SonidoSonicApp.getApp(requireContext()).getAppContainer().getPagoRepository();
         pedidoRepository = SonidoSonicApp.getApp(requireContext()).getAppContainer().getPedidoRepository();
         equipoRepository = SonidoSonicApp.getApp(requireContext()).getAppContainer().getEquipoRepository();
 
@@ -144,15 +140,15 @@ public class DashboardFragment extends Fragment {
         btnAvisoSiguiente = view.findViewById(R.id.btnAvisoSiguiente);
 
         tvDashCobrado = view.findViewById(R.id.tvDashCobrado);
-        tvDashReembolsos = view.findViewById(R.id.tvDashReembolsos);
-        tvDashNeto = view.findViewById(R.id.tvDashNeto);
-        tvDashPorCobrar = view.findViewById(R.id.tvDashPorCobrar);
+        tvDashPorCobrarMes = view.findViewById(R.id.tvDashPorCobrarMes);
+        tvDashEfectivo = view.findViewById(R.id.tvDashEfectivo);
+        tvDashTransferencia = view.findViewById(R.id.tvDashTransferencia);
 
         tvEventosSemanaTotal = view.findViewById(R.id.tvEventosSemanaTotal);
         graficaEventosSemana = view.findViewById(R.id.graficaEventosSemana);
-        tvDashApartadosPorPagar = view.findViewById(R.id.tvDashApartadosPorPagar);
+        tvDashPorAprobar = view.findViewById(R.id.tvDashPorAprobar);
         tvDashEquiposPorAsignar = view.findViewById(R.id.tvDashEquiposPorAsignar);
-        tvDashPorRevisar = view.findViewById(R.id.tvDashPorRevisar);
+        tvDashPedidosPorCobrar = view.findViewById(R.id.tvDashPedidosPorCobrar);
 
         tvIngresosPeriodo = view.findViewById(R.id.tvIngresosPeriodo);
         graficaIngresosMes = view.findViewById(R.id.graficaIngresosMes);
@@ -223,9 +219,9 @@ public class DashboardFragment extends Fragment {
         rowRecienteInventario.setOnClickListener(v -> irAPestana(R.id.nav_inventario));
         rowRecienteFinanzas.setOnClickListener(v -> irAPestana(R.id.nav_finanzas));
 
-        requireView().findViewById(R.id.rowApartadosPorPagar).setOnClickListener(v -> irAPestana(R.id.nav_pedidos));
+        requireView().findViewById(R.id.rowPorAprobar).setOnClickListener(v -> irAPestana(R.id.nav_pedidos));
         requireView().findViewById(R.id.rowEquiposPorAsignar).setOnClickListener(v -> irAPestana(R.id.nav_pedidos));
-        requireView().findViewById(R.id.rowPorRevisar).setOnClickListener(v -> irAPestana(R.id.nav_pedidos));
+        requireView().findViewById(R.id.rowPorCobrar).setOnClickListener(v -> irAPestana(R.id.nav_finanzas));
 
         requireView().findViewById(R.id.btnVerAgenda).setOnClickListener(v -> irAPestana(R.id.nav_agenda));
         requireView().findViewById(R.id.btnVerFinanzas).setOnClickListener(v -> irAPestana(R.id.nav_finanzas));
@@ -233,12 +229,6 @@ public class DashboardFragment extends Fragment {
     }
 
     private void observarDatos() {
-        if (pagoRepository != null) {
-            pagoRepository.getTodosLosPagos().observe(getViewLifecycleOwner(), pagos -> {
-                todosLosPagos = pagos != null ? new ArrayList<>(pagos) : new ArrayList<>();
-                actualizarUI();
-            });
-        }
         if (pedidoRepository != null) {
             pedidoRepository.getPedidos().observe(getViewLifecycleOwner(), pedidos -> {
                 todosLosPedidos = pedidos != null ? new ArrayList<>(pedidos) : new ArrayList<>();
@@ -313,29 +303,31 @@ public class DashboardFragment extends Fragment {
                     args));
         }
 
-        int porRevisar = DashboardUtils.contarEnRevision(todosLosPedidos);
-        if (porRevisar > 0) {
+        List<Pedido> porAprobar = DashboardUtils.solicitudesPorAprobar(todosLosPedidos, ahora);
+        if (!porAprobar.isEmpty()) {
+            Pedido masProxima = porAprobar.get(0);
             avisos.add(new AvisosDashboardAdapter.Aviso(
-                    R.drawable.ic_info_24,
-                    getString(R.string.dash_aviso_revision_etiqueta),
-                    getResources().getQuantityString(R.plurals.dash_aviso_revision_titulo, porRevisar, porRevisar),
-                    getString(R.string.dash_aviso_revision_detalle),
+                    R.drawable.ic_hourglass_24,
+                    getString(R.string.dash_aviso_por_aprobar_etiqueta),
+                    getResources().getQuantityString(R.plurals.dash_aviso_por_aprobar_titulo, porAprobar.size(), porAprobar.size()),
+                    getString(R.string.dash_aviso_por_aprobar_detalle,
+                            FormatUtils.formatoFecha(masProxima.getInicioMillis()),
+                            FormatUtils.hora(masProxima.getInicioMillis())),
                     getString(R.string.dash_aviso_ir_pedidos),
                     R.id.nav_pedidos,
                     null));
         }
 
-        List<Pedido> apartados = DashboardUtils.apartadosVigentes(todosLosPedidos, ahora);
-        if (!apartados.isEmpty()) {
-            long vence = apartados.get(0).getVencimientoApartadoMillis();
+        List<Pedido> porCobrar = FinanzasUtils.pedidosPorCobrar(todosLosPedidos);
+        if (!porCobrar.isEmpty()) {
             avisos.add(new AvisosDashboardAdapter.Aviso(
-                    R.drawable.ic_hourglass_24,
-                    getString(R.string.dash_aviso_apartados_etiqueta),
-                    getResources().getQuantityString(R.plurals.dash_aviso_apartados_titulo, apartados.size(), apartados.size()),
-                    getString(R.string.dash_aviso_apartados_detalle,
-                            FormatUtils.formatoFecha(vence), FormatUtils.hora(vence)),
-                    getString(R.string.dash_aviso_ir_pedidos),
-                    R.id.nav_pedidos,
+                    R.drawable.ic_info_24,
+                    getString(R.string.dash_aviso_por_cobrar_etiqueta),
+                    getResources().getQuantityString(R.plurals.dash_aviso_por_cobrar_titulo, porCobrar.size(), porCobrar.size()),
+                    getString(R.string.dash_aviso_por_cobrar_detalle,
+                            FormatUtils.formatoMoneda(FinanzasUtils.sumaTotales(porCobrar))),
+                    getString(R.string.dash_aviso_ir_finanzas),
+                    R.id.nav_finanzas,
                     null));
         }
 
@@ -357,16 +349,11 @@ public class DashboardFragment extends Fragment {
     // ---------- Este mes ----------
 
     private void actualizarEsteMes(int anio, int mes0) {
-        double[] resumen = FinanzasUtils.resumenMes(todosLosPagos, todosLosPedidos, anio, mes0);
+        double[] resumen = FinanzasUtils.resumenMes(todosLosPedidos, anio, mes0);
         tvDashCobrado.setText(FormatUtils.formatoMoneda(resumen[0]));
-        tvDashReembolsos.setText(FormatUtils.formatoMoneda(resumen[1]));
-        tvDashNeto.setText(FormatUtils.formatoMoneda(resumen[2]));
-        if (resumen[2] < 0) {
-            tvDashNeto.setTextColor(BadgeUtils.colorError(requireContext()));
-        } else {
-            tvDashNeto.setTextColor(MaterialColors.getColor(tvDashNeto, com.google.android.material.R.attr.colorOnSurface));
-        }
-        tvDashPorCobrar.setText(FormatUtils.formatoMoneda(resumen[3]));
+        tvDashPorCobrarMes.setText(FormatUtils.formatoMoneda(resumen[1]));
+        tvDashEfectivo.setText(FormatUtils.formatoMoneda(resumen[2]));
+        tvDashTransferencia.setText(FormatUtils.formatoMoneda(resumen[3]));
     }
 
     // ---------- Operación ----------
@@ -385,16 +372,16 @@ public class DashboardFragment extends Fragment {
         tvEventosSemanaTotal.setText(getResources().getQuantityString(R.plurals.dash_eventos_semana_total, total, total));
 
         int[] contadores = DashboardUtils.contadores(todosLosPedidos, ahora);
-        int apartadosPorPagar = contadores[2];
+        int porAprobar = contadores[2];
         int equiposPorAsignar = contadores[3];
-        int porRevisar = DashboardUtils.contarEnRevision(todosLosPedidos);
+        int pedidosPorCobrar = FinanzasUtils.pedidosPorCobrar(todosLosPedidos).size();
 
-        tvDashApartadosPorPagar.setText(String.valueOf(apartadosPorPagar));
+        tvDashPorAprobar.setText(String.valueOf(porAprobar));
         tvDashEquiposPorAsignar.setText(String.valueOf(equiposPorAsignar));
-        tvDashPorRevisar.setText(String.valueOf(porRevisar));
+        tvDashPedidosPorCobrar.setText(String.valueOf(pedidosPorCobrar));
+        pintarContador(tvDashPorAprobar, porAprobar > 0);
         pintarContador(tvDashEquiposPorAsignar, equiposPorAsignar > 0);
-        pintarContador(tvDashPorRevisar, porRevisar > 0);
-        pintarContador(tvDashApartadosPorPagar, false);
+        pintarContador(tvDashPedidosPorCobrar, pedidosPorCobrar > 0);
     }
 
     private void pintarContador(TextView tv, boolean alerta) {
@@ -408,7 +395,7 @@ public class DashboardFragment extends Fragment {
         tv.setTextColor(texto);
     }
 
-    // ---------- Ingresos netos por mes ----------
+    // ---------- Ingresos cobrados por mes ----------
 
     private void actualizarIngresosPorMes(int anio, int mes0) {
         float[] valores = new float[MESES_GRAFICA];
@@ -426,7 +413,7 @@ public class DashboardFragment extends Fragment {
         for (int i = 0; i < MESES_GRAFICA; i++) {
             int a = cal.get(Calendar.YEAR);
             int m = cal.get(Calendar.MONTH);
-            double neto = FinanzasUtils.resumenMes(todosLosPagos, todosLosPedidos, a, m)[2];
+            double neto = FinanzasUtils.cobradoDelMes(todosLosPedidos, a, m);
             total += neto;
             valores[i] = (float) Math.max(0, neto);
             textos[i] = montoCompacto(neto);
@@ -526,60 +513,23 @@ public class DashboardFragment extends Fragment {
                     tiempoTexto));
         }
 
-        Pago ultPago = ActividadRecienteUtils.ultimoPago(todosLosPagos);
+        Pedido ultPago = ActividadRecienteUtils.ultimoPagoConfirmado(todosLosPedidos);
         if (ultPago == null) {
             tvRecienteFinanzasTitulo.setText(R.string.reciente_finanzas_vacio);
             tvRecienteFinanzasSubtitulo.setVisibility(View.GONE);
         } else {
             tvRecienteFinanzasSubtitulo.setVisibility(View.VISIBLE);
             tvRecienteFinanzasTitulo.setText(getString(R.string.reciente_finanzas_titulo_formato,
-                    obtenerTipoPagoTexto(ultPago.getTipo()),
-                    FormatUtils.formatoMoneda(ultPago.getMonto())));
-            long numeroPedido = 0;
-            if (ultPago.getPedidoId() != null) {
-                for (Pedido p : todosLosPedidos) {
-                    if (ultPago.getPedidoId().equals(p.getId())) {
-                        numeroPedido = p.getNumero();
-                        break;
-                    }
-                }
-            }
-            String tiempoTexto = FormatUtils.tiempoRelativoFormateado(requireContext(), ahora, ultPago.getFecha());
+                    EstadosPedido.etiquetaMetodo(ultPago.getMetodoPago()),
+                    FormatUtils.formatoMoneda(ultPago.getTotal())));
+            String tiempoTexto = FormatUtils.tiempoRelativoFormateado(requireContext(), ahora, ultPago.getFechaPagoMillis());
             tvRecienteFinanzasSubtitulo.setText(getString(R.string.reciente_finanzas_subtitulo_formato,
-                    numeroPedido,
+                    ultPago.getNumero(),
                     tiempoTexto));
         }
     }
 
-    private String obtenerTipoPagoTexto(String tipo) {
-        if (Pago.TIPO_ANTICIPO.equals(tipo)) return "Anticipo";
-        if (Pago.TIPO_ABONO.equals(tipo)) return "Abono";
-        if (Pago.TIPO_LIQUIDACION.equals(tipo)) return "Pago total";
-        if (Pago.TIPO_REEMBOLSO.equals(tipo)) return "Reembolso";
-        return tipo != null ? tipo : "Pago";
-    }
-
     private String estadoPedidoTexto(String estado) {
-        if (estado == null) return "";
-        switch (estado) {
-            case Pedido.ESTADO_APARTADO:
-                return getString(R.string.badge_apartado);
-            case Pedido.ESTADO_EN_REVISION:
-                return getString(R.string.badge_en_revision);
-            case Pedido.ESTADO_CONFIRMADO:
-                return getString(R.string.badge_confirmado);
-            case Pedido.ESTADO_PAGADO:
-                return getString(R.string.badge_pagado);
-            case Pedido.ESTADO_COMPLETADO:
-                return getString(R.string.badge_completado);
-            case Pedido.ESTADO_CANCELADO:
-                return getString(R.string.badge_cancelado);
-            case Pedido.ESTADO_RECHAZADO:
-                return getString(R.string.badge_rechazado);
-            case Pedido.ESTADO_VENCIDO:
-                return getString(R.string.badge_vencido);
-            default:
-                return estado;
-        }
+        return EstadosPedido.etiqueta(estado);
     }
 }

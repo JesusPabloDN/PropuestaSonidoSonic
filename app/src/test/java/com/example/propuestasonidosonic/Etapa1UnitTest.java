@@ -169,8 +169,6 @@ public class Etapa1UnitTest {
         assertNotNull(container.getEventoRepository());
         assertNotNull(container.getPedidoRepository());
         assertNotNull(container.getDiaOperativoRepository());
-        assertNotNull(container.getPagoRepository());
-        assertNotNull(container.getFinanzasRepository());
         assertNotNull(container.getSessionManager());
     }
 

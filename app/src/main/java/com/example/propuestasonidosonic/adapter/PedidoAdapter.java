@@ -21,9 +21,10 @@ import java.util.List;
 
 public class PedidoAdapter extends RecyclerView.Adapter<PedidoAdapter.PedidoViewHolder> {
 
-    public static final int TAB_POR_PAGAR = 0;
+    public static final int TAB_POR_APROBAR = 0;
     public static final int TAB_CONFIRMADOS = 1;
-    public static final int TAB_HISTORIAL = 2;
+    public static final int TAB_POR_COBRAR = 2;
+    public static final int TAB_HISTORIAL = 3;
 
     public interface OnPedidoClickListener {
         void onPedidoClick(Pedido pedido);
@@ -31,7 +32,7 @@ public class PedidoAdapter extends RecyclerView.Adapter<PedidoAdapter.PedidoView
 
     private final List<Pedido> lista = new ArrayList<>();
     private final OnPedidoClickListener listener;
-    private int tabActual = TAB_POR_PAGAR;
+    private int tabActual = TAB_POR_APROBAR;
 
     public PedidoAdapter(OnPedidoClickListener listener) {
         this.listener = listener;
@@ -92,7 +93,7 @@ public class PedidoAdapter extends RecyclerView.Adapter<PedidoAdapter.PedidoView
             tvFolio.setText(ctx.getString(R.string.folio_formato, pedido.getNumero()));
 
             // Insignia de estado
-            pintarBadgeEstado(ctx, pedido.getEstado());
+            BadgeUtils.pintarEstadoPedido(tvEstadoBadge, pedido.getEstado());
 
             // Fecha y Horario
             String fechaStr = FormatUtils.formatoFechaCompleta(pedido.getInicioMillis()).replace(".", "");
@@ -104,33 +105,31 @@ public class PedidoAdapter extends RecyclerView.Adapter<PedidoAdapter.PedidoView
             tvCliente.setText(pedido.getClienteNombre() != null ? pedido.getClienteNombre() : "");
 
             // Línea de dinero y vencimiento según la pestaña
-            if (tabActual == TAB_POR_PAGAR) {
-                double anticipoPendiente = Math.max(0.0, pedido.getAnticipoRequerido() - pedido.getAnticipoPagado());
-                tvLineaDinero.setText(ctx.getString(R.string.anticipo_pendiente_formato,
-                        FormatUtils.formatoMoneda(anticipoPendiente)));
+            String monto = FormatUtils.formatoMoneda(pedido.getTotal());
+            if (tabActual == TAB_POR_APROBAR) {
+                tvLineaDinero.setText(ctx.getString(R.string.linea_monto_a_pagar, monto));
 
-                long restanteMs = pedido.getVencimientoApartadoMillis() - System.currentTimeMillis();
+                // La solicitud vence cuando empieza el evento sin haber sido aprobada
+                long restanteMs = pedido.getInicioMillis() - System.currentTimeMillis();
                 tvVencimiento.setVisibility(View.VISIBLE);
-                String restanteTexto = FormatUtils.tiempoRestante(restanteMs);
                 if (restanteMs <= 0) {
                     tvVencimiento.setText(R.string.badge_vencido);
                     tvVencimiento.setTextColor(BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanado));
                 } else {
-                    tvVencimiento.setText(ctx.getString(R.string.vence_en_formato, restanteTexto));
-                    if (restanteMs < 2 * 3600_000L) {
+                    tvVencimiento.setText(ctx.getString(R.string.vence_en_formato, FormatUtils.tiempoRestante(restanteMs)));
+                    if (restanteMs < 24 * 3600_000L) {
                         tvVencimiento.setTextColor(BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanado));
                     } else {
                         tvVencimiento.setTextColor(MaterialColors.getColor(tvVencimiento,
                                 com.google.android.material.R.attr.colorOnSurfaceVariant));
                     }
                 }
-            } else if (tabActual == TAB_CONFIRMADOS) {
-                double saldo = Math.max(0.0, pedido.getTotal() - pedido.getAnticipoPagado());
-                tvLineaDinero.setText(ctx.getString(R.string.anticipo_pagado_saldo_formato,
-                        FormatUtils.formatoMoneda(saldo)));
+            } else if (tabActual == TAB_POR_COBRAR) {
+                tvLineaDinero.setText(ctx.getString(R.string.linea_por_cobrar, monto));
                 tvVencimiento.setVisibility(View.GONE);
             } else {
-                tvLineaDinero.setText("Total: " + FormatUtils.formatoMoneda(pedido.getTotal()));
+                tvLineaDinero.setText(ctx.getString(pedido.isPagoConfirmado()
+                        ? R.string.linea_total_pagado : R.string.linea_total_pendiente, monto));
                 tvVencimiento.setVisibility(View.GONE);
             }
 
@@ -139,61 +138,6 @@ public class PedidoAdapter extends RecyclerView.Adapter<PedidoAdapter.PedidoView
                     listener.onPedidoClick(pedido);
                 }
             });
-        }
-
-        private void pintarBadgeEstado(Context ctx, String estado) {
-            if (estado == null) estado = Pedido.ESTADO_APARTADO;
-
-            int colorTexto;
-            int colorFondo;
-            int textoRes;
-
-            switch (estado) {
-                case Pedido.ESTADO_APARTADO:
-                    textoRes = R.string.badge_apartado;
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoPendienteContainer);
-                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendienteContainer);
-                    break;
-                case Pedido.ESTADO_EN_REVISION:
-                    textoRes = R.string.badge_en_revision;
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoPendienteContainer);
-                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendienteContainer);
-                    break;
-                case Pedido.ESTADO_CONFIRMADO:
-                    textoRes = R.string.badge_confirmado;
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDisponibleContainer);
-                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponibleContainer);
-                    break;
-                case Pedido.ESTADO_PAGADO:
-                    textoRes = R.string.badge_pagado;
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDisponibleContainer);
-                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponibleContainer);
-                    break;
-                case Pedido.ESTADO_COMPLETADO:
-                    textoRes = R.string.badge_completado;
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoRentadoContainer);
-                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoRentadoContainer);
-                    break;
-                case Pedido.ESTADO_CANCELADO:
-                    textoRes = R.string.badge_cancelado;
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDanadoContainer);
-                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanadoContainer);
-                    break;
-                case Pedido.ESTADO_RECHAZADO:
-                    textoRes = R.string.badge_rechazado;
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDanadoContainer);
-                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanadoContainer);
-                    break;
-                case Pedido.ESTADO_VENCIDO:
-                default:
-                    textoRes = R.string.badge_vencido;
-                    colorTexto = MaterialColors.getColor(tvEstadoBadge, com.google.android.material.R.attr.colorOnSurfaceVariant);
-                    colorFondo = MaterialColors.getColor(tvEstadoBadge, com.google.android.material.R.attr.colorSurfaceContainerHighest);
-                    break;
-            }
-
-            tvEstadoBadge.setText(textoRes);
-            BadgeUtils.pintar(tvEstadoBadge, colorTexto, colorFondo);
         }
     }
 }

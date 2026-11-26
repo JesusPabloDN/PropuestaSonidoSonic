@@ -44,12 +44,11 @@ public final class MotorDisponibilidad {
     public static boolean bloquea(Pedido p, long ahora) {
         if (p == null || p.getEstado() == null) return false;
         String estado = p.getEstado();
-        if (Pedido.ESTADO_APARTADO.equals(estado)) {
-            return p.getVencimientoApartadoMillis() > ahora;
+        if (Pedido.ESTADO_POR_APROBAR.equals(estado)) {
+            // Una solicitud pendiente aparta los recursos hasta que se aprueba, se rechaza o vence
+            return p.getInicioMillis() > ahora;
         }
-        return Pedido.ESTADO_PAGADO.equals(estado)
-                || Pedido.ESTADO_CONFIRMADO.equals(estado)
-                || Pedido.ESTADO_EN_REVISION.equals(estado);
+        return Pedido.ESTADO_CONFIRMADO.equals(estado);
     }
 
     public static double calcularTotal(Paquete paquete, int duracionMin) {
@@ -61,10 +60,6 @@ public final class MotorDisponibilidad {
             horasExtra = (int) Math.ceil(excesoMin / 60.0);
         }
         return paquete.getPrecio() + (horasExtra * paquete.getPrecioHoraExtra());
-    }
-
-    public static double calcularAnticipo(double total) {
-        return Math.round(total * Config.ANTICIPO_PORCENTAJE * 100.0) / 100.0;
     }
 
     public static ResultadoDisponibilidad evaluar(ContextoDisponibilidad ctx, Paquete paquete,

@@ -146,18 +146,18 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/kpi_reembolsos"
+                        android:text="@string/kpi_por_cobrar"
                         android:textAppearance="?attr/textAppearanceLabelMedium"
                         android:textColor="?attr/colorOnSurfaceVariant" />
 
                     <TextView
-                        android:id="@+id/tvDashReembolsos"
+                        android:id="@+id/tvDashPorCobrarMes"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_tiny"
                         android:maxLines="1"
                         android:textAppearance="?attr/textAppearanceTitleLarge"
-                        android:textColor="?attr/colorError"
+                        android:textColor="?attr/colorOnSurface"
                         tools:text="$0.00" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -185,12 +185,12 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/kpi_neto"
+                        android:text="@string/kpi_efectivo"
                         android:textAppearance="?attr/textAppearanceLabelMedium"
                         android:textColor="?attr/colorOnSurfaceVariant" />
 
                     <TextView
-                        android:id="@+id/tvDashNeto"
+                        android:id="@+id/tvDashEfectivo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_tiny"
@@ -216,12 +216,12 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/kpi_por_cobrar"
+                        android:text="@string/kpi_transferencia"
                         android:textAppearance="?attr/textAppearanceLabelMedium"
                         android:textColor="?attr/colorOnSurfaceVariant" />
 
                     <TextView
-                        android:id="@+id/tvDashPorCobrar"
+                        android:id="@+id/tvDashTransferencia"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_tiny"
@@ -315,7 +315,7 @@
                 android:layout_height="12dp" />
 
             <LinearLayout
-                android:id="@+id/rowApartadosPorPagar"
+                android:id="@+id/rowPorAprobar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/spacing_small"
@@ -332,12 +332,12 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/kpi_apartados_por_pagar"
+                    android:text="@string/kpi_por_aprobar"
                     android:textAppearance="?attr/textAppearanceTitleSmall"
                     android:textColor="?attr/colorPrimary" />
 
                 <TextView
-                    android:id="@+id/tvDashApartadosPorPagar"
+                    android:id="@+id/tvDashPorAprobar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_contador"
@@ -407,7 +407,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/rowPorRevisar"
+                android:id="@+id/rowPorCobrar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_fila_accion"
@@ -423,12 +423,12 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/kpi_por_revisar"
+                    android:text="@string/kpi_pedidos_por_cobrar"
                     android:textAppearance="?attr/textAppearanceTitleSmall"
                     android:textColor="?attr/colorPrimary" />
 
                 <TextView
-                    android:id="@+id/tvDashPorRevisar"
+                    android:id="@+id/tvDashPedidosPorCobrar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_contador"

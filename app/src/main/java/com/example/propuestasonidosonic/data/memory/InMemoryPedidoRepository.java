@@ -7,15 +7,13 @@ import com.example.propuestasonidosonic.data.Callback;
 import com.example.propuestasonidosonic.data.DiaOperativoRepository;
 import com.example.propuestasonidosonic.data.EquipoRepository;
 import com.example.propuestasonidosonic.data.EventoRepository;
-import com.example.propuestasonidosonic.data.PagoRepository;
 import com.example.propuestasonidosonic.data.PaqueteRepository;
 import com.example.propuestasonidosonic.data.PedidoRepository;
 import com.example.propuestasonidosonic.data.UsuarioRepository;
 import com.example.propuestasonidosonic.domain.AsignadorUnidades;
 import com.example.propuestasonidosonic.domain.ContextoDisponibilidad;
-import com.example.propuestasonidosonic.domain.MoneyUtils;
+import com.example.propuestasonidosonic.domain.EstadosPedido;
 import com.example.propuestasonidosonic.domain.MotorDisponibilidad;
-import com.example.propuestasonidosonic.domain.PoliticaCancelacion;
 import com.example.propuestasonidosonic.domain.ResultadoDisponibilidad;
 import com.example.propuestasonidosonic.domain.SolicitudReserva;
 import com.example.propuestasonidosonic.model.ComponentePaquete;
@@ -23,7 +21,6 @@ import com.example.propuestasonidosonic.model.DiaOperativo;
 import com.example.propuestasonidosonic.model.Equipo;
 import com.example.propuestasonidosonic.model.Evento;
 import com.example.propuestasonidosonic.model.ModeloInventario;
-import com.example.propuestasonidosonic.model.Pago;
 import com.example.propuestasonidosonic.model.Paquete;
 import com.example.propuestasonidosonic.model.Pedido;
 import com.example.propuestasonidosonic.model.Usuario;
@@ -55,13 +52,12 @@ public class InMemoryPedidoRepository implements PedidoRepository {
     private final PaqueteRepository paqueteRepository;
     private final UsuarioRepository usuarioRepository;
     private final DiaOperativoRepository diaOperativoRepository;
-    private final PagoRepository pagoRepository;
     private final EventoRepository eventoRepository;
     private final Reloj reloj;
     private FirebaseFirestore firestore;
 
     public InMemoryPedidoRepository() {
-        this(null, null, null, null, null, null, new RelojSistema());
+        this(null, null, null, null, null, new RelojSistema());
     }
 
     public InMemoryPedidoRepository(EquipoRepository equipoRepository,
@@ -69,30 +65,19 @@ public class InMemoryPedidoRepository implements PedidoRepository {
                                     UsuarioRepository usuarioRepository,
                                     DiaOperativoRepository diaOperativoRepository,
                                     Reloj reloj) {
-        this(equipoRepository, paqueteRepository, usuarioRepository, diaOperativoRepository, null, null, reloj);
+        this(equipoRepository, paqueteRepository, usuarioRepository, diaOperativoRepository, null, reloj);
     }
 
     public InMemoryPedidoRepository(EquipoRepository equipoRepository,
                                     PaqueteRepository paqueteRepository,
                                     UsuarioRepository usuarioRepository,
                                     DiaOperativoRepository diaOperativoRepository,
-                                    PagoRepository pagoRepository,
-                                    Reloj reloj) {
-        this(equipoRepository, paqueteRepository, usuarioRepository, diaOperativoRepository, pagoRepository, null, reloj);
-    }
-
-    public InMemoryPedidoRepository(EquipoRepository equipoRepository,
-                                    PaqueteRepository paqueteRepository,
-                                    UsuarioRepository usuarioRepository,
-                                    DiaOperativoRepository diaOperativoRepository,
-                                    PagoRepository pagoRepository,
                                     EventoRepository eventoRepository,
                                     Reloj reloj) {
         this.equipoRepository = equipoRepository;
         this.paqueteRepository = paqueteRepository;
         this.usuarioRepository = usuarioRepository;
         this.diaOperativoRepository = diaOperativoRepository;
-        this.pagoRepository = pagoRepository;
         this.eventoRepository = eventoRepository;
         this.reloj = reloj != null ? reloj : new RelojSistema();
     }
@@ -108,11 +93,15 @@ public class InMemoryPedidoRepository implements PedidoRepository {
                     synchronized (InMemoryPedidoRepository.this) {
                         pedidos.clear();
                         long maxNumero = 1000;
+                        List<Pedido> migrados = new ArrayList<>();
                         for (DocumentSnapshot doc : snapshots.getDocuments()) {
                             Pedido p = doc.toObject(Pedido.class);
                             if (p != null) {
                                 if (p.getId() == null || p.getId().trim().isEmpty()) {
                                     p.setId(doc.getId());
+                                }
+                                if (MigracionPedidos.normalizar(p, doc)) {
+                                    migrados.add(p);
                                 }
                                 pedidos.add(p);
                                 if (p.getNumero() > maxNumero) {
@@ -122,6 +111,15 @@ public class InMemoryPedidoRepository implements PedidoRepository {
                         }
                         if (maxNumero >= consecutivoNumero) {
                             consecutivoNumero = maxNumero + 1;
+                        }
+                        long ahora = reloj.ahora();
+                        for (Pedido p : migrados) {
+                            guardarEnFirestore(p);
+                            // Los pedidos confirmados por la migración necesitan su evento en la agenda
+                            if (Pedido.ESTADO_CONFIRMADO.equals(p.getEstado()) && p.getEventoId() == null
+                                    && EstadosPedido.finBloqueo(p) > ahora) {
+                                crearEventoSiFalta(p);
+                            }
                         }
                         notificarCambios();
                     }
@@ -185,28 +183,44 @@ public class InMemoryPedidoRepository implements PedidoRepository {
         return copia;
     }
 
+    private Pedido buscar(String pedidoId) {
+        if (pedidoId == null) return null;
+        for (Pedido p : pedidos) {
+            if (pedidoId.equals(p.getId())) {
+                return p;
+            }
+        }
+        return null;
+    }
+
     @Override
-    public synchronized int liberarApartadosVencidos() {
+    public synchronized int actualizarEstadosPorTiempo() {
         long ahora = reloj.ahora();
         int cambiados = 0;
+        boolean liberoRecursos = false;
         for (Pedido p : pedidos) {
-            if (Pedido.ESTADO_APARTADO.equals(p.getEstado()) && p.getVencimientoApartadoMillis() <= ahora) {
+            if (Pedido.ESTADO_POR_APROBAR.equals(p.getEstado()) && p.getInicioMillis() <= ahora) {
+                // Nadie aprobó la solicitud antes de la fecha del evento
                 p.setEstado(Pedido.ESTADO_VENCIDO);
+                p.setEquipoIds(new ArrayList<String>());
+                p.setAsignacionIncompleta(false);
                 p.setFechaActualizacion(ahora);
                 guardarEnFirestore(p);
+                liberoRecursos = true;
                 cambiados++;
-            } else if (Pedido.ESTADO_CONFIRMADO.equals(p.getEstado())) {
-                long finBloqueo = p.getBloqueoFinMillis() > 0 ? p.getBloqueoFinMillis() : p.getFinMillis();
-                if (finBloqueo <= ahora) {
-                    p.setEstado(Pedido.ESTADO_COMPLETADO);
-                    p.setFechaActualizacion(ahora);
-                    guardarEnFirestore(p);
-                    if (p.getEventoId() != null && eventoRepository != null) {
-                        eventoRepository.finalizarEvento(p.getEventoId(), null);
-                    }
-                    cambiados++;
+            } else if (Pedido.ESTADO_CONFIRMADO.equals(p.getEstado()) && EstadosPedido.finBloqueo(p) <= ahora) {
+                // El evento terminó: queda finalizado si ya se pagó, si no, por cobrar
+                p.setEstado(p.isPagoConfirmado() ? Pedido.ESTADO_FINALIZADO : Pedido.ESTADO_POR_COBRAR);
+                p.setFechaActualizacion(ahora);
+                guardarEnFirestore(p);
+                if (p.getEventoId() != null && eventoRepository != null) {
+                    eventoRepository.finalizarEvento(p.getEventoId(), null);
                 }
+                cambiados++;
             }
+        }
+        if (liberoRecursos) {
+            reasignarUnidadesInterno(ahora);
         }
         if (cambiados > 0) {
             notificarCambios();
@@ -216,7 +230,7 @@ public class InMemoryPedidoRepository implements PedidoRepository {
 
     @Override
     public synchronized void crearReserva(SolicitudReserva solicitud, Callback<Pedido> callback) {
-        liberarApartadosVencidos();
+        actualizarEstadosPorTiempo();
 
         if (solicitud == null) {
             if (callback != null) callback.onError("Solicitud nula");
@@ -262,16 +276,18 @@ public class InMemoryPedidoRepository implements PedidoRepository {
                 return;
             }
 
-            long ahora = reloj.ahora();
+            int pendientes = 0;
             for (Pedido p : pedidos) {
                 if (solicitud.getClienteId().equals(p.getClienteId())
-                        && Pedido.ESTADO_APARTADO.equals(p.getEstado())
-                        && p.getVencimientoApartadoMillis() > ahora) {
-                    if (callback != null) {
-                        callback.onError("Ya tienes una reserva pendiente de pago. Págala o espera a que venza.");
-                    }
-                    return;
+                        && Pedido.ESTADO_POR_APROBAR.equals(p.getEstado())) {
+                    pendientes++;
                 }
+            }
+            if (pendientes >= Config.SOLICITUDES_POR_APROBAR_MAX) {
+                if (callback != null) {
+                    callback.onError("Ya tienes una solicitud por aprobar. Espera la respuesta del negocio o cancélala para enviar otra.");
+                }
+                return;
             }
         }
 
@@ -328,33 +344,24 @@ public class InMemoryPedidoRepository implements PedidoRepository {
         pedido.setOperadoresRequeridos(paquete.getOperadoresRequeridos());
         pedido.setOperadorIds(new ArrayList<>(eval.getOperadorIds()));
 
-        double total = MotorDisponibilidad.calcularTotal(paquete, solicitud.getDuracionMin());
-        pedido.setTotal(total);
-        pedido.setAnticipoRequerido(MotorDisponibilidad.calcularAnticipo(total));
-        pedido.setAnticipoPagado(0.0);
-        pedido.setEstado(Pedido.ESTADO_APARTADO);
+        pedido.setTotal(MotorDisponibilidad.calcularTotal(paquete, solicitud.getDuracionMin()));
+        pedido.setPagoConfirmado(false);
 
-        if (Pedido.ORIGEN_APP.equals(origen)) {
-            pedido.setRequiereRevision(eval.isRequiereRevision());
-            pedido.setMotivosRevision(new ArrayList<>(eval.getMotivosRevision()));
-        } else {
-            pedido.setRequiereRevision(false);
-            pedido.setMotivosRevision(new ArrayList<String>());
-        }
+        boolean desdeApp = Pedido.ORIGEN_APP.equals(origen);
+        // Las solicitudes de la app esperan la aprobación de un socio; las del socio se confirman de inmediato
+        pedido.setEstado(desdeApp ? Pedido.ESTADO_POR_APROBAR : Pedido.ESTADO_CONFIRMADO);
+        pedido.setMotivosRevision(desdeApp
+                ? new ArrayList<>(eval.getMotivosRevision())
+                : new ArrayList<String>());
 
         pedido.setFechaCreacion(ahora);
         pedido.setFechaActualizacion(ahora);
 
-        long vencimiento;
-        if (Pedido.ORIGEN_APP.equals(origen)) {
-            vencimiento = TiempoUtils.sumarMinutos(ahora, Config.APARTADO_APP_MIN);
-        } else {
-            int horas = solicitud.getHorasApartado() != null ? solicitud.getHorasApartado() : Config.APARTADO_MANUAL_HORAS;
-            vencimiento = ahora + ((long) horas) * 3600_000L;
-        }
-        pedido.setVencimientoApartadoMillis(vencimiento);
-
         pedidos.add(pedido);
+        reasignarUnidadesInterno(ahora);
+        if (!desdeApp) {
+            crearEventoSiFalta(pedido);
+        }
         guardarEnFirestore(pedido);
         notificarCambios();
         if (callback != null) {
@@ -364,25 +371,14 @@ public class InMemoryPedidoRepository implements PedidoRepository {
 
     @Override
     public synchronized void cancelarReserva(String pedidoId, String canceladoPor, String motivo, Callback<Pedido> callback) {
-        Pedido target = null;
-        for (Pedido p : pedidos) {
-            if (p.getId().equals(pedidoId)) {
-                target = p;
-                break;
-            }
-        }
-
+        Pedido target = buscar(pedidoId);
         if (target == null) {
             if (callback != null) callback.onError("Pedido no encontrado");
             return;
         }
 
-        String estado = target.getEstado();
-        if (!Pedido.ESTADO_APARTADO.equals(estado)
-                && !Pedido.ESTADO_PAGADO.equals(estado)
-                && !Pedido.ESTADO_CONFIRMADO.equals(estado)
-                && !Pedido.ESTADO_EN_REVISION.equals(estado)) {
-            if (callback != null) callback.onError("Esta reserva ya no se puede cancelar");
+        if (!EstadosPedido.ocupaRecursos(target.getEstado())) {
+            if (callback != null) callback.onError("Este pedido ya no se puede cancelar");
             return;
         }
 
@@ -395,323 +391,132 @@ public class InMemoryPedidoRepository implements PedidoRepository {
                 if (callback != null) callback.onError("El motivo de cancelación es obligatorio");
                 return;
             }
-        } else if (Pedido.CANCELA_CLIENTE.equals(quienCancela)) {
-            if (motivo == null || motivo.trim().isEmpty()) {
-                motivo = "Cancelado por el cliente";
-            }
+        } else if (motivo == null || motivo.trim().isEmpty()) {
+            motivo = "Cancelado por el cliente";
         }
 
         long ahora = reloj.ahora();
-        double reembolso;
-        if (Pedido.CANCELA_CLIENTE.equals(quienCancela) && Pedido.ESTADO_EN_REVISION.equals(target.getEstado())) {
-            reembolso = MoneyUtils.redondear2(target.getAnticipoPagado());
-        } else {
-            reembolso = PoliticaCancelacion.calcularReembolso(target.getAnticipoPagado(),
-                    target.getInicioMillis(), ahora, quienCancela);
-        }
+        target.setEstado(Pedido.ESTADO_CANCELADO);
+        target.setCanceladoPor(quienCancela);
+        target.setMotivoCancelacion(motivo.trim());
+        target.setFechaActualizacion(ahora);
+        liberarRecursos(target, ahora);
+        agregarNota(target, "Cancelado por " + quienCancela + ": " + motivo.trim());
 
-        final String motivoFinal = motivo;
-        if (reembolso > 0 && pagoRepository != null) {
-            String metodo = target.getMetodoAnticipo() != null ? target.getMetodoAnticipo() : Pago.METODO_EFECTIVO;
-            Pago pagoReembolso = new Pago(UUID.randomUUID().toString(), target.getId(),
-                    target.getClienteId(), reembolso, Pago.TIPO_REEMBOLSO, metodo, ahora);
-
-            final Pedido finalTarget = target;
-            pagoRepository.registrarPago(pagoReembolso, new Callback<Pago>() {
-                @Override
-                public void onSuccess(Pago result) {
-                    synchronized (InMemoryPedidoRepository.this) {
-                        aplicarCancelacion(finalTarget, quienCancela, motivoFinal, reembolso, ahora, callback);
-                    }
-                }
-
-                @Override
-                public void onError(String error) {
-                    if (callback != null) callback.onError("Error al registrar el reembolso: " + error);
-                }
-            });
-        } else {
-            aplicarCancelacion(target, quienCancela, motivoFinal, reembolso, ahora, callback);
+        guardarEnFirestore(target);
+        notificarCambios();
+        if (callback != null) {
+            callback.onSuccess(new Pedido(target));
         }
     }
 
-    private void aplicarCancelacion(Pedido target, String canceladoPor, String motivo,
-                                    double reembolso, long ahora, Callback<Pedido> callback) {
-        target.setEstado(Pedido.ESTADO_CANCELADO);
-        target.setCanceladoPor(canceladoPor);
-        target.setMotivoCancelacion(motivo != null ? motivo.trim() : "");
-        target.setReembolsoMonto(reembolso);
+    @Override
+    public synchronized void confirmarPago(String pedidoId, String metodo, String socioId,
+                                           String socioNombre, Callback<Pedido> callback) {
+        Pedido target = buscar(pedidoId);
+        if (target == null) {
+            if (callback != null) callback.onError("Pedido no encontrado");
+            return;
+        }
+        if (target.isPagoConfirmado()) {
+            if (callback != null) callback.onError("El pago de este pedido ya fue confirmado");
+            return;
+        }
+        if (!EstadosPedido.puedeConfirmarPago(target)) {
+            if (callback != null) callback.onError("Solo se puede confirmar el pago de pedidos confirmados o por cobrar");
+            return;
+        }
+        if (!EstadosPedido.metodoValido(metodo)) {
+            if (callback != null) callback.onError("Elige si el pago fue en efectivo o por transferencia");
+            return;
+        }
+
+        long ahora = reloj.ahora();
+        target.setPagoConfirmado(true);
+        target.setMetodoPago(metodo);
+        target.setFechaPagoMillis(ahora);
+        target.setPagoConfirmadoPorId(socioId);
+        target.setPagoConfirmadoPorNombre(socioNombre);
+        // Si el evento ya terminó, con el pago el pedido queda finalizado con éxito
+        if (Pedido.ESTADO_POR_COBRAR.equals(target.getEstado())
+                || EstadosPedido.finBloqueo(target) <= ahora) {
+            target.setEstado(Pedido.ESTADO_FINALIZADO);
+        }
         target.setFechaActualizacion(ahora);
 
+        guardarEnFirestore(target);
+        notificarCambios();
+        if (callback != null) {
+            callback.onSuccess(new Pedido(target));
+        }
+    }
+
+    /** Crea el evento de la agenda (personal, equipo y checklist) de un pedido confirmado. */
+    private void crearEventoSiFalta(Pedido target) {
+        if (target == null || target.getEventoId() != null || eventoRepository == null) return;
+
+        String socioId = "";
+        String asistenteId = null;
+        if (usuarioRepository != null && target.getOperadorIds() != null) {
+            for (String opId : target.getOperadorIds()) {
+                Usuario u = usuarioRepository.getUsuarioPorId(opId);
+                if (u != null) {
+                    if (Usuario.ROL_SOCIO.equals(u.getRol()) && socioId.isEmpty()) {
+                        socioId = u.getId();
+                    } else if (Usuario.ROL_ASISTENTE.equals(u.getRol()) && asistenteId == null) {
+                        asistenteId = u.getId();
+                    }
+                }
+            }
+        }
+
+        Evento ev = new Evento();
+        ev.setNombre(target.getNombreEvento());
+        ev.setInicioMillis(target.getInicioMillis());
+        ev.setFinMillis(target.getFinMillis());
+        ev.setBloqueoInicioMillis(target.getBloqueoInicioMillis());
+        ev.setBloqueoFinMillis(target.getBloqueoFinMillis());
+        ev.setDireccion(target.getDireccion() != null && !target.getDireccion().trim().isEmpty() ? target.getDireccion().trim() : null);
+        ev.setPedidoId(target.getId());
+        ev.setEstado(Evento.ESTADO_PROGRAMADO);
+        ev.setEquipoIds(new ArrayList<>(target.getEquipoIds()));
+        ev.setSocioResponsableId(socioId);
+        ev.setAsistenteId(asistenteId);
+
+        final String pedidoIdEvento = target.getId();
+        eventoRepository.crearEvento(ev, new Callback<Evento>() {
+            @Override
+            public void onSuccess(Evento result) {
+                synchronized (InMemoryPedidoRepository.this) {
+                    Pedido actual = buscar(pedidoIdEvento);
+                    if (actual != null && result != null) {
+                        actual.setEventoId(result.getId());
+                        guardarEnFirestore(actual);
+                    }
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+            }
+        });
+    }
+
+    /** Cancela el evento de la agenda y libera las unidades que tenía apartadas. */
+    private void liberarRecursos(Pedido target, long ahora) {
         if (target.getEventoId() != null && eventoRepository != null) {
             eventoRepository.cancelarEvento(target.getEventoId(), null);
         }
         target.setEquipoIds(new ArrayList<String>());
         target.setAsignacionIncompleta(false);
-
         reasignarUnidadesInterno(ahora);
+    }
 
-        String notaCancelacion = (motivo != null && !motivo.trim().isEmpty())
-                ? "Cancelado por " + canceladoPor + ": " + motivo.trim()
-                : "Cancelado por " + canceladoPor;
+    private static void agregarNota(Pedido target, String nota) {
         if (target.getNotas() != null && !target.getNotas().isEmpty()) {
-            target.setNotas(target.getNotas() + "\n" + notaCancelacion);
+            target.setNotas(target.getNotas() + "\n" + nota);
         } else {
-            target.setNotas(notaCancelacion);
-        }
-
-        guardarEnFirestore(target);
-        notificarCambios();
-        if (callback != null) {
-            callback.onSuccess(new Pedido(target));
-        }
-    }
-
-    @Override
-    public synchronized void registrarAnticipo(String pedidoId, double monto, String metodo, Callback<Pedido> callback) {
-        Pedido target = null;
-        for (Pedido p : pedidos) {
-            if (p.getId().equals(pedidoId)) {
-                target = p;
-                break;
-            }
-        }
-
-        if (target == null) {
-            if (callback != null) callback.onError("Pedido no encontrado");
-            return;
-        }
-
-        if (!Pedido.ESTADO_APARTADO.equals(target.getEstado())) {
-            if (callback != null) callback.onError("Solo se puede registrar anticipo en reservas apartadas");
-            return;
-        }
-
-        long ahora = reloj.ahora();
-        if (target.getVencimientoApartadoMillis() > 0 && target.getVencimientoApartadoMillis() <= ahora) {
-            target.setEstado(Pedido.ESTADO_VENCIDO);
-            target.setFechaActualizacion(ahora);
-            guardarEnFirestore(target);
-            notificarCambios();
-            if (callback != null) callback.onError("El apartado ya venció");
-            return;
-        }
-
-        if (metodo == null || (!Pedido.METODO_EFECTIVO.equals(metodo)
-                && !Pedido.METODO_TRANSFERENCIA.equals(metodo)
-                && !Pedido.METODO_TARJETA.equals(metodo))) {
-            if (callback != null) callback.onError("Método de pago inválido");
-            return;
-        }
-
-        if (monto <= 0) {
-            if (callback != null) callback.onError("El monto debe ser mayor a 0");
-            return;
-        }
-
-        double montoRedondeado = MoneyUtils.redondear2(monto);
-        double anticipoPendiente = target.getAnticipoRequerido() - target.getAnticipoPagado();
-        if (montoRedondeado < anticipoPendiente - 0.005) {
-            if (callback != null) callback.onError("El monto no cubre el anticipo requerido");
-            return;
-        }
-
-        double saldoTotal = target.getTotal() - target.getAnticipoPagado();
-        if (montoRedondeado > saldoTotal + 0.005) {
-            if (callback != null) callback.onError("El monto excede el saldo restante del pedido");
-            return;
-        }
-        if (montoRedondeado > saldoTotal) {
-            montoRedondeado = saldoTotal;
-        }
-
-        if (pagoRepository != null) {
-            Pago pago = new Pago(UUID.randomUUID().toString(), target.getId(),
-                    target.getClienteId(), montoRedondeado, Pago.TIPO_ANTICIPO, metodo, ahora);
-
-            final Pedido finalTarget = target;
-            final double finalMonto = montoRedondeado;
-            pagoRepository.registrarPago(pago, new Callback<Pago>() {
-                @Override
-                public void onSuccess(Pago result) {
-                    synchronized (InMemoryPedidoRepository.this) {
-                        aplicarAnticipo(finalTarget, finalMonto, metodo, ahora, callback);
-                    }
-                }
-
-                @Override
-                public void onError(String error) {
-                    if (callback != null) callback.onError("Error al registrar el pago: " + error);
-                }
-            });
-        } else {
-            aplicarAnticipo(target, montoRedondeado, metodo, ahora, callback);
-        }
-    }
-
-    private void aplicarAnticipo(Pedido target, double monto, String metodo, long ahora, Callback<Pedido> callback) {
-        target.setAnticipoPagado(MoneyUtils.redondear2(target.getAnticipoPagado() + monto));
-        target.setMetodoAnticipo(metodo);
-        target.setFechaAnticipo(ahora);
-        target.setVencimientoApartadoMillis(0);
-
-        if (target.estaLiquidado()) {
-            target.setCobrado(true);
-            target.setFechaCobro(ahora);
-        }
-
-        if (target.isRequiereRevision()) {
-            target.setEstado(Pedido.ESTADO_EN_REVISION);
-        } else {
-            target.setEstado(Pedido.ESTADO_CONFIRMADO);
-        }
-
-        target.setFechaActualizacion(ahora);
-
-        if (target.getEventoId() == null) {
-            reasignarUnidadesInterno(ahora);
-
-            String socioId = "";
-            String asistenteId = null;
-            if (usuarioRepository != null && target.getOperadorIds() != null) {
-                for (String opId : target.getOperadorIds()) {
-                    Usuario u = usuarioRepository.getUsuarioPorId(opId);
-                    if (u != null) {
-                        if (Usuario.ROL_SOCIO.equals(u.getRol()) && socioId.isEmpty()) {
-                            socioId = u.getId();
-                        } else if (Usuario.ROL_ASISTENTE.equals(u.getRol()) && asistenteId == null) {
-                            asistenteId = u.getId();
-                        }
-                    }
-                }
-            }
-
-            Evento ev = new Evento();
-            ev.setNombre(target.getNombreEvento());
-            ev.setInicioMillis(target.getInicioMillis());
-            ev.setFinMillis(target.getFinMillis());
-            ev.setBloqueoInicioMillis(target.getBloqueoInicioMillis());
-            ev.setBloqueoFinMillis(target.getBloqueoFinMillis());
-            ev.setDireccion(target.getDireccion() != null && !target.getDireccion().trim().isEmpty() ? target.getDireccion().trim() : null);
-            ev.setPedidoId(target.getId());
-            ev.setEstado(Evento.ESTADO_PROGRAMADO);
-            ev.setEquipoIds(new ArrayList<>(target.getEquipoIds()));
-            ev.setSocioResponsableId(socioId);
-            ev.setAsistenteId(asistenteId);
-
-            if (eventoRepository != null) {
-                eventoRepository.crearEvento(ev, new Callback<Evento>() {
-                    @Override
-                    public void onSuccess(Evento result) {
-                        target.setEventoId(result.getId());
-                        guardarEnFirestore(target);
-                    }
-
-                    @Override
-                    public void onError(String error) {
-                    }
-                });
-            }
-        }
-
-        guardarEnFirestore(target);
-        notificarCambios();
-        if (callback != null) {
-            callback.onSuccess(new Pedido(target));
-        }
-    }
-
-    @Override
-    public synchronized void liquidarSaldo(String pedidoId, double monto, String metodo, Callback<Pago> callback) {
-        Pedido target = null;
-        for (Pedido p : pedidos) {
-            if (p.getId().equals(pedidoId)) {
-                target = p;
-                break;
-            }
-        }
-
-        if (target == null) {
-            if (callback != null) callback.onError("Pedido no encontrado");
-            return;
-        }
-
-        String estado = target.getEstado();
-        if (!Pedido.ESTADO_CONFIRMADO.equals(estado)
-                && !Pedido.ESTADO_PAGADO.equals(estado)
-                && !Pedido.ESTADO_EN_REVISION.equals(estado)
-                && !Pedido.ESTADO_COMPLETADO.equals(estado)) {
-            if (callback != null) callback.onError("Solo se puede cobrar saldo de pedidos confirmados, en revisión o completados");
-            return;
-        }
-
-        if (monto <= 0) {
-            if (callback != null) callback.onError("El monto debe ser mayor a 0");
-            return;
-        }
-
-        if (metodo == null || (!Pedido.METODO_EFECTIVO.equals(metodo)
-                && !Pedido.METODO_TRANSFERENCIA.equals(metodo)
-                && !Pedido.METODO_TARJETA.equals(metodo))) {
-            if (callback != null) callback.onError("Método de pago inválido");
-            return;
-        }
-
-        double saldoPendiente = target.getSaldoPendiente();
-        if (saldoPendiente <= 0.005) {
-            if (callback != null) callback.onError("El pedido ya está liquidado");
-            return;
-        }
-
-        double montoRedondeado = MoneyUtils.redondear2(monto);
-        if (montoRedondeado > saldoPendiente + 0.005) {
-            if (callback != null) callback.onError("El monto excede el saldo pendiente");
-            return;
-        }
-        if (montoRedondeado > saldoPendiente) {
-            montoRedondeado = saldoPendiente;
-        }
-
-        boolean liquidaTotal = MoneyUtils.iguales(montoRedondeado, saldoPendiente);
-        String tipoPago = liquidaTotal ? Pago.TIPO_TOTAL : Pago.TIPO_ABONO;
-        long ahora = reloj.ahora();
-
-        Pago pago = new Pago(UUID.randomUUID().toString(), target.getId(),
-                target.getClienteId(), montoRedondeado, tipoPago, metodo, ahora);
-
-        if (pagoRepository != null) {
-            final Pedido finalTarget = target;
-            final double finalMonto = montoRedondeado;
-            pagoRepository.registrarPago(pago, new Callback<Pago>() {
-                @Override
-                public void onSuccess(Pago result) {
-                    synchronized (InMemoryPedidoRepository.this) {
-                        aplicarLiquidacion(finalTarget, result != null ? result : pago, finalMonto, ahora, callback);
-                    }
-                }
-
-                @Override
-                public void onError(String error) {
-                    if (callback != null) callback.onError("Error al registrar el pago: " + error);
-                }
-            });
-        } else {
-            aplicarLiquidacion(target, pago, montoRedondeado, ahora, callback);
-        }
-    }
-
-    private void aplicarLiquidacion(Pedido target, Pago pago, double monto, long ahora, Callback<Pago> callback) {
-        double nuevoAnticipo = MoneyUtils.redondear2(target.getAnticipoPagado() + monto);
-        target.setAnticipoPagado(nuevoAnticipo);
-        target.setFechaActualizacion(ahora);
-        if (target.estaLiquidado()) {
-            target.setCobrado(true);
-            target.setFechaCobro(ahora);
-        }
-        guardarEnFirestore(target);
-        notificarCambios();
-        if (callback != null) {
-            callback.onSuccess(pago);
+            target.setNotas(nota);
         }
     }
 
@@ -730,9 +535,8 @@ public class InMemoryPedidoRepository implements PedidoRepository {
             return;
         }
 
-        if (!Pedido.ESTADO_APARTADO.equals(target.getEstado())
-                && !Pedido.ESTADO_CONFIRMADO.equals(target.getEstado())) {
-            if (callback != null) callback.onError("Solo se pueden reprogramar reservas apartadas o confirmadas");
+        if (!EstadosPedido.ocupaRecursos(target.getEstado())) {
+            if (callback != null) callback.onError("Solo se pueden reprogramar pedidos por aprobar o confirmados");
             return;
         }
 
@@ -804,28 +608,27 @@ public class InMemoryPedidoRepository implements PedidoRepository {
 
     @Override
     public synchronized void aprobarPedido(String pedidoId, Callback<Pedido> callback) {
-        Pedido target = null;
-        for (Pedido p : pedidos) {
-            if (p.getId().equals(pedidoId)) {
-                target = p;
-                break;
-            }
-        }
-
+        Pedido target = buscar(pedidoId);
         if (target == null) {
             if (callback != null) callback.onError("Pedido no encontrado");
             return;
         }
 
-        if (!Pedido.ESTADO_EN_REVISION.equals(target.getEstado())) {
-            if (callback != null) callback.onError("El pedido no está en revisión");
+        if (!Pedido.ESTADO_POR_APROBAR.equals(target.getEstado())) {
+            if (callback != null) callback.onError("El pedido no está por aprobar");
             return;
         }
 
         long ahora = reloj.ahora();
+        if (target.getInicioMillis() <= ahora) {
+            if (callback != null) callback.onError("La fecha del evento ya pasó; la solicitud venció");
+            return;
+        }
+
         target.setEstado(Pedido.ESTADO_CONFIRMADO);
-        target.setRequiereRevision(false);
         target.setFechaActualizacion(ahora);
+        reasignarUnidadesInterno(ahora);
+        crearEventoSiFalta(target);
 
         guardarEnFirestore(target);
         notificarCambios();
@@ -836,21 +639,14 @@ public class InMemoryPedidoRepository implements PedidoRepository {
 
     @Override
     public synchronized void rechazarPedido(String pedidoId, String motivo, Callback<Pedido> callback) {
-        Pedido target = null;
-        for (Pedido p : pedidos) {
-            if (p.getId().equals(pedidoId)) {
-                target = p;
-                break;
-            }
-        }
-
+        Pedido target = buscar(pedidoId);
         if (target == null) {
             if (callback != null) callback.onError("Pedido no encontrado");
             return;
         }
 
-        if (!Pedido.ESTADO_EN_REVISION.equals(target.getEstado())) {
-            if (callback != null) callback.onError("El pedido no está en revisión");
+        if (!Pedido.ESTADO_POR_APROBAR.equals(target.getEstado())) {
+            if (callback != null) callback.onError("El pedido no está por aprobar");
             return;
         }
 
@@ -859,55 +655,12 @@ public class InMemoryPedidoRepository implements PedidoRepository {
             return;
         }
 
-        final String motivoTrim = motivo.trim();
         long ahora = reloj.ahora();
-        double totalPagado = target.getAnticipoPagado();
-        final double reembolso = MoneyUtils.redondear2(totalPagado);
-
-        if (reembolso > 0 && pagoRepository != null) {
-            String metodo = target.getMetodoAnticipo() != null ? target.getMetodoAnticipo() : Pago.METODO_EFECTIVO;
-            Pago pagoReembolso = new Pago(UUID.randomUUID().toString(), target.getId(),
-                    target.getClienteId(), reembolso, Pago.TIPO_REEMBOLSO, metodo, ahora);
-
-            final Pedido finalTarget = target;
-            pagoRepository.registrarPago(pagoReembolso, new Callback<Pago>() {
-                @Override
-                public void onSuccess(Pago result) {
-                    synchronized (InMemoryPedidoRepository.this) {
-                        aplicarRechazo(finalTarget, motivoTrim, reembolso, ahora, callback);
-                    }
-                }
-
-                @Override
-                public void onError(String error) {
-                    if (callback != null) callback.onError("Error al registrar el reembolso: " + error);
-                }
-            });
-        } else {
-            aplicarRechazo(target, motivoTrim, reembolso, ahora, callback);
-        }
-    }
-
-    private void aplicarRechazo(Pedido target, String motivo, double reembolso, long ahora, Callback<Pedido> callback) {
         target.setEstado(Pedido.ESTADO_RECHAZADO);
-        target.setMotivoRechazo(motivo);
-        target.setReembolsoMonto(reembolso);
+        target.setMotivoRechazo(motivo.trim());
         target.setFechaActualizacion(ahora);
-
-        if (target.getEventoId() != null && eventoRepository != null) {
-            eventoRepository.cancelarEvento(target.getEventoId(), null);
-        }
-        target.setEquipoIds(new ArrayList<String>());
-        target.setAsignacionIncompleta(false);
-
-        reasignarUnidadesInterno(ahora);
-
-        String notaRechazo = "Rechazado: " + motivo;
-        if (target.getNotas() != null && !target.getNotas().isEmpty()) {
-            target.setNotas(target.getNotas() + "\n" + notaRechazo);
-        } else {
-            target.setNotas(notaRechazo);
-        }
+        liberarRecursos(target, ahora);
+        agregarNota(target, "Rechazado: " + motivo.trim());
 
         guardarEnFirestore(target);
         notificarCambios();
@@ -948,10 +701,7 @@ public class InMemoryPedidoRepository implements PedidoRepository {
 
         for (Pedido p : pedidos) {
             if (p == null) continue;
-            boolean activo = Pedido.ESTADO_CONFIRMADO.equals(p.getEstado())
-                    || Pedido.ESTADO_PAGADO.equals(p.getEstado())
-                    || Pedido.ESTADO_EN_REVISION.equals(p.getEstado());
-            if (!activo) continue;
+            if (!EstadosPedido.ocupaRecursos(p.getEstado())) continue;
 
             pedidosActivos.add(p);
             long desde = p.getBloqueoInicioMillis() > 0 ? p.getBloqueoInicioMillis() : p.getInicioMillis();
@@ -1061,15 +811,5 @@ public class InMemoryPedidoRepository implements PedidoRepository {
         if (paquete == null) return new ArrayList<>();
         ContextoDisponibilidad ctx = construirContexto(reloj.ahora());
         return MotorDisponibilidad.proximasAlternativas(ctx, paquete, desdeMillis, duracionMin, max);
-    }
-
-    @Override
-    public synchronized double calcularReembolsoPrevio(String pedidoId, String canceladoPor) {
-        Pedido p = getPedidoPorId(pedidoId);
-        if (p == null) return 0.0;
-        if (Pedido.CANCELA_CLIENTE.equals(canceladoPor) && Pedido.ESTADO_EN_REVISION.equals(p.getEstado())) {
-            return MoneyUtils.redondear2(p.getAnticipoPagado());
-        }
-        return PoliticaCancelacion.calcularReembolso(p.getAnticipoPagado(), p.getInicioMillis(), reloj.ahora(), canceladoPor);
     }
 }

@@ -6,12 +6,12 @@ import com.example.propuestasonidosonic.data.Callback;
 import com.example.propuestasonidosonic.data.memory.InMemoryDiaOperativoRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryEquipoRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryEventoRepository;
-import com.example.propuestasonidosonic.data.memory.InMemoryPagoRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryPaqueteRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryPedidoRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryUsuarioRepository;
 import com.example.propuestasonidosonic.domain.ClienteUtils;
 import com.example.propuestasonidosonic.domain.DashboardUtils;
+import com.example.propuestasonidosonic.domain.EstadosPedido;
 import com.example.propuestasonidosonic.domain.FinanzasUtils;
 import com.example.propuestasonidosonic.util.ModeloUtils;
 import com.example.propuestasonidosonic.domain.SolicitudReserva;
@@ -19,7 +19,6 @@ import com.example.propuestasonidosonic.model.CategoriaEquipo;
 import com.example.propuestasonidosonic.model.ComponentePaquete;
 import com.example.propuestasonidosonic.model.Equipo;
 import com.example.propuestasonidosonic.model.Evento;
-import com.example.propuestasonidosonic.model.Pago;
 import com.example.propuestasonidosonic.model.Paquete;
 import com.example.propuestasonidosonic.model.Pedido;
 import com.example.propuestasonidosonic.model.Usuario;
@@ -72,7 +71,6 @@ public class Etapa4GUnitTest {
     private InMemoryPaqueteRepository paqueteRepo;
     private InMemoryUsuarioRepository usuarioRepo;
     private InMemoryDiaOperativoRepository diaRepo;
-    private InMemoryPagoRepository pagoRepo;
     private InMemoryEventoRepository eventoRepo;
     private InMemoryPedidoRepository pedidoRepo;
 
@@ -89,7 +87,6 @@ public class Etapa4GUnitTest {
         paqueteRepo = new InMemoryPaqueteRepository(equipoRepo);
         usuarioRepo = new InMemoryUsuarioRepository(null);
         diaRepo = new InMemoryDiaOperativoRepository();
-        pagoRepo = new InMemoryPagoRepository(reloj);
         eventoRepo = new InMemoryEventoRepository();
 
         equipoRepo.setEventoRepository(eventoRepo);
@@ -99,7 +96,6 @@ public class Etapa4GUnitTest {
                 paqueteRepo,
                 usuarioRepo,
                 diaRepo,
-                pagoRepo,
                 eventoRepo,
                 reloj
         );
@@ -168,9 +164,7 @@ public class Etapa4GUnitTest {
         p1.setClienteTelefono("747 123 4567");
         p1.setClienteNombre("Juan P.");
         p1.setInicioMillis(1000L);
-        p1.setTotal(3500.0);
-        p1.setAnticipoRequerido(1050.0);
-        p1.setAnticipoPagado(1050.0); // saldo pendiente = 2450.0
+        p1.setTotal(3500.0); // sin pago confirmado: por pagar 3500
         p1.setEstado(Pedido.ESTADO_CONFIRMADO);
 
         // Pedido 2: Socio con inicioMillis = 2000, nombre "Juan Pérez"
@@ -181,14 +175,10 @@ public class Etapa4GUnitTest {
         p2.setClienteNombre("Juan Pérez");
         p2.setInicioMillis(2000L);
         p2.setTotal(4000.0);
-        p2.setAnticipoRequerido(1200.0);
-        p2.setAnticipoPagado(1200.0); // saldo pendiente = 2800.0
-        p2.setEstado(Pedido.ESTADO_CONFIRMADO);
-
-        // Pagos: Anticipo ped-1 ($1050) y ped-2 ($1200), y abono ped-2 ($800)
-        Pago pago1 = new Pago("pg-1", "ped-1", "usr-app-1", 1050.0, Pago.TIPO_ANTICIPO, Pago.METODO_EFECTIVO, 1000L);
-        Pago pago2 = new Pago("pg-2", "ped-2", null, 1200.0, Pago.TIPO_ANTICIPO, Pago.METODO_TRANSFERENCIA, 2000L);
-        Pago pago3 = new Pago("pg-3", "ped-2", null, 800.0, Pago.TIPO_ABONO, Pago.METODO_EFECTIVO, 2100L);
+        p2.setEstado(Pedido.ESTADO_FINALIZADO);
+        p2.setPagoConfirmado(true); // pagado: 4000
+        p2.setMetodoPago(Pedido.METODO_TRANSFERENCIA);
+        p2.setFechaPagoMillis(2100L);
 
         // Usuario cliente coincidente
         Usuario uCliente = new Usuario("usr-app-1", "Juan Registrado", "juan@correo.com", "7471234567",
@@ -196,7 +186,6 @@ public class Etapa4GUnitTest {
 
         List<ClienteUtils.ResumenCliente> resumenes = ClienteUtils.resumenes(
                 Arrays.asList(p1, p2),
-                Arrays.asList(pago1, pago2, pago3),
                 Collections.singletonList(uCliente)
         );
 
@@ -209,13 +198,13 @@ public class Etapa4GUnitTest {
         assertEquals("juan@correo.com", c.getCorreo());
         assertEquals("usr-app-1", c.getClienteId());
         assertEquals(2, c.getPedidosValidos());
-        assertEquals(3050.0, c.getTotalPagadoNeto(), 0.001); // 1050 + 1200 + 800
-        assertEquals(5250.0, c.getSaldoPendiente(), 0.001); // 2450 + 2800
+        assertEquals(4000.0, c.getTotalPagadoNeto(), 0.001); // solo ped-2 tiene pago confirmado
+        assertEquals(3500.0, c.getSaldoPendiente(), 0.001); // ped-1 sigue por pagar
         assertEquals(2000L, c.getUltimoEventoMillis());
     }
 
     @Test
-    public void test03_resumenes_noCuentaApartadosNiCancelados_eIncluyeUsuarioSinPedidos() {
+    public void test03_resumenes_noCuentaSolicitudesNiCancelados_eIncluyeUsuarioSinPedidos() {
         // Pedido cancelado
         Pedido pCanc = new Pedido();
         pCanc.setId("ped-canc");
@@ -223,7 +212,6 @@ public class Etapa4GUnitTest {
         pCanc.setClienteNombre("Pedro Cancelado");
         pCanc.setInicioMillis(1000L);
         pCanc.setTotal(3500.0);
-        pCanc.setAnticipoPagado(1050.0);
         pCanc.setEstado(Pedido.ESTADO_CANCELADO);
 
         // Pedido apartado
@@ -233,7 +221,7 @@ public class Etapa4GUnitTest {
         pApart.setClienteNombre("Pedro Apartado");
         pApart.setInicioMillis(2000L);
         pApart.setTotal(3500.0);
-        pApart.setEstado(Pedido.ESTADO_APARTADO);
+        pApart.setEstado(Pedido.ESTADO_POR_APROBAR);
 
         // Usuario cliente sin pedidos
         Usuario uSinPedidos = new Usuario("usr-nuevo", "Ana Gómez", "ana@correo.com", "7479998877",
@@ -241,7 +229,6 @@ public class Etapa4GUnitTest {
 
         List<ClienteUtils.ResumenCliente> resumenes = ClienteUtils.resumenes(
                 Arrays.asList(pCanc, pApart),
-                Collections.<Pago>emptyList(),
                 Collections.singletonList(uSinPedidos)
         );
 
@@ -257,7 +244,8 @@ public class Etapa4GUnitTest {
 
         ClienteUtils.ResumenCliente cPedro = resumenes.get(1);
         assertEquals("Pedro Apartado", cPedro.getNombre());
-        assertEquals(0, cPedro.getPedidosValidos()); // No cuenta apartados ni cancelados
+        assertEquals(0, cPedro.getPedidosValidos()); // No cuenta solicitudes por aprobar ni cancelados
+        assertEquals(0.0, cPedro.getSaldoPendiente(), 0.001);
         assertEquals(2000L, cPedro.getUltimoEventoMillis());
     }
 
@@ -315,31 +303,27 @@ public class Etapa4GUnitTest {
         assertEquals("p1", ordenados.get(2).getId()); // 1000
     }
 
-    @Test
-    public void test06_aprobarPedido_deEnRevisionAConfirmado_yErrorEnOtrosEstados() {
-        // Crear pedido de app con menos de 48h para que requiera revisión
-        long iniUrgente = ahoraFijo + 24 * 3600_000L;
-        SolicitudReserva sol = new SolicitudReserva("paq-basico", iniUrgente, 240, Pedido.ORIGEN_APP,
-                "Fiesta Urgente", "usr-1", "Cliente App", "7471234567", "Av. Insurgentes 123", "", 24);
-
+    private Pedido crearSolicitudApp(String nombre, String clienteId, String telefono, long inicio) {
+        SolicitudReserva sol = new SolicitudReserva("paq-basico", inicio, 240, Pedido.ORIGEN_APP,
+                nombre, clienteId, "Cliente App", telefono, "Av. Insurgentes 123", "");
         AtomicReference<Pedido> pedRef = new AtomicReference<>();
         pedidoRepo.crearReserva(sol, new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) { pedRef.set(result); }
             @Override public void onError(String error) { fail("crearReserva error: " + error); }
         });
+        assertNotNull(pedRef.get());
+        return pedRef.get();
+    }
 
-        Pedido p = pedRef.get();
-        assertNotNull(p);
-        assertTrue(p.isRequiereRevision());
+    @Test
+    public void test06_aprobarPedido_dePorAprobarAConfirmado_yErrorEnOtrosEstados() {
+        long iniUrgente = ahoraFijo + 24 * 3600_000L;
+        Pedido p = crearSolicitudApp("Fiesta Urgente", "usr-1", "7471234567", iniUrgente);
+        assertEquals(Pedido.ESTADO_POR_APROBAR, p.getEstado());
+        assertTrue(p.getMotivosRevision().contains(Pedido.MOTIVO_URGENTE));
+        assertNull("La solicitud no crea evento hasta aprobarse", p.getEventoId());
+        assertEquals("La solicitud aparta su unidad", 1, pedidoRepo.getPedidoPorId(p.getId()).getEquipoIds().size());
 
-        // Registrar anticipo para que transicione a EN_REVISION
-        pedidoRepo.registrarAnticipo(p.getId(), 1050.0, Pedido.METODO_EFECTIVO, noop());
-        Pedido enRevision = pedidoRepo.getPedidoPorId(p.getId());
-        assertEquals(Pedido.ESTADO_EN_REVISION, enRevision.getEstado());
-        assertNotNull(enRevision.getEventoId());
-        assertEquals(1, enRevision.getEquipoIds().size());
-
-        // Aprobar pedido
         AtomicReference<Pedido> aprobadoRef = new AtomicReference<>();
         pedidoRepo.aprobarPedido(p.getId(), new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) { aprobadoRef.set(result); }
@@ -348,8 +332,7 @@ public class Etapa4GUnitTest {
 
         assertNotNull(aprobadoRef.get());
         assertEquals(Pedido.ESTADO_CONFIRMADO, aprobadoRef.get().getEstado());
-        assertFalse(aprobadoRef.get().isRequiereRevision());
-        assertNotNull(aprobadoRef.get().getEventoId());
+        assertNotNull(pedidoRepo.getPedidoPorId(p.getId()).getEventoId());
         assertEquals(1, aprobadoRef.get().getEquipoIds().size());
 
         // Intentar aprobar cuando ya está confirmado -> error
@@ -358,32 +341,26 @@ public class Etapa4GUnitTest {
             @Override public void onSuccess(Pedido result) {}
             @Override public void onError(String error) { errYaAprobado.set(error); }
         });
-        assertEquals("El pedido no está en revisión", errYaAprobado.get());
+        assertEquals("El pedido no está por aprobar", errYaAprobado.get());
+
+        // No se aprueba una solicitud cuya fecha ya pasó
+        long iniOtro = ahoraFijo + 72 * 3600_000L;
+        Pedido otra = crearSolicitudApp("Otra", "usr-2", "7470000000", iniOtro);
+        reloj.setAhora(iniOtro + 60_000L);
+        AtomicReference<String> errPasada = new AtomicReference<>();
+        pedidoRepo.aprobarPedido(otra.getId(), new Callback<Pedido>() {
+            @Override public void onSuccess(Pedido result) {}
+            @Override public void onError(String error) { errPasada.set(error); }
+        });
+        assertNotNull(errPasada.get());
     }
 
     @Test
-    public void test07_rechazarPedido_reembolsoTotal_eventoCancelado_yLiberacion() {
+    public void test07_rechazarPedido_sinReembolsos_yLiberacion() {
         long iniUrgente = ahoraFijo + 24 * 3600_000L;
-        SolicitudReserva sol = new SolicitudReserva("paq-basico", iniUrgente, 240, Pedido.ORIGEN_APP,
-                "Boda Urgente", "usr-1", "Cliente App", "7471234567", "Av. Insurgentes 123", "", 24);
+        Pedido p = crearSolicitudApp("Boda Urgente", "usr-1", "7471234567", iniUrgente);
+        assertFalse(pedidoRepo.getPedidoPorId(p.getId()).getEquipoIds().isEmpty());
 
-        AtomicReference<Pedido> pedRef = new AtomicReference<>();
-        pedidoRepo.crearReserva(sol, new Callback<Pedido>() {
-            @Override public void onSuccess(Pedido result) { pedRef.set(result); }
-            @Override public void onError(String error) {}
-        });
-        Pedido p = pedRef.get();
-
-        // 1. Anticipo $1,050 por transferencia
-        pedidoRepo.registrarAnticipo(p.getId(), 1050.0, Pedido.METODO_TRANSFERENCIA, noop());
-        // 2. Abono $500
-        pedidoRepo.liquidarSaldo(p.getId(), 500.0, Pedido.METODO_TRANSFERENCIA, noop());
-
-        Pedido rev = pedidoRepo.getPedidoPorId(p.getId());
-        assertEquals(1550.0, rev.getAnticipoPagado(), 0.001);
-        String eventoId = rev.getEventoId();
-
-        // Rechazar pedido
         AtomicReference<Pedido> rechRef = new AtomicReference<>();
         pedidoRepo.rechazarPedido(p.getId(), "No hay personal suficiente", new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) { rechRef.set(result); }
@@ -394,55 +371,19 @@ public class Etapa4GUnitTest {
         assertNotNull(rechazado);
         assertEquals(Pedido.ESTADO_RECHAZADO, rechazado.getEstado());
         assertEquals("No hay personal suficiente", rechazado.getMotivoRechazo());
-        assertEquals(1550.0, rechazado.getReembolsoMonto(), 0.001);
+        assertFalse(rechazado.isPagoConfirmado());
         assertTrue(rechazado.getEquipoIds().isEmpty());
         assertFalse(rechazado.isAsignacionIncompleta());
+        assertTrue(rechazado.getNotas().contains("Rechazado: No hay personal suficiente"));
 
-        // Evento queda cancelado
-        final Evento[] evBox = new Evento[1];
-        eventoRepo.getEventoPorId(eventoId, new Callback<Evento>() {
-            @Override
-            public void onSuccess(Evento result) {
-                evBox[0] = result;
-            }
-            @Override
-            public void onError(String error) {
-                fail(error);
-            }
-        });
-        Evento ev = evBox[0];
-        assertNotNull(ev);
-        assertEquals(Evento.ESTADO_CANCELADO, ev.getEstado());
-
-        // Se registró un Pago de tipo REEMBOLSO por $1550 con método TRANSFERENCIA
-        List<Pago> pagos = pagoRepo.getTodosLosPagos().getValue();
-        Pago reembolsoPago = null;
-        for (Pago pg : pagos) {
-            if (Pago.TIPO_REEMBOLSO.equals(pg.getTipo())) {
-                reembolsoPago = pg;
-                break;
-            }
-        }
-        assertNotNull(reembolsoPago);
-        assertEquals(1550.0, reembolsoPago.getMonto(), 0.001);
-        assertEquals(Pedido.METODO_TRANSFERENCIA, reembolsoPago.getMetodo());
-        assertNotNull(reembolsoPago.getFolio());
-        assertTrue(reembolsoPago.getFolio().startsWith("R-"));
+        // El horario vuelve a estar disponible
+        assertTrue(pedidoRepo.evaluarDisponibilidad("paq-basico", iniUrgente, 240, null).isViable());
     }
 
     @Test
     public void test08_rechazarPedido_validacionesMotivoYDobleRechazo() {
         long iniUrgente = ahoraFijo + 24 * 3600_000L;
-        SolicitudReserva sol = new SolicitudReserva("paq-basico", iniUrgente, 240, Pedido.ORIGEN_APP,
-                "Fiesta Urgente", "usr-1", "Cliente App", "7471234567", "Av. Insurgentes 123", "", 24);
-
-        AtomicReference<Pedido> pedRef = new AtomicReference<>();
-        pedidoRepo.crearReserva(sol, new Callback<Pedido>() {
-            @Override public void onSuccess(Pedido result) { pedRef.set(result); }
-            @Override public void onError(String error) {}
-        });
-        Pedido p = pedRef.get();
-        pedidoRepo.registrarAnticipo(p.getId(), 1050.0, Pedido.METODO_EFECTIVO, noop());
+        Pedido p = crearSolicitudApp("Fiesta Urgente", "usr-1", "7471234567", iniUrgente);
 
         // 1. Motivo nulo -> error y sin cambios
         AtomicReference<String> errNull = new AtomicReference<>();
@@ -451,7 +392,7 @@ public class Etapa4GUnitTest {
             @Override public void onError(String error) { errNull.set(error); }
         });
         assertNotNull(errNull.get());
-        assertEquals(Pedido.ESTADO_EN_REVISION, pedidoRepo.getPedidoPorId(p.getId()).getEstado());
+        assertEquals(Pedido.ESTADO_POR_APROBAR, pedidoRepo.getPedidoPorId(p.getId()).getEstado());
 
         // 2. Motivo vacío o < 3 chars -> error y sin cambios
         AtomicReference<String> errCorto = new AtomicReference<>();
@@ -460,7 +401,7 @@ public class Etapa4GUnitTest {
             @Override public void onError(String error) { errCorto.set(error); }
         });
         assertNotNull(errCorto.get());
-        assertEquals(Pedido.ESTADO_EN_REVISION, pedidoRepo.getPedidoPorId(p.getId()).getEstado());
+        assertEquals(Pedido.ESTADO_POR_APROBAR, pedidoRepo.getPedidoPorId(p.getId()).getEstado());
 
         // 3. Rechazo exitoso
         pedidoRepo.rechazarPedido(p.getId(), "Motivo válido", noop());
@@ -472,7 +413,7 @@ public class Etapa4GUnitTest {
             @Override public void onSuccess(Pedido result) {}
             @Override public void onError(String error) { errDoble.set(error); }
         });
-        assertEquals("El pedido no está en revisión", errDoble.get());
+        assertEquals("El pedido no está por aprobar", errDoble.get());
     }
 
     @Test
@@ -486,25 +427,17 @@ public class Etapa4GUnitTest {
 
         long iniUrgente = ahoraFijo + 24 * 3600_000L;
 
-        // Pedido 1: App urgente
-        SolicitudReserva sol1 = new SolicitudReserva("paq-basico", iniUrgente, 240, Pedido.ORIGEN_APP,
-                "Pedido 1 Urgente", "usr-1", "Cliente 1", "7471111111", "Av. Insurgentes 123", "", 24);
-        AtomicReference<Pedido> p1Ref = new AtomicReference<>();
-        pedidoRepo.crearReserva(sol1, new Callback<Pedido>() {
-            @Override public void onSuccess(Pedido result) { p1Ref.set(result); }
-            @Override public void onError(String error) { fail("sol1 error: " + error); }
-        });
-        pedidoRepo.registrarAnticipo(p1Ref.get().getId(), 1050.0, Pedido.METODO_EFECTIVO, noop());
+        // Pedido 1: solicitud de la app (aparta una bocina mientras se decide)
+        Pedido p1 = crearSolicitudApp("Pedido 1 Urgente", "usr-1", "7471111111", iniUrgente);
 
-        // Pedido 2: Simultáneo
+        // Pedido 2: simultáneo, registrado por el socio
         SolicitudReserva sol2 = new SolicitudReserva("paq-basico", iniUrgente, 240, Pedido.ORIGEN_LLAMADA,
-                "Pedido 2 Simultáneo", null, "Cliente 2", "7472222222", "Av. Insurgentes 123", "", 24);
+                "Pedido 2 Simultáneo", null, "Cliente 2", "7472222222", "Av. Insurgentes 123", "");
         AtomicReference<Pedido> p2Ref = new AtomicReference<>();
         pedidoRepo.crearReserva(sol2, new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) { p2Ref.set(result); }
             @Override public void onError(String error) { fail("sol2 error: " + error); }
         });
-        pedidoRepo.registrarAnticipo(p2Ref.get().getId(), 1050.0, Pedido.METODO_EFECTIVO, noop());
 
         // Ambos tienen bocina asignada inicialmente
         Pedido p2Inicial = pedidoRepo.getPedidoPorId(p2Ref.get().getId());
@@ -517,8 +450,8 @@ public class Etapa4GUnitTest {
         Pedido ped2Incompleto = pedidoRepo.getPedidoPorId(p2Ref.get().getId());
         assertTrue("El pedido 2 debía quedar incompleto al dañarse su bocina", ped2Incompleto.isAsignacionIncompleta());
 
-        // Rechazamos el pedido 1
-        pedidoRepo.rechazarPedido(p1Ref.get().getId(), "No se puede atender", noop());
+        // Rechazamos la solicitud 1
+        pedidoRepo.rechazarPedido(p1.getId(), "No se puede atender", noop());
 
         // Pedido 2 debe haber recuperado la bocina restante
         Pedido ped2Actualizado = pedidoRepo.getPedidoPorId(p2Ref.get().getId());
@@ -528,53 +461,36 @@ public class Etapa4GUnitTest {
     }
 
     @Test
-    public void test10_finanzas_netoPedidoRechazadoQuedaEnCero_yExcluidoDePorCobrar() {
+    public void test10_finanzas_pedidoRechazadoNoCuenta() {
         long ini = ahoraFijo + 24 * 3600_000L;
-        SolicitudReserva sol = new SolicitudReserva("paq-basico", ini, 240, Pedido.ORIGEN_APP,
-                "Evento Noviembre", "usr-1", "Cliente Finanzas", "7471234567", "Av. Insurgentes 123", "", 24);
-        AtomicReference<Pedido> pedRef = new AtomicReference<>();
-        pedidoRepo.crearReserva(sol, new Callback<Pedido>() {
-            @Override public void onSuccess(Pedido result) { pedRef.set(result); }
-            @Override public void onError(String error) {}
-        });
-        Pedido p = pedRef.get();
-        pedidoRepo.registrarAnticipo(p.getId(), 1050.0, Pedido.METODO_EFECTIVO, noop());
+        Pedido p = crearSolicitudApp("Evento Noviembre", "usr-1", "7471234567", ini);
 
-        // Rechazamos con reembolso total
+        // Mientras está por aprobar todavía no cuenta como "por cobrar"
+        double[] antes = FinanzasUtils.resumenMes(pedidoRepo.obtenerTodos(), 2026, Calendar.NOVEMBER);
+        assertEquals(0.0, antes[1], 0.001);
+
         pedidoRepo.rechazarPedido(p.getId(), "Rechazo operativo", noop());
-
-        List<Pago> pagos = pagoRepo.getTodosLosPagos().getValue();
-        List<Pedido> pedidos = pedidoRepo.obtenerTodos();
-
-        double[] resumen = FinanzasUtils.resumenMes(pagos, pedidos, 2026, Calendar.NOVEMBER);
-        double cobrado = resumen[0];
-        double reembolsos = resumen[1];
-        double neto = resumen[2];
-        double porCobrar = resumen[3];
-
-        assertEquals(1050.0, cobrado, 0.001);
-        assertEquals(1050.0, reembolsos, 0.001);
-        assertEquals(0.0, neto, 0.001);
-        assertEquals(0.0, porCobrar, 0.001); // RECHAZADO no entra en porCobrar
+        double[] resumen = FinanzasUtils.resumenMes(pedidoRepo.obtenerTodos(), 2026, Calendar.NOVEMBER);
+        assertEquals(0.0, resumen[0], 0.001); // cobrado
+        assertEquals(0.0, resumen[1], 0.001); // RECHAZADO no entra en por cobrar
     }
 
     @Test
-    public void test11_dashboardUtils_contarEnRevision() {
-        Pedido p1 = new Pedido();
-        p1.setEstado(Pedido.ESTADO_EN_REVISION);
-
-        Pedido p2 = new Pedido();
-        p2.setEstado(Pedido.ESTADO_CONFIRMADO);
-
-        Pedido p3 = new Pedido();
-        p3.setEstado(Pedido.ESTADO_EN_REVISION);
-
-        Pedido p4 = new Pedido();
-        p4.setEstado(Pedido.ESTADO_CANCELADO);
-
-        List<Pedido> lista = Arrays.asList(p1, p2, p3, p4);
-        assertEquals(2, DashboardUtils.contarEnRevision(lista));
-        assertEquals(0, DashboardUtils.contarEnRevision(Collections.singletonList(p2)));
-        assertEquals(0, DashboardUtils.contarEnRevision(null));
+    public void test11_estadosPedido_clasificacion() {
+        assertTrue(EstadosPedido.ocupaRecursos(Pedido.ESTADO_POR_APROBAR));
+        assertTrue(EstadosPedido.ocupaRecursos(Pedido.ESTADO_CONFIRMADO));
+        assertFalse(EstadosPedido.ocupaRecursos(Pedido.ESTADO_POR_COBRAR));
+        assertTrue(EstadosPedido.esRealizado(Pedido.ESTADO_POR_COBRAR));
+        assertTrue(EstadosPedido.esRealizado(Pedido.ESTADO_FINALIZADO));
+        assertTrue(EstadosPedido.esAceptado(Pedido.ESTADO_CONFIRMADO));
+        assertFalse(EstadosPedido.esAceptado(Pedido.ESTADO_POR_APROBAR));
+        assertTrue(EstadosPedido.esDescartado(Pedido.ESTADO_VENCIDO));
+        assertTrue(EstadosPedido.esDescartado(Pedido.ESTADO_RECHAZADO));
+        assertTrue(EstadosPedido.esDescartado(Pedido.ESTADO_CANCELADO));
+        assertEquals("Por aprobar", EstadosPedido.etiqueta(Pedido.ESTADO_POR_APROBAR));
+        assertEquals("Por cobrar", EstadosPedido.etiqueta(Pedido.ESTADO_POR_COBRAR));
+        assertEquals("Transferencia", EstadosPedido.etiquetaMetodo(Pedido.METODO_TRANSFERENCIA));
+        assertTrue(EstadosPedido.metodoValido(Pedido.METODO_EFECTIVO));
+        assertFalse(EstadosPedido.metodoValido("TARJETA"));
     }
 }

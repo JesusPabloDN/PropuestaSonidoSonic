@@ -1,7 +1,6 @@
 package com.example.propuestasonidosonic.domain;
 
 import com.example.propuestasonidosonic.model.Equipo;
-import com.example.propuestasonidosonic.model.Pago;
 import com.example.propuestasonidosonic.model.Pedido;
 import com.example.propuestasonidosonic.util.TiempoUtils;
 
@@ -62,9 +61,9 @@ public final class ActividadRecienteUtils {
     }
 
     /**
-     * De los pedidos CONFIRMADO, PAGADO o EN_REVISION cuyo finMillis sea mayor a ahora
+     * De los pedidos CONFIRMADO cuyo finMillis sea mayor a ahora
      * (incluye el que está en curso), el de inicioMillis más cercano.
-     * Excluye apartados, cancelados, rechazados, vencidos y completados.
+     * Excluye solicitudes por aprobar, cancelados, rechazados, vencidos y realizados.
      */
     public static Pedido proximoEvento(List<Pedido> pedidos, long ahora) {
         if (pedidos == null || pedidos.isEmpty()) {
@@ -74,10 +73,7 @@ public final class ActividadRecienteUtils {
         for (Pedido p : pedidos) {
             if (p == null) continue;
             String est = p.getEstado();
-            boolean estadoValido = Pedido.ESTADO_CONFIRMADO.equals(est)
-                    || Pedido.ESTADO_PAGADO.equals(est)
-                    || Pedido.ESTADO_EN_REVISION.equals(est);
-            if (!estadoValido) continue;
+            if (!Pedido.ESTADO_CONFIRMADO.equals(est)) continue;
             if (p.getFinMillis() <= ahora) continue;
 
             if (proximo == null || p.getInicioMillis() < proximo.getInicioMillis()) {
@@ -88,16 +84,16 @@ public final class ActividadRecienteUtils {
     }
 
     /**
-     * El pago de fecha más reciente (incluye anticipos, abonos, pagos totales y reembolsos).
+     * El pedido cuyo pago se confirmó más recientemente.
      */
-    public static Pago ultimoPago(List<Pago> pagos) {
-        if (pagos == null || pagos.isEmpty()) {
+    public static Pedido ultimoPagoConfirmado(List<Pedido> pedidos) {
+        if (pedidos == null || pedidos.isEmpty()) {
             return null;
         }
-        Pago masReciente = null;
-        for (Pago p : pagos) {
-            if (p == null) continue;
-            if (masReciente == null || p.getFecha() > masReciente.getFecha()) {
+        Pedido masReciente = null;
+        for (Pedido p : pedidos) {
+            if (p == null || !p.isPagoConfirmado()) continue;
+            if (masReciente == null || p.getFechaPagoMillis() > masReciente.getFechaPagoMillis()) {
                 masReciente = p;
             }
         }

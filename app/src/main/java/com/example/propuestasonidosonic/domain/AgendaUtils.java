@@ -25,8 +25,8 @@ public final class AgendaUtils {
 
     /**
      * Determina si un pedido debe aparecer en la agenda:
-     * - CONFIRMADO, PAGADO, EN_REVISION y COMPLETADO: siempre true
-     * - APARTADO: true solo si su vencimiento es estrictamente posterior a 'ahora'
+     * - CONFIRMADO, POR_COBRAR y FINALIZADO: siempre true
+     * - POR_APROBAR: true mientras el evento no haya empezado (después vence)
      * - Cualquier otro estado: false
      */
     public static boolean apareceEnAgenda(Pedido p, long ahora) {
@@ -34,17 +34,9 @@ public final class AgendaUtils {
         String st = p.getEstado();
         if (st == null) return false;
 
-        switch (st) {
-            case Pedido.ESTADO_CONFIRMADO:
-            case Pedido.ESTADO_PAGADO:
-            case Pedido.ESTADO_EN_REVISION:
-            case Pedido.ESTADO_COMPLETADO:
-                return true;
-            case Pedido.ESTADO_APARTADO:
-                return p.getVencimientoApartadoMillis() > ahora;
-            default:
-                return false;
-        }
+        if (EstadosPedido.esAceptado(st)) return true;
+        if (Pedido.ESTADO_POR_APROBAR.equals(st)) return p.getInicioMillis() > ahora;
+        return false;
     }
 
     /**
@@ -106,9 +98,9 @@ public final class AgendaUtils {
     }
 
     /**
-     * Devuelve {eventosConfirmados, apartados} para los pedidos de un día:
-     * - eventosConfirmados cuenta CONFIRMADO, PAGADO, EN_REVISION y COMPLETADO
-     * - apartados cuenta APARTADO
+     * Devuelve {eventosConfirmados, porAprobar} para los pedidos de un día:
+     * - eventosConfirmados cuenta CONFIRMADO, POR_COBRAR y FINALIZADO
+     * - porAprobar cuenta las solicitudes POR_APROBAR
      */
     public static int[] marcadoresDia(List<Pedido> delDia) {
         int confirmados = 0;
@@ -117,12 +109,9 @@ public final class AgendaUtils {
             for (Pedido p : delDia) {
                 if (p == null) continue;
                 String st = p.getEstado();
-                if (Pedido.ESTADO_APARTADO.equals(st)) {
+                if (Pedido.ESTADO_POR_APROBAR.equals(st)) {
                     apartados++;
-                } else if (Pedido.ESTADO_CONFIRMADO.equals(st)
-                        || Pedido.ESTADO_PAGADO.equals(st)
-                        || Pedido.ESTADO_EN_REVISION.equals(st)
-                        || Pedido.ESTADO_COMPLETADO.equals(st)) {
+                } else if (EstadosPedido.esAceptado(st)) {
                     confirmados++;
                 }
             }

@@ -36,7 +36,7 @@ public class PaqueteDetalleClienteFragment extends Fragment {
     private LinearLayout llComponentesDetalle;
     private TextView tvDuracionDetalle;
     private TextView tvHoraExtraDetalle;
-    private TextView tvAnticipoDetalle;
+    private TextView tvPagoInfoDetalle;
     private MaterialButton btnReservar;
 
     private PaqueteRepository paqueteRepository;
@@ -66,7 +66,7 @@ public class PaqueteDetalleClienteFragment extends Fragment {
         llComponentesDetalle = view.findViewById(R.id.llComponentesDetalle);
         tvDuracionDetalle = view.findViewById(R.id.tvDuracionDetalle);
         tvHoraExtraDetalle = view.findViewById(R.id.tvHoraExtraDetalle);
-        tvAnticipoDetalle = view.findViewById(R.id.tvAnticipoDetalle);
+        tvPagoInfoDetalle = view.findViewById(R.id.tvPagoInfoDetalle);
         btnReservar = view.findViewById(R.id.btnReservar);
 
         cargarPaquete();
@@ -139,7 +139,6 @@ public class PaqueteDetalleClienteFragment extends Fragment {
         tvHoraExtraDetalle.setText(getString(R.string.paquete_detalle_hora_extra_formato, FormatUtils.formatoMoneda(paqueteActual.getPrecioHoraExtra())));
 
         double totalBase = paqueteActual.getPrecio();
-        double anticipo = MotorDisponibilidad.calcularAnticipo(totalBase);
-        tvAnticipoDetalle.setText(getString(R.string.paquete_detalle_anticipo_formato, FormatUtils.formatoMoneda(anticipo)));
+        tvPagoInfoDetalle.setText(R.string.paquete_detalle_pago_info);
     }
 }

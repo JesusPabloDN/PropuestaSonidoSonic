@@ -35,7 +35,7 @@
                     android:id="@+id/tvRevisionTitulo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/titulo_requiere_revision"
+                    android:text="@string/titulo_solicitud_por_aprobar"
                     android:textAppearance="?attr/textAppearanceTitleLarge" />
 
                 <TextView
@@ -131,7 +131,7 @@
                         android:paddingTop="2dp"
                         android:paddingEnd="@dimen/spacing_small"
                         android:paddingBottom="2dp"
-                        android:text="@string/badge_liquidado"
+                        android:text="@string/badge_pagado"
                         android:textAppearance="?attr/textAppearanceLabelMedium"
                         android:visibility="gone"
                         tools:visibility="visible" />
@@ -461,81 +461,33 @@
                     tools:text="Total: $3,500.00" />
 
                 <TextView
-                    android:id="@+id/tvAnticipoRequerido"
+                    android:id="@+id/tvEstadoPago"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_tiny"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    tools:text="Pago recibido" />
+
+                <TextView
+                    android:id="@+id/tvDetallePago"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textAppearance="?attr/textAppearanceBodyLarge"
-                    tools:text="Anticipo requerido (30%): $1,050.00" />
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    tools:text="Efectivo · mar 24 nov 2026 · 14:35\nConfirmó: Socio Principal" />
 
-                <TextView
-                    android:id="@+id/tvAnticipoPagado"
-                    android:layout_width="match_parent"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnVerTicket"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textAppearance="?attr/textAppearanceTitleMedium"
-                    tools:text="Anticipo pagado: $1,050.00 (Efectivo el 5 dic 2026)" />
-
-                <TextView
-                    android:id="@+id/tvSaldoPendiente"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textAppearance="?attr/textAppearanceBodyLarge"
-                    tools:text="Saldo pendiente: $2,450.00" />
-
-                <TextView
-                    android:id="@+id/tvReembolsoMonto"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_tiny"
-                    android:textColor="?attr/colorError"
-                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:layout_marginTop="@dimen/spacing_small"
+                    android:minHeight="@dimen/touch_target_min"
+                    android:text="@string/btn_ver_ticket"
                     android:visibility="gone"
-                    tools:text="Reembolso: $1,050.00 (simulado)"
+                    app:icon="@drawable/ic_receipt_24"
                     tools:visibility="visible" />
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- 6b. Historial de Pagos -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardHistorialPagos"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_medium">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/spacing_medium">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/seccion_historial_pagos"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textAppearance="?attr/textAppearanceTitleLarge" />
-
-                <TextView
-                    android:id="@+id/tvHistorialVacio"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_tiny"
-                    android:text="@string/sin_pagos_registrados"
-                    android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textAppearance="?attr/textAppearanceBodyLarge"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
-
-                <LinearLayout
-                    android:id="@+id/layoutPagosContainer"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_tiny"
-                    android:orientation="vertical" />
 
             </LinearLayout>
 
@@ -597,22 +549,14 @@
             android:orientation="vertical">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnCobrarSaldo"
+                android:id="@+id/btnConfirmarPago"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/spacing_small"
                 android:minHeight="@dimen/button_height"
-                android:text="@string/btn_cobrar_saldo"
+                android:text="@string/btn_confirmar_pago"
                 android:visibility="gone"
                 tools:visibility="visible" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnRegistrarAnticipo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_small"
-                android:minHeight="@dimen/button_height"
-                android:text="@string/btn_registrar_anticipo" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnReprogramar"
@@ -629,7 +573,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/button_height"
-                android:text="@string/btn_cancelar_apartado" />
+                android:text="@string/btn_cancelar_pedido" />
 
         </LinearLayout>
 

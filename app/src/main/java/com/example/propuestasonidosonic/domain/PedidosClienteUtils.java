@@ -25,30 +25,15 @@ public final class PedidosClienteUtils {
     }
 
     public static boolean esVisible(Pedido p, long ahora) {
-        if (p == null) return false;
-        String estado = p.getEstado();
-        if (Pedido.ESTADO_VENCIDO.equals(estado)) {
-            return false;
-        }
-        if (Pedido.ESTADO_APARTADO.equals(estado) && p.getVencimientoApartadoMillis() <= ahora) {
-            return false;
-        }
-        return true;
+        // Las solicitudes vencidas (o que están por vencer porque su evento ya empezó) no se muestran al cliente
+        if (p == null || Pedido.ESTADO_VENCIDO.equals(p.getEstado())) return false;
+        return !(Pedido.ESTADO_POR_APROBAR.equals(p.getEstado()) && p.getInicioMillis() <= ahora);
     }
 
+    /** Solicitudes por aprobar y pedidos confirmados cuyo evento aún no termina. */
     public static boolean esActivo(Pedido p, long ahora) {
         if (p == null || !esVisible(p, ahora)) return false;
-        String estado = p.getEstado();
-        if (Pedido.ESTADO_APARTADO.equals(estado)) {
-            return p.getVencimientoApartadoMillis() > ahora;
-        }
-        if (Pedido.ESTADO_CONFIRMADO.equals(estado)
-                || Pedido.ESTADO_PAGADO.equals(estado)
-                || Pedido.ESTADO_EN_REVISION.equals(estado)) {
-            long fin = p.getBloqueoFinMillis() > 0 ? p.getBloqueoFinMillis() : p.getFinMillis();
-            return fin > ahora;
-        }
-        return false;
+        return EstadosPedido.ocupaRecursos(p.getEstado()) && EstadosPedido.finBloqueo(p) > ahora;
     }
 
     public static List<Pedido> activos(List<Pedido> pedidos, long ahora) {
@@ -76,39 +61,17 @@ public final class PedidosClienteUtils {
     }
 
     public static boolean puedeCancelar(Pedido p, long ahora) {
-        if (p == null) return false;
-        if (p.getInicioMillis() <= ahora) return false;
-        String estado = p.getEstado();
-        if (Pedido.ESTADO_APARTADO.equals(estado)) {
-            return p.getVencimientoApartadoMillis() > ahora;
-        }
-        return Pedido.ESTADO_CONFIRMADO.equals(estado)
-                || Pedido.ESTADO_PAGADO.equals(estado)
-                || Pedido.ESTADO_EN_REVISION.equals(estado);
-    }
-
-    public static boolean puedePagarAnticipo(Pedido p, long ahora) {
-        if (p == null) return false;
-        return Pedido.ESTADO_APARTADO.equals(p.getEstado()) && p.getVencimientoApartadoMillis() > ahora;
+        return EstadosPedido.puedeCancelarse(p, ahora);
     }
 
     public static String etiquetaEstado(String estado) {
-        if (Pedido.ESTADO_APARTADO.equals(estado)) return "Pendiente de pago";
-        if (Pedido.ESTADO_CONFIRMADO.equals(estado) || Pedido.ESTADO_PAGADO.equals(estado)) return "Confirmado";
-        if (Pedido.ESTADO_EN_REVISION.equals(estado)) return "En revisión";
-        if (Pedido.ESTADO_COMPLETADO.equals(estado)) return "Realizado";
+        if (Pedido.ESTADO_POR_APROBAR.equals(estado)) return "Por aprobar";
+        if (Pedido.ESTADO_CONFIRMADO.equals(estado)) return "Confirmado";
+        if (Pedido.ESTADO_POR_COBRAR.equals(estado)) return "Pago pendiente";
+        if (Pedido.ESTADO_FINALIZADO.equals(estado)) return "Realizado";
         if (Pedido.ESTADO_CANCELADO.equals(estado)) return "Cancelado";
         if (Pedido.ESTADO_RECHAZADO.equals(estado)) return "No aprobado";
+        if (Pedido.ESTADO_VENCIDO.equals(estado)) return "Vencido";
         return estado != null ? estado : "";
-    }
-
-    public static String textoVencimiento(long vencimientoMillis, long ahora) {
-        long diffMs = vencimientoMillis - ahora;
-        if (diffMs <= 0) {
-            return "Vencida";
-        }
-        long minutos = (long) Math.ceil(diffMs / 60000.0);
-        if (minutos < 1) minutos = 1;
-        return "Vence en " + minutos + " min";
     }
 }

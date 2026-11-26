@@ -6,20 +6,19 @@ import com.example.propuestasonidosonic.data.Callback;
 import com.example.propuestasonidosonic.data.memory.InMemoryDiaOperativoRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryEquipoRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryEventoRepository;
-import com.example.propuestasonidosonic.data.memory.InMemoryPagoRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryPaqueteRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryPedidoRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryUsuarioRepository;
 import com.example.propuestasonidosonic.domain.DashboardUtils;
 import com.example.propuestasonidosonic.domain.FinanzasUtils;
 import com.example.propuestasonidosonic.domain.MoneyUtils;
-import com.example.propuestasonidosonic.domain.ReciboUtils;
+import com.example.propuestasonidosonic.domain.EstadosPedido;
+import com.example.propuestasonidosonic.domain.TicketPago;
 import com.example.propuestasonidosonic.domain.SolicitudReserva;
 import com.example.propuestasonidosonic.model.CategoriaEquipo;
 import com.example.propuestasonidosonic.model.ComponentePaquete;
 import com.example.propuestasonidosonic.model.DiaOperativo;
 import com.example.propuestasonidosonic.model.Equipo;
-import com.example.propuestasonidosonic.model.Pago;
 import com.example.propuestasonidosonic.model.Paquete;
 import com.example.propuestasonidosonic.model.Pedido;
 import com.example.propuestasonidosonic.model.Usuario;
@@ -77,7 +76,6 @@ public class Etapa4FUnitTest {
     private InMemoryPaqueteRepository paqueteRepo;
     private InMemoryUsuarioRepository usuarioRepo;
     private InMemoryDiaOperativoRepository diaRepo;
-    private InMemoryPagoRepository pagoRepo;
     private InMemoryEventoRepository eventoRepo;
     private InMemoryPedidoRepository pedidoRepo;
 
@@ -94,7 +92,6 @@ public class Etapa4FUnitTest {
         paqueteRepo = new InMemoryPaqueteRepository(equipoRepo);
         usuarioRepo = new InMemoryUsuarioRepository(null);
         diaRepo = new InMemoryDiaOperativoRepository();
-        pagoRepo = new InMemoryPagoRepository(reloj);
         eventoRepo = new InMemoryEventoRepository();
 
         equipoRepo.setEventoRepository(eventoRepo);
@@ -104,7 +101,6 @@ public class Etapa4FUnitTest {
                 paqueteRepo,
                 usuarioRepo,
                 diaRepo,
-                pagoRepo,
                 eventoRepo,
                 reloj
         );
@@ -147,7 +143,10 @@ public class Etapa4FUnitTest {
         paqueteRepo.guardarPaquete(paqueteBasico, noop());
     }
 
-    private Pedido crearYConfirmarPedido(double anticipo) {
+    private static final long HORA = 3600_000L;
+
+    /** Pedido registrado por un socio (queda confirmado) el 20 de noviembre de 16:00 a 20:00. */
+    private Pedido crearPedidoConfirmado() {
         long inicioEvento = TiempoUtils.construir(2026, Calendar.NOVEMBER, 20, 16 * 60);
         SolicitudReserva sol = new SolicitudReserva();
         sol.setPaqueteId(paqueteBasico.getId());
@@ -158,7 +157,6 @@ public class Etapa4FUnitTest {
         sol.setClienteTelefono("9611112233");
         sol.setDireccion("Av. Central 123, Tuxtla");
         sol.setOrigen(Pedido.ORIGEN_LLAMADA);
-        sol.setHorasApartado(48);
 
         AtomicReference<Pedido> ref = new AtomicReference<>();
         pedidoRepo.crearReserva(sol, new Callback<Pedido>() {
@@ -168,493 +166,301 @@ public class Etapa4FUnitTest {
 
         Pedido p = ref.get();
         assertNotNull(p);
-
-        AtomicReference<Pedido> refConf = new AtomicReference<>();
-        pedidoRepo.registrarAnticipo(p.getId(), anticipo, Pedido.METODO_EFECTIVO, new Callback<Pedido>() {
-            @Override public void onSuccess(Pedido result) { refConf.set(result); }
-            @Override public void onError(String error) {}
-        });
-
-        Pedido conf = refConf.get();
-        assertNotNull(conf);
-        return conf;
+        assertEquals(Pedido.ESTADO_CONFIRMADO, p.getEstado());
+        return p;
     }
 
-    /**
-     * 1. liquidarSaldo parcial -> TIPO_ABONO, saldo baja, cobrado == false.
-     */
-    @Test
-    public void test01_liquidarSaldoParcial() {
-        Pedido p = crearYConfirmarPedido(300.0); // total 1000, anticipo 300, saldo 700
-        assertEquals(700.0, p.getSaldoPendiente(), 0.001);
-        assertFalse(p.isCobrado());
-
-        AtomicReference<Pago> refPago = new AtomicReference<>();
-        pedidoRepo.liquidarSaldo(p.getId(), 250.0, Pedido.METODO_EFECTIVO, new Callback<Pago>() {
-            @Override public void onSuccess(Pago result) { refPago.set(result); }
-            @Override public void onError(String error) {}
+    private String confirmarPago(String pedidoId, String metodo, String socioNombre) {
+        AtomicReference<String> err = new AtomicReference<>();
+        pedidoRepo.confirmarPago(pedidoId, metodo, "u-socio", socioNombre, new Callback<Pedido>() {
+            @Override public void onSuccess(Pedido result) {}
+            @Override public void onError(String error) { err.set(error); }
         });
-
-        Pago pago = refPago.get();
-        assertNotNull(pago);
-        assertEquals(Pago.TIPO_ABONO, pago.getTipo());
-        assertEquals(250.0, pago.getMonto(), 0.001);
-
-        Pedido actualizado = pedidoRepo.getPedidoPorId(p.getId());
-        assertEquals(550.0, actualizado.getAnticipoPagado(), 0.001);
-        assertEquals(450.0, actualizado.getSaldoPendiente(), 0.001);
-        assertFalse(actualizado.isCobrado());
-        assertFalse(actualizado.estaLiquidado());
-        assertEquals(Pedido.ESTADO_CONFIRMADO, actualizado.getEstado());
+        return err.get();
     }
 
-    /**
-     * 2. liquidarSaldo por el saldo exacto -> TIPO_TOTAL, saldo 0, cobrado == true, fechaCobro correcta, estado no cambia.
-     */
-    @Test
-    public void test02_liquidarSaldoTotalExacto() {
-        Pedido p = crearYConfirmarPedido(300.0);
-        assertEquals(700.0, p.getSaldoPendiente(), 0.001);
-
-        long fechaPago = ahoraFijo + 10_000L;
-        reloj.setAhora(fechaPago);
-
-        AtomicReference<Pago> refPago = new AtomicReference<>();
-        pedidoRepo.liquidarSaldo(p.getId(), 700.0, Pedido.METODO_TRANSFERENCIA, new Callback<Pago>() {
-            @Override public void onSuccess(Pago result) { refPago.set(result); }
-            @Override public void onError(String error) {}
-        });
-
-        Pago pago = refPago.get();
-        assertNotNull(pago);
-        assertEquals(Pago.TIPO_TOTAL, pago.getTipo());
-        assertEquals(700.0, pago.getMonto(), 0.001);
-
-        Pedido actualizado = pedidoRepo.getPedidoPorId(p.getId());
-        assertEquals(1000.0, actualizado.getAnticipoPagado(), 0.001);
-        assertEquals(0.0, actualizado.getSaldoPendiente(), 0.001);
-        assertTrue(actualizado.isCobrado());
-        assertTrue(actualizado.estaLiquidado());
-        assertEquals(fechaPago, actualizado.getFechaCobro());
-        assertEquals(Pedido.ESTADO_CONFIRMADO, actualizado.getEstado());
+    private static Pedido pedido(String id, String estado, long inicio, double total) {
+        Pedido p = new Pedido();
+        p.setId(id);
+        p.setNumero(Math.abs(id.hashCode() % 1000));
+        p.setEstado(estado);
+        p.setInicioMillis(inicio);
+        p.setFinMillis(inicio + 4 * HORA);
+        p.setTotal(total);
+        return p;
     }
 
-    /**
-     * 3. Validaciones: monto 0 o negativo, mayor al saldo, método inválido, estados no permitidos, saldo ya en 0.
-     */
-    @Test
-    public void test03_validacionesLiquidarSaldo() {
-        Pedido p = crearYConfirmarPedido(300.0); // saldo 700
-
-        // Monto 0
-        AtomicReference<String> error = new AtomicReference<>();
-        pedidoRepo.liquidarSaldo(p.getId(), 0.0, Pedido.METODO_EFECTIVO, new Callback<Pago>() {
-            @Override public void onSuccess(Pago result) {}
-            @Override public void onError(String err) { error.set(err); }
-        });
-        assertNotNull(error.get());
-
-        // Monto negativo
-        error.set(null);
-        pedidoRepo.liquidarSaldo(p.getId(), -50.0, Pedido.METODO_EFECTIVO, new Callback<Pago>() {
-            @Override public void onSuccess(Pago result) {}
-            @Override public void onError(String err) { error.set(err); }
-        });
-        assertNotNull(error.get());
-
-        // Monto mayor al saldo
-        error.set(null);
-        pedidoRepo.liquidarSaldo(p.getId(), 750.0, Pedido.METODO_EFECTIVO, new Callback<Pago>() {
-            @Override public void onSuccess(Pago result) {}
-            @Override public void onError(String err) { error.set(err); }
-        });
-        assertNotNull(error.get());
-
-        // Método inválido
-        error.set(null);
-        pedidoRepo.liquidarSaldo(p.getId(), 100.0, "BITCOIN", new Callback<Pago>() {
-            @Override public void onSuccess(Pago result) {}
-            @Override public void onError(String err) { error.set(err); }
-        });
-        assertNotNull(error.get());
-
-        // Liquidar todo el saldo
-        pedidoRepo.liquidarSaldo(p.getId(), 700.0, Pedido.METODO_EFECTIVO, noop());
-
-        // Saldo ya en 0
-        error.set(null);
-        pedidoRepo.liquidarSaldo(p.getId(), 50.0, Pedido.METODO_EFECTIVO, new Callback<Pago>() {
-            @Override public void onSuccess(Pago result) {}
-            @Override public void onError(String err) { error.set(err); }
-        });
-        assertNotNull(error.get());
+    private static Pedido pagado(String id, long fechaPago, double total, String metodo) {
+        Pedido p = pedido(id, Pedido.ESTADO_FINALIZADO, fechaPago - 24 * HORA, total);
+        p.setPagoConfirmado(true);
+        p.setFechaPagoMillis(fechaPago);
+        p.setMetodoPago(metodo);
+        return p;
     }
 
-    /**
-     * 4. Un pedido COMPLETADO con saldo sí puede liquidarse.
-     */
-    @Test
-    public void test04_pedidoCompletadoPuedeLiquidarSaldo() {
-        Pedido p = crearYConfirmarPedido(300.0); // saldo 700
-
-        // Avanzar el reloj para que el evento termine y pase a COMPLETADO
-        reloj.avanzarDias(2);
-        pedidoRepo.liberarApartadosVencidos();
-
-        Pedido comp = pedidoRepo.getPedidoPorId(p.getId());
-        assertEquals(Pedido.ESTADO_COMPLETADO, comp.getEstado());
-        assertEquals(700.0, comp.getSaldoPendiente(), 0.001);
-
-        AtomicReference<Pago> refPago = new AtomicReference<>();
-        pedidoRepo.liquidarSaldo(comp.getId(), 700.0, Pedido.METODO_EFECTIVO, new Callback<Pago>() {
-            @Override public void onSuccess(Pago result) { refPago.set(result); }
-            @Override public void onError(String error) {}
-        });
-
-        assertNotNull(refPago.get());
-        Pedido liquidado = pedidoRepo.getPedidoPorId(p.getId());
-        assertTrue(liquidado.estaLiquidado());
-        assertTrue(liquidado.isCobrado());
-        assertEquals(Pedido.ESTADO_COMPLETADO, liquidado.getEstado());
-    }
-
-    /**
-     * 5. Dos pagos consecutivos reciben folios R-0001 y R-0002, únicos.
-     */
-    @Test
-    public void test05_foliosConsecutivosUnicos() {
-        AtomicReference<Pago> ref1 = new AtomicReference<>();
-        AtomicReference<Pago> ref2 = new AtomicReference<>();
-
-        Pago p1 = new Pago("pg-1", "ped-1", "c-1", 100.0, Pago.TIPO_ANTICIPO, Pago.METODO_EFECTIVO, ahoraFijo);
-        pagoRepo.registrarPago(p1, new Callback<Pago>() {
-            @Override public void onSuccess(Pago result) { ref1.set(result); }
-            @Override public void onError(String error) {}
-        });
-
-        Pago p2 = new Pago("pg-2", "ped-1", "c-1", 200.0, Pago.TIPO_ABONO, Pago.METODO_TRANSFERENCIA, ahoraFijo);
-        pagoRepo.registrarPago(p2, new Callback<Pago>() {
-            @Override public void onSuccess(Pago result) { ref2.set(result); }
-            @Override public void onError(String error) {}
-        });
-
-        assertNotNull(ref1.get());
-        assertNotNull(ref2.get());
-        assertEquals("R-0001", ref1.get().getFolio());
-        assertEquals("R-0002", ref2.get().getFolio());
-        assertNotEquals(ref1.get().getFolio(), ref2.get().getFolio());
-    }
-
-    /**
-     * 6. registrarAnticipo con el 100% del total deja cobrado == true sin cambiar el estado.
-     */
-    @Test
-    public void test06_registrarAnticipo100PorCiento() {
-        long inicioEvento = TiempoUtils.construir(2026, Calendar.NOVEMBER, 20, 16 * 60);
-        SolicitudReserva sol = new SolicitudReserva();
-        sol.setPaqueteId(paqueteBasico.getId());
-        sol.setInicioMillis(inicioEvento);
-        sol.setDuracionMin(240);
-        sol.setNombreEvento("Boda 100%");
-        sol.setClienteNombre("Beatriz");
-        sol.setClienteTelefono("9611234455");
-        sol.setDireccion("Calle 5 de Mayo #4");
-        sol.setOrigen(Pedido.ORIGEN_LLAMADA);
-
-        AtomicReference<Pedido> ref = new AtomicReference<>();
-        pedidoRepo.crearReserva(sol, new Callback<Pedido>() {
-            @Override public void onSuccess(Pedido result) { ref.set(result); }
-            @Override public void onError(String error) {}
-        });
-        Pedido p = ref.get();
-        assertNotNull(p);
-
-        pedidoRepo.registrarAnticipo(p.getId(), 1000.0, Pedido.METODO_TARJETA, noop());
-
-        Pedido conf = pedidoRepo.getPedidoPorId(p.getId());
-        assertEquals(Pedido.ESTADO_CONFIRMADO, conf.getEstado());
-        assertTrue(conf.isCobrado());
-        assertTrue(conf.estaLiquidado());
-        assertEquals(0.0, conf.getSaldoPendiente(), 0.001);
-        assertEquals(ahoraFijo, conf.getFechaCobro());
-    }
-
-    /**
-     * 7. Redondeo: montos como 1/3 del total o 0.1 + 0.2 no dejan saldos tipo 0.0000001; saldo termina en 0.
-     */
-    @Test
-    public void test07_redondeoSinErroresDePuntoFlotante() {
-        assertEquals(0.3, MoneyUtils.redondear2(0.1 + 0.2), 0.0001);
-        assertEquals(0.33, MoneyUtils.redondear2(1.0 / 3.0), 0.0001);
-
-        Pedido p = crearYConfirmarPedido(333.33); // total 1000.0, anticipo 333.33 -> saldo 666.67
-        assertEquals(666.67, p.getSaldoPendiente(), 0.001);
-
-        pedidoRepo.liquidarSaldo(p.getId(), 333.33, Pedido.METODO_EFECTIVO, noop());
-        Pedido p2 = pedidoRepo.getPedidoPorId(p.getId());
-        assertEquals(333.34, p2.getSaldoPendiente(), 0.001);
-
-        pedidoRepo.liquidarSaldo(p.getId(), 333.34, Pedido.METODO_EFECTIVO, noop());
-        Pedido p3 = pedidoRepo.getPedidoPorId(p.getId());
-        assertEquals(0.0, p3.getSaldoPendiente(), 0.0);
-        assertTrue(p3.estaLiquidado());
-    }
-
-    /**
-     * 8. FinanzasUtils.resumenMes: 1 de octubre 00:00 entra; 31 de octubre 23:59 entra; 1 de noviembre 00:00 no entra.
-     */
-    @Test
-    public void test08_resumenMesLimitesMensuales() {
+    private static long fecha(int anio, int mes0, int dia, int h, int min, int seg, int ms) {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(Config.ZONA_HORARIA), Locale.ROOT);
         cal.clear();
-        cal.set(2026, Calendar.OCTOBER, 1, 0, 0, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        long t1Oct00 = cal.getTimeInMillis();
-
-        cal.clear();
-        cal.set(2026, Calendar.OCTOBER, 31, 23, 59, 59);
-        cal.set(Calendar.MILLISECOND, 999);
-        long t31Oct2359 = cal.getTimeInMillis();
-
-        cal.clear();
-        cal.set(2026, Calendar.NOVEMBER, 1, 0, 0, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        long t1Nov00 = cal.getTimeInMillis();
-
-        List<Pago> pagos = Arrays.asList(
-                new Pago("p1", "ped1", "c1", 100.0, Pago.TIPO_ANTICIPO, "EFECTIVO", t1Oct00),
-                new Pago("p2", "ped2", "c2", 200.0, Pago.TIPO_ABONO, "EFECTIVO", t31Oct2359),
-                new Pago("p3", "ped3", "c3", 400.0, Pago.TIPO_TOTAL, "EFECTIVO", t1Nov00)
-        );
-
-        double[] resumenOct = FinanzasUtils.resumenMes(pagos, Collections.emptyList(), 2026, Calendar.OCTOBER);
-        assertEquals(300.0, resumenOct[0], 0.001); // 100 + 200
-        assertEquals(0.0, resumenOct[1], 0.001);
-        assertEquals(300.0, resumenOct[2], 0.001);
-
-        double[] resumenNov = FinanzasUtils.resumenMes(pagos, Collections.emptyList(), 2026, Calendar.NOVEMBER);
-        assertEquals(400.0, resumenNov[0], 0.001);
+        cal.set(anio, mes0, dia, h, min, seg);
+        cal.set(Calendar.MILLISECOND, ms);
+        return cal.getTimeInMillis();
     }
 
     /**
-     * 9. resumenMes.porCobrar excluye apartados, cancelados, rechazados, vencidos y pedidos de otros meses;
-     *    incluye completados con saldo.
+     * 1. El pago se puede confirmar antes del evento: el pedido sigue confirmado y, al terminar, queda finalizado.
      */
     @Test
-    public void test09_resumenMesPorCobrar() {
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(Config.ZONA_HORARIA), Locale.ROOT);
-        cal.clear();
-        cal.set(2026, Calendar.OCTOBER, 15, 12, 0, 0);
-        long fechaOct = cal.getTimeInMillis();
+    public void test01_pagoAntesDelEvento() {
+        Pedido p = crearPedidoConfirmado();
+        assertEquals(1000.0, EstadosPedido.montoPendiente(p), 0.001);
 
-        cal.clear();
-        cal.set(2026, Calendar.NOVEMBER, 15, 12, 0, 0);
-        long fechaNov = cal.getTimeInMillis();
+        reloj.avanzarHoras(2); // 10:00
+        assertNull(confirmarPago(p.getId(), Pedido.METODO_EFECTIVO, "Carlos Socio"));
 
-        Pedido pConf = new Pedido();
-        pConf.setEstado(Pedido.ESTADO_CONFIRMADO);
-        pConf.setInicioMillis(fechaOct);
-        pConf.setTotal(1000.0);
-        pConf.setAnticipoPagado(500.0); // saldo 500
+        Pedido pagado = pedidoRepo.getPedidoPorId(p.getId());
+        assertEquals(Pedido.ESTADO_CONFIRMADO, pagado.getEstado());
+        assertTrue(pagado.isPagoConfirmado());
+        assertEquals(reloj.ahora(), pagado.getFechaPagoMillis());
+        assertEquals("Carlos Socio", pagado.getPagoConfirmadoPorNombre());
+        assertEquals(0.0, EstadosPedido.montoPendiente(pagado), 0.001);
 
-        Pedido pComp = new Pedido();
-        pComp.setEstado(Pedido.ESTADO_COMPLETADO);
-        pComp.setInicioMillis(fechaOct);
-        pComp.setTotal(1000.0);
-        pComp.setAnticipoPagado(700.0); // saldo 300
-
-        Pedido pApar = new Pedido();
-        pApar.setEstado(Pedido.ESTADO_APARTADO);
-        pApar.setInicioMillis(fechaOct);
-        pApar.setTotal(1000.0);
-        pApar.setAnticipoPagado(0.0);
-
-        Pedido pCanc = new Pedido();
-        pCanc.setEstado(Pedido.ESTADO_CANCELADO);
-        pCanc.setInicioMillis(fechaOct);
-        pCanc.setTotal(1000.0);
-        pCanc.setAnticipoPagado(300.0);
-
-        Pedido pRech = new Pedido();
-        pRech.setEstado(Pedido.ESTADO_RECHAZADO);
-        pRech.setInicioMillis(fechaOct);
-        pRech.setTotal(1000.0);
-
-        Pedido pVenc = new Pedido();
-        pVenc.setEstado(Pedido.ESTADO_VENCIDO);
-        pVenc.setInicioMillis(fechaOct);
-        pVenc.setTotal(1000.0);
-
-        Pedido pOtroMes = new Pedido();
-        pOtroMes.setEstado(Pedido.ESTADO_CONFIRMADO);
-        pOtroMes.setInicioMillis(fechaNov);
-        pOtroMes.setTotal(1000.0);
-        pOtroMes.setAnticipoPagado(200.0); // saldo 800
-
-        List<Pedido> pedidos = Arrays.asList(pConf, pComp, pApar, pCanc, pRech, pVenc, pOtroMes);
-
-        double[] resumen = FinanzasUtils.resumenMes(Collections.emptyList(), pedidos, 2026, Calendar.OCTOBER);
-        // Debe sumar solo pConf (500) + pComp (300) = 800.0
-        assertEquals(800.0, resumen[3], 0.001);
+        // 16:00 + 4 h de evento + 60 min de desmontaje = 21:00
+        reloj.setAhora(TiempoUtils.construir(2026, Calendar.NOVEMBER, 20, 21 * 60 + 1));
+        assertEquals(1, pedidoRepo.actualizarEstadosPorTiempo());
+        assertEquals(Pedido.ESTADO_FINALIZADO, pedidoRepo.getPedidoPorId(p.getId()).getEstado());
     }
 
     /**
-     * 10. movimientosDelMes con cada filtro y orden descendente.
+     * 2. Si el evento termina sin pago queda "Por cobrar"; al confirmar el pago queda "Finalizado".
      */
     @Test
-    public void test10_movimientosDelMesFiltroYOrden() {
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(Config.ZONA_HORARIA), Locale.ROOT);
-        cal.clear();
-        cal.set(2026, Calendar.OCTOBER, 5, 10, 0, 0);
-        long t1 = cal.getTimeInMillis();
-        cal.set(2026, Calendar.OCTOBER, 10, 10, 0, 0);
-        long t2 = cal.getTimeInMillis();
+    public void test02_eventoTerminadoSinPago() {
+        Pedido p = crearPedidoConfirmado();
+        reloj.setAhora(TiempoUtils.construir(2026, Calendar.NOVEMBER, 21, 10 * 60));
+        pedidoRepo.actualizarEstadosPorTiempo();
 
-        Pago p1 = new Pago("1", "ped1", "c1", 100.0, Pago.TIPO_ANTICIPO, "EFECTIVO", t1);
-        p1.setFolio("R-0001");
-        Pago p2 = new Pago("2", "ped2", "c2", 50.0, Pago.TIPO_REEMBOLSO, "EFECTIVO", t2);
-        p2.setFolio("R-0002");
-        Pago p3 = new Pago("3", "ped3", "c3", 200.0, Pago.TIPO_ABONO, "TRANSFERENCIA", t2);
-        p3.setFolio("R-0003");
+        Pedido porCobrar = pedidoRepo.getPedidoPorId(p.getId());
+        assertEquals(Pedido.ESTADO_POR_COBRAR, porCobrar.getEstado());
+        assertTrue(EstadosPedido.puedeConfirmarPago(porCobrar));
+        assertEquals(1, FinanzasUtils.pedidosPorCobrar(pedidoRepo.obtenerTodos()).size());
 
-        List<Pago> pagos = Arrays.asList(p1, p2, p3);
-
-        // Filtro TODOS: t2 desc (p3 con R-0003 antes de p2 con R-0002), luego t1 (p1)
-        List<Pago> todos = FinanzasUtils.movimientosDelMes(pagos, 2026, Calendar.OCTOBER, FinanzasUtils.FILTRO_TODOS);
-        assertEquals(3, todos.size());
-        assertEquals("3", todos.get(0).getId());
-        assertEquals("2", todos.get(1).getId());
-        assertEquals("1", todos.get(2).getId());
-
-        // Filtro INGRESOS
-        List<Pago> ingresos = FinanzasUtils.movimientosDelMes(pagos, 2026, Calendar.OCTOBER, FinanzasUtils.FILTRO_INGRESOS);
-        assertEquals(2, ingresos.size());
-        assertEquals("3", ingresos.get(0).getId());
-        assertEquals("1", ingresos.get(1).getId());
-
-        // Filtro REEMBOLSOS
-        List<Pago> reembolsos = FinanzasUtils.movimientosDelMes(pagos, 2026, Calendar.OCTOBER, FinanzasUtils.FILTRO_REEMBOLSOS);
-        assertEquals(1, reembolsos.size());
-        assertEquals("2", reembolsos.get(0).getId());
+        assertNull(confirmarPago(p.getId(), Pedido.METODO_TRANSFERENCIA, "Carlos Socio"));
+        Pedido finalizado = pedidoRepo.getPedidoPorId(p.getId());
+        assertEquals(Pedido.ESTADO_FINALIZADO, finalizado.getEstado());
+        assertEquals(Pedido.METODO_TRANSFERENCIA, finalizado.getMetodoPago());
+        assertEquals(reloj.ahora(), finalizado.getFechaPagoMillis());
+        assertTrue(FinanzasUtils.pedidosPorCobrar(pedidoRepo.obtenerTodos()).isEmpty());
     }
 
     /**
-     * 11. ReciboUtils.saldoDespuesDe y totalPagadoHasta con anticipo, abono, total y reembolso.
+     * 3. Validaciones de confirmarPago.
      */
     @Test
-    public void test11_reciboUtilsCalculos() {
-        double totalPedido = 1000.0;
-        Pago p1 = new Pago("p1", "ped", "c", 300.0, Pago.TIPO_ANTICIPO, "EFECTIVO", 1000L);
-        Pago p2 = new Pago("p2", "ped", "c", 200.0, Pago.TIPO_ABONO, "EFECTIVO", 2000L);
-        Pago p3 = new Pago("p3", "ped", "c", 500.0, Pago.TIPO_TOTAL, "EFECTIVO", 3000L);
-        Pago p4 = new Pago("p4", "ped", "c", 1000.0, Pago.TIPO_REEMBOLSO, "EFECTIVO", 4000L);
-
-        List<Pago> historial = Arrays.asList(p1, p2, p3, p4);
-
-        // p1 (anticipo 300)
-        assertEquals(300.0, ReciboUtils.totalPagadoHasta(historial, "p1"), 0.001);
-        assertEquals(700.0, ReciboUtils.saldoDespuesDe(totalPedido, historial, "p1"), 0.001);
-
-        // p2 (abono 200 -> neto 500)
-        assertEquals(500.0, ReciboUtils.totalPagadoHasta(historial, "p2"), 0.001);
-        assertEquals(500.0, ReciboUtils.saldoDespuesDe(totalPedido, historial, "p2"), 0.001);
-
-        // p3 (total 500 -> neto 1000)
-        assertEquals(1000.0, ReciboUtils.totalPagadoHasta(historial, "p3"), 0.001);
-        assertEquals(0.0, ReciboUtils.saldoDespuesDe(totalPedido, historial, "p3"), 0.001);
-
-        // p4 (reembolso 1000 -> neto 0)
-        assertEquals(0.0, ReciboUtils.totalPagadoHasta(historial, "p4"), 0.001);
-        assertEquals(1000.0, ReciboUtils.saldoDespuesDe(totalPedido, historial, "p4"), 0.001);
-
-        // Títulos de recibos
-        assertEquals("Recibo de anticipo", ReciboUtils.tituloRecibo(Pago.TIPO_ANTICIPO));
-        assertEquals("Recibo de abono", ReciboUtils.tituloRecibo(Pago.TIPO_ABONO));
-        assertEquals("Recibo de pago total", ReciboUtils.tituloRecibo(Pago.TIPO_TOTAL));
-        assertEquals("Comprobante de reembolso", ReciboUtils.tituloRecibo(Pago.TIPO_REEMBOLSO));
-    }
-
-    /**
-     * 12. Cancelar con el Socio un pedido liquidado reembolsa el 100% del total pagado y genera un Pago REEMBOLSO con folio.
-     */
-    @Test
-    public void test12_cancelarPedidoLiquidadoReembolsa100PorCiento() {
-        Pedido p = crearYConfirmarPedido(300.0);
-        pedidoRepo.liquidarSaldo(p.getId(), 700.0, Pedido.METODO_EFECTIVO, noop());
-
-        Pedido liquidado = pedidoRepo.getPedidoPorId(p.getId());
-        assertTrue(liquidado.estaLiquidado());
-        assertEquals(1000.0, liquidado.getAnticipoPagado(), 0.001);
-
-        AtomicReference<Pedido> refCanc = new AtomicReference<>();
-        pedidoRepo.cancelarReserva(liquidado.getId(), Pedido.CANCELA_SOCIO, "Imprevisto técnico", new Callback<Pedido>() {
-            @Override public void onSuccess(Pedido result) { refCanc.set(result); }
-            @Override public void onError(String error) {}
+    public void test03_validacionesConfirmarPago() {
+        AtomicReference<String> errNoExiste = new AtomicReference<>();
+        pedidoRepo.confirmarPago("no-existe", Pedido.METODO_EFECTIVO, "u", "U", new Callback<Pedido>() {
+            @Override public void onSuccess(Pedido result) {}
+            @Override public void onError(String error) { errNoExiste.set(error); }
         });
+        assertEquals("Pedido no encontrado", errNoExiste.get());
 
-        Pedido cancelado = refCanc.get();
-        assertNotNull(cancelado);
-        assertEquals(Pedido.ESTADO_CANCELADO, cancelado.getEstado());
-        assertEquals(1000.0, cancelado.getReembolsoMonto(), 0.001);
+        Pedido p = crearPedidoConfirmado();
+        assertNotNull("Tarjeta ya no es un método válido", confirmarPago(p.getId(), "TARJETA", "Carlos"));
+        assertNotNull(confirmarPago(p.getId(), "", "Carlos"));
+        assertNull(confirmarPago(p.getId(), Pedido.METODO_EFECTIVO, "Carlos"));
+        assertNotNull("No se confirma dos veces", confirmarPago(p.getId(), Pedido.METODO_EFECTIVO, "Carlos"));
 
-        List<Pago> pagos = pagoRepo.getPagosPorPedido(liquidado.getId()).getValue();
-        Pago pagoReembolso = null;
-        for (Pago pg : pagos) {
-            if (Pago.TIPO_REEMBOLSO.equals(pg.getTipo())) {
-                pagoReembolso = pg;
-                break;
-            }
+        // Un pedido cancelado no se cobra
+        Pedido cancelado = pedido("x", Pedido.ESTADO_CANCELADO, ahoraFijo, 500.0);
+        assertFalse(EstadosPedido.puedeConfirmarPago(cancelado));
+        assertEquals(0.0, EstadosPedido.montoPendiente(cancelado), 0.001);
+    }
+
+    /**
+     * 4. resumenMes: 1 de octubre 00:00 entra; 31 de octubre 23:59 entra; 1 de noviembre 00:00 no entra.
+     *    Se separa lo cobrado en efectivo y por transferencia.
+     */
+    @Test
+    public void test04_resumenMesLimitesYMetodos() {
+        long t1Oct00 = fecha(2026, Calendar.OCTOBER, 1, 0, 0, 0, 0);
+        long t31Oct = fecha(2026, Calendar.OCTOBER, 31, 23, 59, 59, 999);
+        long t1Nov00 = fecha(2026, Calendar.NOVEMBER, 1, 0, 0, 0, 0);
+
+        List<Pedido> pedidos = Arrays.asList(
+                pagado("ped1", t1Oct00, 100.0, Pedido.METODO_EFECTIVO),
+                pagado("ped2", t31Oct, 200.0, Pedido.METODO_TRANSFERENCIA),
+                pagado("ped3", t1Nov00, 400.0, Pedido.METODO_EFECTIVO));
+
+        double[] oct = FinanzasUtils.resumenMes(pedidos, 2026, Calendar.OCTOBER);
+        assertEquals(300.0, oct[0], 0.001); // cobrado
+        assertEquals(0.0, oct[1], 0.001);   // por cobrar
+        assertEquals(100.0, oct[2], 0.001); // efectivo
+        assertEquals(200.0, oct[3], 0.001); // transferencia
+
+        double[] nov = FinanzasUtils.resumenMes(pedidos, 2026, Calendar.NOVEMBER);
+        assertEquals(400.0, nov[0], 0.001);
+        assertEquals(400.0, nov[2], 0.001);
+        assertEquals(400.0, FinanzasUtils.cobradoDelMes(pedidos, 2026, Calendar.NOVEMBER), 0.001);
+    }
+
+    /**
+     * 5. resumenMes.porCobrar: solo pedidos aceptados sin pago con evento en el mes.
+     */
+    @Test
+    public void test05_resumenMesPorCobrar() {
+        long fechaOct = fecha(2026, Calendar.OCTOBER, 15, 12, 0, 0, 0);
+        long fechaNov = fecha(2026, Calendar.NOVEMBER, 15, 12, 0, 0, 0);
+
+        List<Pedido> pedidos = Arrays.asList(
+                pedido("conf", Pedido.ESTADO_CONFIRMADO, fechaOct, 1000.0),
+                pedido("cobrar", Pedido.ESTADO_POR_COBRAR, fechaOct, 300.0),
+                pedido("aprobar", Pedido.ESTADO_POR_APROBAR, fechaOct, 1000.0),
+                pedido("canc", Pedido.ESTADO_CANCELADO, fechaOct, 1000.0),
+                pedido("rech", Pedido.ESTADO_RECHAZADO, fechaOct, 1000.0),
+                pedido("venc", Pedido.ESTADO_VENCIDO, fechaOct, 1000.0),
+                pedido("otroMes", Pedido.ESTADO_CONFIRMADO, fechaNov, 800.0));
+
+        double[] resumen = FinanzasUtils.resumenMes(pedidos, 2026, Calendar.OCTOBER);
+        // Solo "conf" (1000) + "cobrar" (300)
+        assertEquals(1300.0, resumen[1], 0.001);
+        assertEquals(0.0, resumen[0], 0.001);
+    }
+
+    /**
+     * 6. movimientosDelMes: primero lo pendiente (evento más antiguo arriba), luego lo cobrado (más reciente arriba).
+     */
+    @Test
+    public void test06_movimientosDelMesFiltroYOrden() {
+        long t5 = fecha(2026, Calendar.OCTOBER, 5, 10, 0, 0, 0);
+        long t10 = fecha(2026, Calendar.OCTOBER, 10, 10, 0, 0, 0);
+        long t20 = fecha(2026, Calendar.OCTOBER, 20, 10, 0, 0, 0);
+
+        Pedido c1 = pagado("c1", t5, 100.0, Pedido.METODO_EFECTIVO);
+        Pedido c2 = pagado("c2", t10, 200.0, Pedido.METODO_TRANSFERENCIA);
+        Pedido pend20 = pedido("p20", Pedido.ESTADO_CONFIRMADO, t20, 300.0);
+        Pedido pend5 = pedido("p5", Pedido.ESTADO_POR_COBRAR, t5, 400.0);
+        List<Pedido> pedidos = Arrays.asList(c1, pend20, c2, pend5);
+
+        List<Pedido> todos = FinanzasUtils.movimientosDelMes(pedidos, 2026, Calendar.OCTOBER, FinanzasUtils.FILTRO_TODOS);
+        assertEquals(4, todos.size());
+        assertEquals("p5", todos.get(0).getId());
+        assertEquals("p20", todos.get(1).getId());
+        assertEquals("c2", todos.get(2).getId());
+        assertEquals("c1", todos.get(3).getId());
+
+        List<Pedido> cobrados = FinanzasUtils.movimientosDelMes(pedidos, 2026, Calendar.OCTOBER, FinanzasUtils.FILTRO_COBRADOS);
+        assertEquals(2, cobrados.size());
+        assertEquals("c2", cobrados.get(0).getId());
+
+        List<Pedido> porCobrar = FinanzasUtils.movimientosDelMes(pedidos, 2026, Calendar.OCTOBER, FinanzasUtils.FILTRO_POR_COBRAR);
+        assertEquals(2, porCobrar.size());
+        assertEquals("p5", porCobrar.get(0).getId());
+
+        assertTrue(FinanzasUtils.movimientosDelMes(null, 2026, Calendar.OCTOBER, FinanzasUtils.FILTRO_TODOS).isEmpty());
+    }
+
+    /**
+     * 7. pedidosPorCobrar solo incluye eventos terminados sin pago; sumaTotales redondea a centavos.
+     */
+    @Test
+    public void test07_pedidosPorCobrarYSuma() {
+        Pedido a = pedido("a", Pedido.ESTADO_POR_COBRAR, ahoraFijo - 48 * HORA, 0.1);
+        Pedido b = pedido("b", Pedido.ESTADO_POR_COBRAR, ahoraFijo - 72 * HORA, 0.2);
+        Pedido c = pedido("c", Pedido.ESTADO_CONFIRMADO, ahoraFijo + 48 * HORA, 1000.0);
+        List<Pedido> lista = FinanzasUtils.pedidosPorCobrar(Arrays.asList(a, b, c));
+        assertEquals(2, lista.size());
+        assertEquals("b", lista.get(0).getId()); // el más antiguo primero
+        assertEquals(0.3, FinanzasUtils.sumaTotales(lista), 0.0000001);
+    }
+
+    /**
+     * 8. Ticket térmico: logo y encabezado, fecha y hora de confirmación, paquete, monto, IVA 0 % y total.
+     */
+    @Test
+    public void test08_ticketDePago() {
+        Pedido p = crearPedidoConfirmado();
+        reloj.setAhora(TiempoUtils.construir(2026, Calendar.NOVEMBER, 20, 14 * 60 + 35));
+        assertNull(confirmarPago(p.getId(), Pedido.METODO_EFECTIVO, "Carlos Socio"));
+        Pedido pagado = pedidoRepo.getPedidoPorId(p.getId());
+
+        List<TicketPago.Linea> lineas = TicketPago.construir(pagado);
+        StringBuilder sb = new StringBuilder();
+        int idxIva = -1;
+        int idxTotal = -1;
+        for (int i = 0; i < lineas.size(); i++) {
+            TicketPago.Linea l = lineas.get(i);
+            sb.append(l.izquierda).append('|').append(l.derecha).append('\n');
+            if (l.izquierda.startsWith("IVA")) idxIva = i;
+            if (l.tipo == TicketPago.TIPO_TOTAL) idxTotal = i;
         }
-        assertNotNull(pagoReembolso);
-        assertEquals(1000.0, pagoReembolso.getMonto(), 0.001);
-        assertNotNull(pagoReembolso.getFolio());
-        assertTrue(pagoReembolso.getFolio().startsWith("R-"));
+        String texto = sb.toString();
+
+        assertEquals(TicketPago.TIPO_TITULO, lineas.get(0).tipo);
+        assertEquals(String.format(Locale.ROOT, "%06d", pagado.getNumero()), TicketPago.folio(pagado));
+        assertTrue("Fecha y hora del pago en la misma línea", texto.contains("Fecha: 20/11/2026|Hora: 14:35"));
+        assertTrue(texto.contains("San Rafael Norte Ixtapa"));
+        assertTrue(texto.contains("Mza 10 LT 6 CP 39016"));
+        assertTrue(texto.contains("Tel. 747 109 0459"));
+        assertTrue(texto.contains("Lugar: Av. Central 123, Tuxtla"));
+        assertTrue(texto.contains("Fecha del evento:|20/11/2026"));
+        assertTrue(texto.contains("Hora de inicio:|16:00"));
+        assertTrue(texto.contains("Paquete Básico"));
+        assertTrue(texto.contains("IVA (0%)|" + TicketPago.moneda(0.0)));
+        assertTrue(texto.contains("TOTAL|" + TicketPago.moneda(1000.0)));
+        assertTrue(texto.contains("Forma de pago:|Efectivo"));
+        assertTrue(texto.contains("Recibió: Carlos Socio"));
+        assertTrue("El IVA va antes del total", idxIva >= 0 && idxIva < idxTotal);
+        assertEquals(1000.0, TicketPago.subtotal(1000.0), 0.001);
+        assertEquals(0.0, TicketPago.iva(1000.0), 0.001);
+        assertEquals("ticket_" + TicketPago.folio(pagado) + ".pdf", TicketPago.nombreArchivo(pagado));
     }
 
     /**
-     * 13. DashboardUtils.contadores con pedidos de hoy, de mañana, dentro de 8 días, apartados vigentes/vencidos y asignacionIncompleta.
+     * 9. Cancelar un pedido ya pagado no genera reembolsos: el pago confirmado se conserva en Finanzas.
      */
     @Test
-    public void test13_dashboardContadores() {
+    public void test09_cancelarPedidoPagadoConservaPago() {
+        Pedido p = crearPedidoConfirmado();
+        assertNull(confirmarPago(p.getId(), Pedido.METODO_EFECTIVO, "Carlos Socio"));
+
+        pedidoRepo.cancelarReserva(p.getId(), Pedido.CANCELA_SOCIO, "El cliente lo pidió", noop());
+        Pedido cancelado = pedidoRepo.getPedidoPorId(p.getId());
+        assertEquals(Pedido.ESTADO_CANCELADO, cancelado.getEstado());
+        assertTrue(cancelado.isPagoConfirmado());
+
+        double[] resumen = FinanzasUtils.resumenMes(pedidoRepo.obtenerTodos(), 2026, Calendar.NOVEMBER);
+        assertEquals(1000.0, resumen[0], 0.001);
+        assertEquals(0.0, resumen[1], 0.001);
+    }
+
+    /**
+     * 10. DashboardUtils.contadores con pedidos de hoy, de mañana, dentro de 8 días,
+     *     solicitudes por aprobar vigentes/vencidas y asignacionIncompleta.
+     */
+    @Test
+    public void test10_dashboardContadores() {
         long hoy = ahoraFijo; // 20 nov 08:00
         long manana = TiempoUtils.construir(2026, Calendar.NOVEMBER, 21, 14 * 60);
         long en8Dias = TiempoUtils.construir(2026, Calendar.NOVEMBER, 28, 14 * 60);
 
-        Pedido p1Hoy = new Pedido();
-        p1Hoy.setEstado(Pedido.ESTADO_CONFIRMADO);
-        p1Hoy.setInicioMillis(hoy);
-
-        Pedido p2Manana = new Pedido();
-        p2Manana.setEstado(Pedido.ESTADO_CONFIRMADO);
-        p2Manana.setInicioMillis(manana);
-
-        Pedido p3En8Dias = new Pedido();
-        p3En8Dias.setEstado(Pedido.ESTADO_CONFIRMADO);
-        p3En8Dias.setInicioMillis(en8Dias);
-
-        Pedido p4ApartadoVigente = new Pedido();
-        p4ApartadoVigente.setEstado(Pedido.ESTADO_APARTADO);
-        p4ApartadoVigente.setVencimientoApartadoMillis(hoy + 3600_000L);
-
-        Pedido p5ApartadoVencido = new Pedido();
-        p5ApartadoVencido.setEstado(Pedido.ESTADO_APARTADO);
-        p5ApartadoVencido.setVencimientoApartadoMillis(hoy - 3600_000L);
-
-        Pedido p6AsigIncompleta = new Pedido();
-        p6AsigIncompleta.setEstado(Pedido.ESTADO_CONFIRMADO);
-        p6AsigIncompleta.setInicioMillis(en8Dias);
+        Pedido p1Hoy = pedido("1", Pedido.ESTADO_CONFIRMADO, hoy, 1);
+        Pedido p2Manana = pedido("2", Pedido.ESTADO_CONFIRMADO, manana, 1);
+        Pedido p3En8Dias = pedido("3", Pedido.ESTADO_CONFIRMADO, en8Dias, 1);
+        Pedido p4PorAprobar = pedido("4", Pedido.ESTADO_POR_APROBAR, manana, 1);
+        Pedido p5PorAprobarPasado = pedido("5", Pedido.ESTADO_POR_APROBAR, hoy - HORA, 1);
+        Pedido p6AsigIncompleta = pedido("6", Pedido.ESTADO_CONFIRMADO, en8Dias, 1);
         p6AsigIncompleta.setAsignacionIncompleta(true);
 
-        List<Pedido> lista = Arrays.asList(p1Hoy, p2Manana, p3En8Dias, p4ApartadoVigente, p5ApartadoVencido, p6AsigIncompleta);
+        List<Pedido> lista = Arrays.asList(p1Hoy, p2Manana, p3En8Dias, p4PorAprobar, p5PorAprobarPasado, p6AsigIncompleta);
 
         int[] c = DashboardUtils.contadores(lista, hoy);
-        // [0] eventosHoy = 1 (p1Hoy)
-        // [1] proximos7Dias = 1 (p2Manana)
-        // [2] apartadosPorPagar = 1 (p4ApartadoVigente)
-        // [3] asignacionIncompleta = 1 (p6AsigIncompleta)
-        assertEquals(1, c[0]);
-        assertEquals(1, c[1]);
-        assertEquals(1, c[2]);
-        assertEquals(1, c[3]);
+        assertEquals(1, c[0]); // eventos hoy
+        assertEquals(1, c[1]); // próximos 7 días (la solicitud por aprobar no cuenta)
+        assertEquals(1, c[2]); // solicitudes por aprobar vigentes
+        assertEquals(1, c[3]); // asignación incompleta
+
+        List<Pedido> solicitudes = DashboardUtils.solicitudesPorAprobar(lista, hoy);
+        assertEquals(1, solicitudes.size());
+        assertEquals("4", solicitudes.get(0).getId());
     }
 }
