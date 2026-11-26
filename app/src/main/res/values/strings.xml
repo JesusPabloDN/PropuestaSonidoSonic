@@ -719,4 +719,9 @@
     <string name="prueba_evento">Ticket de prueba</string>
     <string name="prueba_lugar">Dirección del evento</string>
     <string name="prueba_paquete">Prueba de impresión</string>
+    <string name="btn_imprimir_ticket">Imprimir</string>
+    <string name="btn_imprimir">Imprimir</string>
+    <string name="btn_configurar_impresora">Configurar impresora</string>
+    <string name="impresora_no_configurada_titulo">Sin impresora en este teléfono</string>
+    <string name="impresora_no_configurada_mensaje">Primero elige la impresora de tickets en este teléfono (menú ☰ → Impresora de tickets → Buscar impresora).</string>
 </resources>

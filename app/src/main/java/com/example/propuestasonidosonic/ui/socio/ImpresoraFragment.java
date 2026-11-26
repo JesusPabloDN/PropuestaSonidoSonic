@@ -1,25 +1,18 @@
 package com.example.propuestasonidosonic.ui.socio;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.ParcelUuid;
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,19 +21,16 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
-import androidx.core.location.LocationManagerCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.propuestasonidosonic.R;
 import com.example.propuestasonidosonic.SonidoSonicApp;
 import com.example.propuestasonidosonic.impresion.ImpresoraBle;
 import com.example.propuestasonidosonic.impresion.PreferenciasImpresora;
+import com.example.propuestasonidosonic.impresion.RequisitosBluetooth;
 import com.example.propuestasonidosonic.model.Pedido;
 import com.example.propuestasonidosonic.model.Usuario;
 import com.example.propuestasonidosonic.util.TicketRender;
@@ -78,32 +68,10 @@ public class ImpresoraFragment extends Fragment {
 
     private Bitmap ticketPrueba;
     private boolean imprimiendo;
-    private Runnable accionPendiente;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
 
-    private final ActivityResultLauncher<String[]> permisosLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), resultado -> {
-                if (!isAdded()) return;
-                if (tienePermisos()) {
-                    continuarPendiente();
-                } else {
-                    accionPendiente = null;
-                    mostrarAviso(R.string.impresora_sin_permiso_titulo, R.string.impresora_sin_permiso_mensaje, true);
-                }
-            });
-
-    private final ActivityResultLauncher<Intent> activarBluetoothLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), r -> {
-                if (!isAdded()) return;
-                BluetoothAdapter adaptador = adaptador();
-                if (adaptador != null && adaptador.isEnabled()) {
-                    continuarPendiente();
-                } else {
-                    accionPendiente = null;
-                    mostrarAviso(R.string.impresora_bluetooth_apagado_titulo, R.string.impresora_bluetooth_apagado_mensaje, false);
-                }
-            });
+    private final RequisitosBluetooth requisitos = new RequisitosBluetooth(this);
 
     @Nullable
     @Override
@@ -127,8 +95,8 @@ public class ImpresoraFragment extends Fragment {
         tvMedidasTicket = view.findViewById(R.id.tvMedidasTicket);
         ivVistaPrevia = view.findViewById(R.id.ivVistaPrevia);
 
-        btnBuscarImpresora.setOnClickListener(v -> conRequisitos(this::buscarImpresoras));
-        btnImprimirPrueba.setOnClickListener(v -> conRequisitos(this::imprimirPrueba));
+        btnBuscarImpresora.setOnClickListener(v -> requisitos.conRequisitos(this::buscarImpresoras));
+        btnImprimirPrueba.setOnClickListener(v -> requisitos.conRequisitos(this::imprimirPrueba));
         btnOlvidarImpresora.setOnClickListener(v -> {
             preferencias.olvidar();
             actualizarImpresora();
@@ -167,87 +135,6 @@ public class ImpresoraFragment extends Fragment {
         btnOlvidarImpresora.setEnabled(!imprimiendo);
     }
 
-    // ---------- Requisitos: permisos, Bluetooth encendido y ubicación (Android 11 o anterior) ----------
-
-    private String[] permisosNecesarios() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            return new String[]{Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT};
-        }
-        return new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
-    }
-
-    private boolean tienePermisos() {
-        for (String p : permisosNecesarios()) {
-            if (ContextCompat.checkSelfPermission(requireContext(), p) != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private BluetoothAdapter adaptador() {
-        BluetoothManager manager = (BluetoothManager) requireContext().getSystemService(Context.BLUETOOTH_SERVICE);
-        return manager != null ? manager.getAdapter() : null;
-    }
-
-    private void conRequisitos(Runnable accion) {
-        if (!requireContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)
-                || adaptador() == null) {
-            mostrarAviso(R.string.impresora_sin_ble_titulo, R.string.impresora_sin_ble_mensaje, false);
-            return;
-        }
-        accionPendiente = accion;
-        continuarPendiente();
-    }
-
-    private void continuarPendiente() {
-        Runnable accion = accionPendiente;
-        if (accion == null) return;
-        if (!tienePermisos()) {
-            permisosLauncher.launch(permisosNecesarios());
-            return;
-        }
-        BluetoothAdapter adaptador = adaptador();
-        if (adaptador == null || !adaptador.isEnabled()) {
-            activarBluetoothLauncher.launch(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE));
-            return;
-        }
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S && !ubicacionActiva()) {
-            // En Android 11 o anterior, la búsqueda Bluetooth no encuentra nada con la ubicación apagada
-            accionPendiente = null;
-            new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(R.string.impresora_ubicacion_titulo)
-                    .setMessage(R.string.impresora_ubicacion_mensaje)
-                    .setNegativeButton(R.string.dialog_cancelar, null)
-                    .setPositiveButton(R.string.impresora_abrir_ajustes, (d, w) ->
-                            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
-                    .show();
-            return;
-        }
-        accionPendiente = null;
-        accion.run();
-    }
-
-    private boolean ubicacionActiva() {
-        LocationManager lm = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
-        return lm != null && LocationManagerCompat.isLocationEnabled(lm);
-    }
-
-    private void mostrarAviso(int titulo, int mensaje, boolean ofrecerAjustesApp) {
-        MaterialAlertDialogBuilder b = new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(titulo)
-                .setMessage(mensaje)
-                .setPositiveButton(R.string.dialog_aceptar_impresora, null);
-        if (ofrecerAjustesApp) {
-            b.setNeutralButton(R.string.impresora_abrir_ajustes, (d, w) -> {
-                Intent i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                i.setData(android.net.Uri.fromParts("package", requireContext().getPackageName(), null));
-                startActivity(i);
-            });
-        }
-        b.show();
-    }
-
     // ---------- Búsqueda de impresoras ----------
 
     private static final class Encontrado {
@@ -266,10 +153,10 @@ public class ImpresoraFragment extends Fragment {
 
     @SuppressLint("MissingPermission")
     private void buscarImpresoras() {
-        BluetoothAdapter adaptador = adaptador();
+        BluetoothAdapter adaptador = requisitos.adaptador();
         BluetoothLeScanner scanner = adaptador != null ? adaptador.getBluetoothLeScanner() : null;
         if (scanner == null) {
-            mostrarAviso(R.string.impresora_bluetooth_apagado_titulo, R.string.impresora_bluetooth_apagado_mensaje, false);
+            requisitos.aviso(R.string.impresora_bluetooth_apagado_titulo, R.string.impresora_bluetooth_apagado_mensaje, false);
             return;
         }
 
@@ -381,7 +268,7 @@ public class ImpresoraFragment extends Fragment {
             scanner.startScan(null, ajustes, callback);
         } catch (SecurityException e) {
             dialogo.dismiss();
-            mostrarAviso(R.string.impresora_sin_permiso_titulo, R.string.impresora_sin_permiso_mensaje, true);
+            requisitos.aviso(R.string.impresora_sin_permiso_titulo, R.string.impresora_sin_permiso_mensaje, true);
             return;
         }
         handler.postDelayed(detener, DURACION_BUSQUEDA_MS);

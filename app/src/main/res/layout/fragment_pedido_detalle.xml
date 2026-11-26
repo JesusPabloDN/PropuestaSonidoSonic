@@ -477,17 +477,55 @@
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     tools:text="Efectivo · mar 24 nov 2026 · 14:35\nConfirmó: Socio Principal" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnVerTicket"
-                    style="@style/Widget.Material3.Button.TonalButton"
-                    android:layout_width="wrap_content"
+                <!-- Ticket del pago: imprimir en la térmica o ver/compartir el PDF -->
+                <LinearLayout
+                    android:id="@+id/layoutBotonesTicket"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_small"
-                    android:minHeight="@dimen/touch_target_min"
-                    android:text="@string/btn_ver_ticket"
+                    android:orientation="horizontal"
                     android:visibility="gone"
-                    app:icon="@drawable/ic_receipt_24"
-                    tools:visibility="visible" />
+                    tools:visibility="visible">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnImprimirTicket"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:minHeight="@dimen/touch_target_min"
+                        android:text="@string/btn_imprimir_ticket"
+                        app:icon="@drawable/ic_print_24" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnVerTicket"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_small"
+                        android:layout_weight="1"
+                        android:minHeight="@dimen/touch_target_min"
+                        android:text="@string/btn_ver_ticket"
+                        app:icon="@drawable/ic_receipt_24" />
+
+                </LinearLayout>
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/progresoImpresionPedido"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_small"
+                    android:indeterminate="true"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tvEstadoImpresionPedido"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_tiny"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?attr/colorOnSurface"
+                    android:visibility="gone"
+                    tools:text="Enviando ticket… 40 %" />
 
             </LinearLayout>
 

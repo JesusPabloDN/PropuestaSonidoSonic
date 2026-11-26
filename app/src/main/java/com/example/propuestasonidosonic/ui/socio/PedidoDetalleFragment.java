@@ -33,6 +33,11 @@ import com.example.propuestasonidosonic.util.BadgeUtils;
 import com.example.propuestasonidosonic.util.CompartirRecibo;
 import com.example.propuestasonidosonic.util.FormatUtils;
 import com.example.propuestasonidosonic.util.TicketPdf;
+import com.example.propuestasonidosonic.util.TicketRender;
+import com.example.propuestasonidosonic.impresion.ImpresoraBle;
+import com.example.propuestasonidosonic.impresion.PreferenciasImpresora;
+import com.example.propuestasonidosonic.impresion.RequisitosBluetooth;
+import android.graphics.Bitmap;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.card.MaterialCardView;
@@ -106,6 +111,12 @@ public class PedidoDetalleFragment extends Fragment {
     private TextView tvEstadoPago;
     private TextView tvDetallePago;
     private MaterialButton btnVerTicket;
+    private View layoutBotonesTicket;
+    private MaterialButton btnImprimirTicket;
+    private View progresoImpresionPedido;
+    private TextView tvEstadoImpresionPedido;
+    private boolean imprimiendo;
+    private final RequisitosBluetooth requisitos = new RequisitosBluetooth(this);
 
     private MaterialCardView cardCancelacion;
     private TextView tvCancelacionTitulo;
@@ -182,6 +193,10 @@ public class PedidoDetalleFragment extends Fragment {
         tvEstadoPago = view.findViewById(R.id.tvEstadoPago);
         tvDetallePago = view.findViewById(R.id.tvDetallePago);
         btnVerTicket = view.findViewById(R.id.btnVerTicket);
+        layoutBotonesTicket = view.findViewById(R.id.layoutBotonesTicket);
+        btnImprimirTicket = view.findViewById(R.id.btnImprimirTicket);
+        progresoImpresionPedido = view.findViewById(R.id.progresoImpresionPedido);
+        tvEstadoImpresionPedido = view.findViewById(R.id.tvEstadoImpresionPedido);
 
         cardRevision = view.findViewById(R.id.cardRevision);
         tvRevisionTitulo = view.findViewById(R.id.tvRevisionTitulo);
@@ -450,10 +465,12 @@ public class PedidoDetalleFragment extends Fragment {
                     FormatUtils.fechaHoraCorta(pedido.getFechaPagoMillis()),
                     quien));
             tvDetallePago.setVisibility(View.VISIBLE);
-            btnVerTicket.setVisibility(View.VISIBLE);
+            layoutBotonesTicket.setVisibility(View.VISIBLE);
             btnVerTicket.setOnClickListener(v -> compartirTicket(pedidoRepository.getPedidoPorId(pedidoId)));
+            btnImprimirTicket.setEnabled(!imprimiendo);
+            btnImprimirTicket.setOnClickListener(v -> imprimirTicket(pedidoRepository.getPedidoPorId(pedidoId)));
         } else {
-            btnVerTicket.setVisibility(View.GONE);
+            layoutBotonesTicket.setVisibility(View.GONE);
             if (EstadosPedido.esAceptado(pedido.getEstado())) {
                 tvEstadoPago.setText(R.string.estado_pago_pendiente);
                 tvEstadoPago.setTextColor(Pedido.ESTADO_POR_COBRAR.equals(pedido.getEstado())
@@ -633,8 +650,16 @@ public class PedidoDetalleFragment extends Fragment {
                     if (!isAdded()) return;
                     dialog.dismiss();
                     cargarPedido();
+                    // Si este teléfono ya tiene impresora, la acción rápida es imprimir el ticket
+                    boolean hayImpresora = new PreferenciasImpresora(requireContext()).hayImpresora();
                     Snackbar.make(requireView(), R.string.msg_pago_confirmado, Snackbar.LENGTH_LONG)
-                            .setAction(R.string.btn_ticket, snackView -> compartirTicket(result))
+                            .setAction(hayImpresora ? R.string.btn_imprimir : R.string.btn_ticket, snackView -> {
+                                if (hayImpresora) {
+                                    imprimirTicket(result);
+                                } else {
+                                    compartirTicket(result);
+                                }
+                            })
                             .show();
                 }
 
@@ -648,6 +673,71 @@ public class PedidoDetalleFragment extends Fragment {
         }));
 
         dialog.show();
+    }
+
+    /** Imprime el ticket del pago en la impresora térmica guardada en este teléfono. */
+    private void imprimirTicket(Pedido pedido) {
+        if (!isAdded() || pedido == null || imprimiendo) return;
+        PreferenciasImpresora preferencias = new PreferenciasImpresora(requireContext());
+        if (!preferencias.hayImpresora()) {
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.impresora_no_configurada_titulo)
+                    .setMessage(R.string.impresora_no_configurada_mensaje)
+                    .setNegativeButton(R.string.dialog_cancelar, null)
+                    .setPositiveButton(R.string.btn_configurar_impresora, (d, w) ->
+                            Navigation.findNavController(requireView()).navigate(R.id.impresoraFragment))
+                    .show();
+            return;
+        }
+        requisitos.conRequisitos(() -> enviarAImpresora(pedido, preferencias.getDireccion()));
+    }
+
+    private void enviarAImpresora(Pedido pedido, String direccion) {
+        if (!isAdded() || imprimiendo) return;
+        Bitmap ticket = TicketRender.generarBitmap(requireContext(), pedido);
+        if (ticket.getHeight() > TicketRender.ALTO_MAXIMO_PUNTOS) {
+            mostrarEstadoImpresion(getString(R.string.impresora_ticket_muy_largo), true);
+            return;
+        }
+        imprimiendo = true;
+        btnImprimirTicket.setEnabled(false);
+        progresoImpresionPedido.setVisibility(View.VISIBLE);
+        mostrarEstadoImpresion(getString(R.string.impresora_preparando), false);
+
+        ImpresoraBle.imprimir(requireContext(), direccion, ticket, new ImpresoraBle.Listener() {
+            @Override
+            public void onProgreso(String mensaje) {
+                if (isAdded() && getView() != null) mostrarEstadoImpresion(mensaje, false);
+            }
+
+            @Override
+            public void onTerminado(boolean confirmado) {
+                imprimiendo = false;
+                if (!isAdded() || getView() == null) return;
+                terminarImpresion(getString(confirmado ? R.string.impresora_listo : R.string.impresora_enviado_sin_confirmar), false);
+            }
+
+            @Override
+            public void onError(String mensaje) {
+                imprimiendo = false;
+                if (!isAdded() || getView() == null) return;
+                terminarImpresion(mensaje, true);
+            }
+        });
+    }
+
+    private void terminarImpresion(String mensaje, boolean error) {
+        progresoImpresionPedido.setVisibility(View.GONE);
+        btnImprimirTicket.setEnabled(true);
+        mostrarEstadoImpresion(mensaje, error);
+    }
+
+    private void mostrarEstadoImpresion(String mensaje, boolean error) {
+        tvEstadoImpresionPedido.setVisibility(View.VISIBLE);
+        tvEstadoImpresionPedido.setText(mensaje);
+        tvEstadoImpresionPedido.setTextColor(error
+                ? BadgeUtils.colorError(requireContext())
+                : MaterialColors.getColor(tvEstadoImpresionPedido, com.google.android.material.R.attr.colorOnSurface));
     }
 
     private void compartirTicket(Pedido pedido) {
