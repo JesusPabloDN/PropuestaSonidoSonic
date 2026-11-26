@@ -11,13 +11,12 @@ public class SolicitudReserva {
     private String clienteTelefono;
     private String direccion;
     private String notas;
-    private Integer horasApartado;
 
     public SolicitudReserva() {}
 
     public SolicitudReserva(String paqueteId, long inicioMillis, int duracionMin, String origen,
                             String nombreEvento, String clienteId, String clienteNombre,
-                            String clienteTelefono, String direccion, String notas, Integer horasApartado) {
+                            String clienteTelefono, String direccion, String notas) {
         this.paqueteId = paqueteId;
         this.inicioMillis = inicioMillis;
         this.duracionMin = duracionMin;
@@ -28,7 +27,6 @@ public class SolicitudReserva {
         this.clienteTelefono = clienteTelefono;
         this.direccion = direccion;
         this.notas = notas;
-        this.horasApartado = horasApartado;
     }
 
     public String getPaqueteId() {
@@ -109,13 +107,5 @@ public class SolicitudReserva {
 
     public void setNotas(String notas) {
         this.notas = notas;
-    }
-
-    public Integer getHorasApartado() {
-        return horasApartado;
-    }
-
-    public void setHorasApartado(Integer horasApartado) {
-        this.horasApartado = horasApartado;
     }
 }

@@ -35,7 +35,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="?attr/colorTertiary"
                     android:textAppearance="?attr/textAppearanceLabelLarge"
-                    tools:text="R-0001" />
+                    tools:text="#1045" />
 
                 <TextView
                     android:id="@+id/tvMovimientoTipo"
@@ -44,7 +44,7 @@
                     android:layout_marginStart="8dp"
                     android:textColor="?attr/colorOnSurface"
                     android:textAppearance="?attr/textAppearanceTitleSmall"
-                    tools:text="Anticipo" />
+                    tools:text="Cobrado" />
 
             </LinearLayout>
 
@@ -66,7 +66,7 @@
                 android:layout_marginTop="2dp"
                 android:textColor="?attr/colorOnSurfaceVariant"
                 android:textAppearance="?attr/textAppearanceBodySmall"
-                tools:text="12 oct 2026 14:30 · Efectivo" />
+                tools:text="lun 12 oct 2026 · 14:30 · Efectivo" />
 
         </LinearLayout>
 
@@ -76,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:textAppearance="?attr/textAppearanceTitleMedium"
-            tools:text="+ $1,050.00" />
+            tools:text="$3,500.00" />
 
     </LinearLayout>
 

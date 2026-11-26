@@ -22,7 +22,6 @@ import com.example.propuestasonidosonic.R;
 import com.example.propuestasonidosonic.ui.comun.SelectorHorarioHelper;
 import com.example.propuestasonidosonic.SonidoSonicApp;
 import com.example.propuestasonidosonic.data.Callback;
-import com.example.propuestasonidosonic.data.PagoRepository;
 import com.example.propuestasonidosonic.data.PaqueteRepository;
 import com.example.propuestasonidosonic.data.PedidoRepository;
 import com.example.propuestasonidosonic.data.UsuarioRepository;
@@ -30,7 +29,6 @@ import com.example.propuestasonidosonic.domain.ClienteUtils;
 import com.example.propuestasonidosonic.domain.MotorDisponibilidad;
 import com.example.propuestasonidosonic.domain.ResultadoDisponibilidad;
 import com.example.propuestasonidosonic.domain.SolicitudReserva;
-import com.example.propuestasonidosonic.model.Pago;
 import com.example.propuestasonidosonic.model.Paquete;
 import com.example.propuestasonidosonic.model.Pedido;
 import com.example.propuestasonidosonic.model.Usuario;
@@ -78,7 +76,6 @@ public class NuevoPedidoFragment extends Fragment implements SelectorHorarioHelp
     private TextView tvResumenDesmontaje;
     private TextView tvResumenPersonal;
     private TextView tvResumenTotal;
-    private TextView tvResumenAnticipo;
 
     private TextInputLayout tilNombreEvento;
     private TextInputEditText etNombreEvento;
@@ -92,9 +89,7 @@ public class NuevoPedidoFragment extends Fragment implements SelectorHorarioHelp
     private TextInputEditText etNotas;
 
     private MaterialButtonToggleGroup toggleOrigen;
-    private TextInputLayout tilRetenerHoras;
-    private MaterialAutoCompleteTextView actvRetenerHoras;
-    private MaterialButton btnApartar;
+    private MaterialButton btnRegistrarPedido;
 
     private SelectorHorarioHelper selectorHorarioHelper;
     private final List<Paquete> paquetesActivos = new ArrayList<>();
@@ -102,7 +97,6 @@ public class NuevoPedidoFragment extends Fragment implements SelectorHorarioHelp
     private final List<String> etiquetasDuracion = new ArrayList<>();
     private final List<ClienteUtils.ResumenCliente> clientesSugerencias = new ArrayList<>();
     private String clienteIdSeleccionado = null;
-    private PagoRepository pagoRepository;
 
     @Nullable
     @Override
@@ -119,17 +113,15 @@ public class NuevoPedidoFragment extends Fragment implements SelectorHorarioHelp
         paqueteRepository = SonidoSonicApp.getApp(requireContext()).getAppContainer().getPaqueteRepository();
         pedidoRepository = SonidoSonicApp.getApp(requireContext()).getAppContainer().getPedidoRepository();
         usuarioRepository = SonidoSonicApp.getApp(requireContext()).getAppContainer().getUsuarioRepository();
-        pagoRepository = SonidoSonicApp.getApp(requireContext()).getAppContainer().getPagoRepository();
 
         vincularVistas(view);
         configurarSelectorHorario();
         configurarDuraciones();
-        configurarHorasApartado();
         configurarOrigenToggle();
         configurarAutocompletarCliente();
         configurarTextWatchers();
         cargarPaquetes();
-        configurarBotonApartar();
+        configurarBotonRegistrar();
     }
 
     private void vincularVistas(View view) {
@@ -149,7 +141,6 @@ public class NuevoPedidoFragment extends Fragment implements SelectorHorarioHelp
         tvResumenDesmontaje = view.findViewById(R.id.tvResumenDesmontaje);
         tvResumenPersonal = view.findViewById(R.id.tvResumenPersonal);
         tvResumenTotal = view.findViewById(R.id.tvResumenTotal);
-        tvResumenAnticipo = view.findViewById(R.id.tvResumenAnticipo);
 
         tilNombreEvento = view.findViewById(R.id.tilNombreEvento);
         etNombreEvento = view.findViewById(R.id.etNombreEvento);
@@ -163,9 +154,7 @@ public class NuevoPedidoFragment extends Fragment implements SelectorHorarioHelp
         etNotas = view.findViewById(R.id.etNotas);
 
         toggleOrigen = view.findViewById(R.id.toggleOrigen);
-        tilRetenerHoras = view.findViewById(R.id.tilRetenerHoras);
-        actvRetenerHoras = view.findViewById(R.id.actvRetenerHoras);
-        btnApartar = view.findViewById(R.id.btnApartar);
+        btnRegistrarPedido = view.findViewById(R.id.btnRegistrarPedido);
     }
 
     private void configurarSelectorHorario() {
@@ -216,27 +205,6 @@ public class NuevoPedidoFragment extends Fragment implements SelectorHorarioHelp
         });
     }
 
-    private void configurarHorasApartado() {
-        List<String> etiquetas = new ArrayList<>();
-        int defaultPos = 3; // 24 horas por defecto
-        for (int i = 0; i < Config.APARTADO_MANUAL_OPCIONES_HORAS.length; i++) {
-            int h = Config.APARTADO_MANUAL_OPCIONES_HORAS[i];
-            etiquetas.add(getString(R.string.horas_formato, h));
-            if (h == viewModel.getHorasApartado()) {
-                defaultPos = i;
-            }
-        }
-
-        ArrayAdapter<String> horasAdapter = new ArrayAdapter<>(requireContext(),
-                R.layout.item_dropdown, etiquetas);
-        actvRetenerHoras.setAdapter(horasAdapter);
-        actvRetenerHoras.setText(etiquetas.get(defaultPos), false);
-
-        actvRetenerHoras.setOnItemClickListener((parent, v, position, id) -> {
-            viewModel.setHorasApartado(Config.APARTADO_MANUAL_OPCIONES_HORAS[position]);
-        });
-    }
-
     private void configurarOrigenToggle() {
         if (Pedido.ORIGEN_WHATSAPP.equals(viewModel.getOrigen())) {
             toggleOrigen.check(R.id.btnOrigenWhatsapp);
@@ -262,12 +230,11 @@ public class NuevoPedidoFragment extends Fragment implements SelectorHorarioHelp
         etNombreCliente.setThreshold(2);
 
         final List<Pedido>[] pedidosHolder = new List[]{new ArrayList<Pedido>()};
-        final List<Pago>[] pagosHolder = new List[]{new ArrayList<Pago>()};
         final List<Usuario>[] usuariosHolder = new List[]{new ArrayList<Usuario>()};
 
         Runnable actualizarSugerencias = () -> {
             clientesSugerencias.clear();
-            clientesSugerencias.addAll(ClienteUtils.resumenes(pedidosHolder[0], pagosHolder[0], usuariosHolder[0]));
+            clientesSugerencias.addAll(ClienteUtils.resumenes(pedidosHolder[0], usuariosHolder[0]));
             List<String> etiquetas = new ArrayList<>();
             for (ClienteUtils.ResumenCliente c : clientesSugerencias) {
                 String tel = (c.getTelefono() != null && !c.getTelefono().isEmpty()) ? c.getTelefono() : "";
@@ -283,12 +250,6 @@ public class NuevoPedidoFragment extends Fragment implements SelectorHorarioHelp
         if (pedidoRepository != null) {
             pedidoRepository.getPedidos().observe(getViewLifecycleOwner(), p -> {
                 pedidosHolder[0] = p != null ? new ArrayList<>(p) : new ArrayList<>();
-                actualizarSugerencias.run();
-            });
-        }
-        if (pagoRepository != null) {
-            pagoRepository.getTodosLosPagos().observe(getViewLifecycleOwner(), pag -> {
-                pagosHolder[0] = pag != null ? new ArrayList<>(pag) : new ArrayList<>();
                 actualizarSugerencias.run();
             });
         }
@@ -371,13 +332,13 @@ public class NuevoPedidoFragment extends Fragment implements SelectorHorarioHelp
             if (paquetesActivos.isEmpty()) {
                 tvAvisoSinPaquetes.setVisibility(View.VISIBLE);
                 actvPaquete.setEnabled(false);
-                btnApartar.setEnabled(false);
+                btnRegistrarPedido.setEnabled(false);
                 return;
             }
 
             tvAvisoSinPaquetes.setVisibility(View.GONE);
             actvPaquete.setEnabled(true);
-            btnApartar.setEnabled(true);
+            btnRegistrarPedido.setEnabled(true);
 
             ArrayAdapter<String> paqAdapter = new ArrayAdapter<>(requireContext(),
                     R.layout.item_dropdown, items);
@@ -472,19 +433,16 @@ public class NuevoPedidoFragment extends Fragment implements SelectorHorarioHelp
                 sbPersonal.length() > 0 ? sbPersonal.toString() : "Pendiente"));
 
         double total = MotorDisponibilidad.calcularTotal(paquete, duracionMin);
-        double anticipo = MotorDisponibilidad.calcularAnticipo(total);
-
-        tvResumenTotal.setText(getString(R.string.label_resumen_total, FormatUtils.formatoMoneda(total)));
-        tvResumenAnticipo.setText(getString(R.string.label_resumen_anticipo, FormatUtils.formatoMoneda(anticipo)));
+        tvResumenTotal.setText(getString(R.string.label_monto_a_pagar, FormatUtils.formatoMoneda(total)));
 
         cardResumenEnVivo.setVisibility(View.VISIBLE);
     }
 
-    private void configurarBotonApartar() {
-        btnApartar.setOnClickListener(v -> validarYCrearApartado());
+    private void configurarBotonRegistrar() {
+        btnRegistrarPedido.setOnClickListener(v -> validarYRegistrarPedido());
     }
 
-    private void validarYCrearApartado() {
+    private void validarYRegistrarPedido() {
         boolean valido = true;
 
         if (viewModel.getPaqueteSeleccionado() == null) {
@@ -531,7 +489,7 @@ public class NuevoPedidoFragment extends Fragment implements SelectorHorarioHelp
             if (imm != null) imm.hideSoftInputFromWindow(focusedView.getWindowToken(), 0);
         }
 
-        btnApartar.setEnabled(false);
+        btnRegistrarPedido.setEnabled(false);
 
         String notas = (etNotas.getText() != null) ? etNotas.getText().toString().trim() : "";
 
@@ -545,15 +503,14 @@ public class NuevoPedidoFragment extends Fragment implements SelectorHorarioHelp
                 nomCliente,
                 tel,
                 dir,
-                notas,
-                viewModel.getHorasApartado()
+                notas
         );
 
         pedidoRepository.crearReserva(solicitud, new Callback<Pedido>() {
             @Override
             public void onSuccess(Pedido result) {
                 if (!isAdded()) return;
-                Toast.makeText(requireContext(), R.string.toast_apartado_creado, Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), R.string.toast_pedido_registrado, Toast.LENGTH_SHORT).show();
 
                 Bundle args = new Bundle();
                 args.putString("pedidoId", result.getId());
@@ -563,9 +520,9 @@ public class NuevoPedidoFragment extends Fragment implements SelectorHorarioHelp
             @Override
             public void onError(String mensaje) {
                 if (!isAdded()) return;
-                btnApartar.setEnabled(true);
+                btnRegistrarPedido.setEnabled(true);
                 new MaterialAlertDialogBuilder(requireContext())
-                        .setTitle("No se pudo crear el apartado")
+                        .setTitle(R.string.err_registrar_pedido_titulo)
                         .setMessage(mensaje)
                         .setPositiveButton("Aceptar", null)
                         .show();

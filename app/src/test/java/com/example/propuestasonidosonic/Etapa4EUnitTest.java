@@ -6,7 +6,6 @@ import com.example.propuestasonidosonic.data.Callback;
 import com.example.propuestasonidosonic.data.memory.InMemoryDiaOperativoRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryEquipoRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryEventoRepository;
-import com.example.propuestasonidosonic.data.memory.InMemoryPagoRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryPaqueteRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryPedidoRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryUsuarioRepository;
@@ -69,7 +68,6 @@ public class Etapa4EUnitTest {
     private InMemoryPaqueteRepository paqueteRepo;
     private InMemoryUsuarioRepository usuarioRepo;
     private InMemoryDiaOperativoRepository diaRepo;
-    private InMemoryPagoRepository pagoRepo;
     private InMemoryEventoRepository eventoRepo;
     private InMemoryPedidoRepository pedidoRepo;
 
@@ -86,7 +84,6 @@ public class Etapa4EUnitTest {
         paqueteRepo = new InMemoryPaqueteRepository(equipoRepo);
         usuarioRepo = new InMemoryUsuarioRepository(null);
         diaRepo = new InMemoryDiaOperativoRepository();
-        pagoRepo = new InMemoryPagoRepository();
         eventoRepo = new InMemoryEventoRepository();
 
         equipoRepo.setEventoRepository(eventoRepo);
@@ -96,7 +93,6 @@ public class Etapa4EUnitTest {
                 paqueteRepo,
                 usuarioRepo,
                 diaRepo,
-                pagoRepo,
                 eventoRepo,
                 reloj
         );
@@ -257,12 +253,12 @@ public class Etapa4EUnitTest {
         assertEquals(r1.pedidosIncompletos, r2.pedidosIncompletos);
     }
 
-    // 6. Repositorio: registrarAnticipo crea el Evento con equipoIds, pedido.eventoId y bloqueo; APARTADO no crea Evento
+    // 6. Repositorio: un pedido confirmado crea el Evento con equipoIds, pedido.eventoId y bloqueo
     @Test
-    public void test6_repositorio_registrarAnticipoCreaEventoConEquipoIdsYBloqueo() {
+    public void test6_repositorio_pedidoConfirmadoCreaEventoConEquipoIdsYBloqueo() {
         long inicio = TiempoUtils.construir(2026, Calendar.NOVEMBER, 20, 18 * 60);
         SolicitudReserva sol = new SolicitudReserva("paq-bocina", inicio, 240, Pedido.ORIGEN_LLAMADA,
-                "Boda Civil", null, "Carlos Ramos", "9611234567", "Calle Central 100", "", null);
+                "Boda Civil", null, "Carlos Ramos", "9611234567", "Calle Central 100", "");
 
         AtomicReference<Pedido> ref = new AtomicReference<>();
         AtomicReference<String> errRef = new AtomicReference<>();
@@ -273,12 +269,10 @@ public class Etapa4EUnitTest {
 
         Pedido p = ref.get();
         assertNotNull("crearReserva fallo con error: " + errRef.get(), p);
-        assertEquals(Pedido.ESTADO_APARTADO, p.getEstado());
-        assertNull("Un APARTADO no debe crear Evento", p.getEventoId());
-        assertTrue("Un APARTADO no debe tener unidades físicas asignadas", p.getEquipoIds().isEmpty());
+        // Registrado por un socio (llamada): queda confirmado de inmediato
+        assertEquals(Pedido.ESTADO_CONFIRMADO, p.getEstado());
 
-        // Registrar anticipo
-        pedidoRepo.registrarAnticipo(p.getId(), p.getAnticipoRequerido(), Pedido.METODO_EFECTIVO, new Callback<Pedido>() {
+        confirmar(p.getId(), new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) { ref.set(result); }
             @Override public void onError(String error) {}
         });
@@ -311,14 +305,14 @@ public class Etapa4EUnitTest {
         // Evento de 19:00 a 23:00. Montaje desde 18:00 (buffer 60 min), Desmontaje hasta 00:00 (buffer 60 min)
         long inicioEvento = TiempoUtils.construir(2026, Calendar.NOVEMBER, 20, 19 * 60);
         SolicitudReserva sol = new SolicitudReserva("paq-bocina", inicioEvento, 240, Pedido.ORIGEN_LLAMADA,
-                "Fiesta Noche", null, "Ana Gomez", "9611234567", "Av Hidalgo 500", "", null);
+                "Fiesta Noche", null, "Ana Gomez", "9611234567", "Av Hidalgo 500", "");
 
         AtomicReference<Pedido> ref = new AtomicReference<>();
         pedidoRepo.crearReserva(sol, new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) { ref.set(result); }
             @Override public void onError(String error) {}
         });
-        pedidoRepo.registrarAnticipo(ref.get().getId(), ref.get().getAnticipoRequerido(), Pedido.METODO_EFECTIVO, new Callback<Pedido>() {
+        confirmar(ref.get().getId(), new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) { ref.set(result); }
             @Override public void onError(String error) {}
         });
@@ -352,14 +346,14 @@ public class Etapa4EUnitTest {
     public void test8_repositorio_cancelarReservaCancelaEventoYLiberaUnidad() {
         long inicio = TiempoUtils.construir(2026, Calendar.NOVEMBER, 20, 18 * 60);
         SolicitudReserva sol = new SolicitudReserva("paq-bocina", inicio, 240, Pedido.ORIGEN_LLAMADA,
-                "Evento Cancelable", null, "Luis Paz", "9611234567", "Calle Central 100", "", null);
+                "Evento Cancelable", null, "Luis Paz", "9611234567", "Calle Central 100", "");
 
         AtomicReference<Pedido> ref = new AtomicReference<>();
         pedidoRepo.crearReserva(sol, new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) { ref.set(result); }
             @Override public void onError(String error) {}
         });
-        pedidoRepo.registrarAnticipo(ref.get().getId(), ref.get().getAnticipoRequerido(), Pedido.METODO_EFECTIVO, new Callback<Pedido>() {
+        confirmar(ref.get().getId(), new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) { ref.set(result); }
             @Override public void onError(String error) {}
         });
@@ -387,14 +381,14 @@ public class Etapa4EUnitTest {
     public void test9_repositorio_reprogramarReservaActualizaFechasEventoYUnidades() {
         long inicio = TiempoUtils.construir(2026, Calendar.NOVEMBER, 20, 14 * 60);
         SolicitudReserva sol = new SolicitudReserva("paq-bocina", inicio, 240, Pedido.ORIGEN_LLAMADA,
-                "Boda Reprogramable", null, "Sofia Ruiz", "9611234567", "Calle Central 100", "", null);
+                "Boda Reprogramable", null, "Sofia Ruiz", "9611234567", "Calle Central 100", "");
 
         AtomicReference<Pedido> ref = new AtomicReference<>();
         pedidoRepo.crearReserva(sol, new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) { ref.set(result); }
             @Override public void onError(String error) {}
         });
-        pedidoRepo.registrarAnticipo(ref.get().getId(), ref.get().getAnticipoRequerido(), Pedido.METODO_EFECTIVO, new Callback<Pedido>() {
+        confirmar(ref.get().getId(), new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) { ref.set(result); }
             @Override public void onError(String error) {}
         });
@@ -427,14 +421,14 @@ public class Etapa4EUnitTest {
     public void test10_repositorio_alCompletarEventoQuedaFinalizado() {
         long inicio = TiempoUtils.construir(2026, Calendar.NOVEMBER, 20, 10 * 60);
         SolicitudReserva sol = new SolicitudReserva("paq-bocina", inicio, 120, Pedido.ORIGEN_LLAMADA,
-                "Evento Mañana", null, "Pedro Leon", "9611234567", "Calle Central 100", "", null);
+                "Evento Mañana", null, "Pedro Leon", "9611234567", "Calle Central 100", "");
 
         AtomicReference<Pedido> ref = new AtomicReference<>();
         pedidoRepo.crearReserva(sol, new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) { ref.set(result); }
             @Override public void onError(String error) {}
         });
-        pedidoRepo.registrarAnticipo(ref.get().getId(), ref.get().getAnticipoRequerido(), Pedido.METODO_EFECTIVO, new Callback<Pedido>() {
+        confirmar(ref.get().getId(), new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) { ref.set(result); }
             @Override public void onError(String error) {}
         });
@@ -444,10 +438,11 @@ public class Etapa4EUnitTest {
 
         // Adelantar reloj pasado el fin de bloqueo (10:00 + 120m evento + 60m desmontaje = 13:00)
         reloj.setAhora(TiempoUtils.construir(2026, Calendar.NOVEMBER, 20, 14 * 60));
-        pedidoRepo.liberarApartadosVencidos();
+        pedidoRepo.actualizarEstadosPorTiempo();
 
+        // Terminó sin pago confirmado: queda por cobrar
         Pedido completado = pedidoRepo.getPedidoPorId(confirmado.getId());
-        assertEquals(Pedido.ESTADO_COMPLETADO, completado.getEstado());
+        assertEquals(Pedido.ESTADO_POR_COBRAR, completado.getEstado());
 
         AtomicReference<Evento> evRef = new AtomicReference<>();
         eventoRepo.getEventoPorId(eventoId, new Callback<Evento>() {
@@ -462,14 +457,14 @@ public class Etapa4EUnitTest {
     public void test11_repositorio_marcarUnidadDanadoReasignaOIncompleto() {
         long inicio = TiempoUtils.construir(2026, Calendar.NOVEMBER, 20, 18 * 60);
         SolicitudReserva sol = new SolicitudReserva("paq-bocina", inicio, 240, Pedido.ORIGEN_LLAMADA,
-                "Evento Reasignable", null, "Mario Diaz", "9611234567", "Calle Central 100", "", null);
+                "Evento Reasignable", null, "Mario Diaz", "9611234567", "Calle Central 100", "");
 
         AtomicReference<Pedido> ref = new AtomicReference<>();
         pedidoRepo.crearReserva(sol, new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) { ref.set(result); }
             @Override public void onError(String error) {}
         });
-        pedidoRepo.registrarAnticipo(ref.get().getId(), ref.get().getAnticipoRequerido(), Pedido.METODO_EFECTIVO, new Callback<Pedido>() {
+        confirmar(ref.get().getId(), new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) { ref.set(result); }
             @Override public void onError(String error) {}
         });
@@ -493,18 +488,18 @@ public class Etapa4EUnitTest {
         assertTrue("Ahora sí debe marcarse incompleto", p.isAsignacionIncompleta());
     }
 
-    // 12. Repositorio: escenario A/B/C del punto 1 a través de pedidos reales (tres registrarAnticipo en orden)
+    // 12. Repositorio: escenario A/B/C del punto 1 a través de pedidos reales (tres pedidos confirmados en orden)
     @Test
     public void test12_repositorio_escenarioABC_pedidosReales_ningunoIncompleto() {
         // Pedido A: 10:00 - 12:00 (bloqueo 09:00 - 13:00)
         long iniA = TiempoUtils.construir(2026, Calendar.NOVEMBER, 20, 10 * 60);
         SolicitudReserva solA = new SolicitudReserva("paq-bocina", iniA, 120, Pedido.ORIGEN_LLAMADA,
-                "Evento A", null, "Cliente A", "9611234567", "Calle Central 100", "", null);
+                "Evento A", null, "Cliente A", "9611234567", "Calle Central 100", "");
 
         // Pedido B: 15:00 - 17:00 (bloqueo 14:00 - 18:00)
         long iniB = TiempoUtils.construir(2026, Calendar.NOVEMBER, 20, 15 * 60);
         SolicitudReserva solB = new SolicitudReserva("paq-bocina", iniB, 120, Pedido.ORIGEN_LLAMADA,
-                "Evento B", null, "Cliente B", "9611234567", "Calle Central 100", "", null);
+                "Evento B", null, "Cliente B", "9611234567", "Calle Central 100", "");
 
         // Pedido C: 12:00 - 16:00 (bloqueo 11:00 - 17:00; solapa tanto con A como con B!)
         // En este caso, para que C sea viable por personal, necesitamos un 2do operador
@@ -514,7 +509,7 @@ public class Etapa4EUnitTest {
 
         long iniC = TiempoUtils.construir(2026, Calendar.NOVEMBER, 20, 12 * 60);
         SolicitudReserva solC = new SolicitudReserva("paq-bocina", iniC, 240, Pedido.ORIGEN_LLAMADA,
-                "Evento C", null, "Cliente C", "9611234567", "Calle Central 100", "", null);
+                "Evento C", null, "Cliente C", "9611234567", "Calle Central 100", "");
 
         AtomicReference<Pedido> refA = new AtomicReference<>();
         AtomicReference<Pedido> refB = new AtomicReference<>();
@@ -534,9 +529,9 @@ public class Etapa4EUnitTest {
         });
 
         // Confirmar A, luego B, luego C
-        pedidoRepo.registrarAnticipo(refA.get().getId(), refA.get().getAnticipoRequerido(), Pedido.METODO_EFECTIVO, noop());
-        pedidoRepo.registrarAnticipo(refB.get().getId(), refB.get().getAnticipoRequerido(), Pedido.METODO_EFECTIVO, noop());
-        pedidoRepo.registrarAnticipo(refC.get().getId(), refC.get().getAnticipoRequerido(), Pedido.METODO_EFECTIVO, noop());
+        confirmar(refA.get().getId(), noop());
+        confirmar(refB.get().getId(), noop());
+        confirmar(refC.get().getId(), noop());
 
         Pedido pA = pedidoRepo.getPedidoPorId(refA.get().getId());
         Pedido pB = pedidoRepo.getPedidoPorId(refB.get().getId());
@@ -554,5 +549,15 @@ public class Etapa4EUnitTest {
         assertNotEquals(unitA, unitC);
         // B y C solapan en [14:00, 17:00) -> unidades distintas
         assertNotEquals(unitB, unitC);
+    }
+
+    /** Antes se confirmaba pagando el anticipo; ahora un socio aprueba la solicitud (los pedidos del socio ya nacen confirmados). */
+    private void confirmar(String pedidoId, Callback<Pedido> callback) {
+        Pedido actual = pedidoRepo.getPedidoPorId(pedidoId);
+        if (actual != null && Pedido.ESTADO_POR_APROBAR.equals(actual.getEstado())) {
+            pedidoRepo.aprobarPedido(pedidoId, callback);
+        } else if (callback != null) {
+            if (actual != null) callback.onSuccess(actual); else callback.onError("Pedido no encontrado");
+        }
     }
 }

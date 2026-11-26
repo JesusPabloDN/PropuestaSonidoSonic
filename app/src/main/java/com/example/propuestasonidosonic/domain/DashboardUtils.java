@@ -19,17 +19,17 @@ public final class DashboardUtils {
 
     /**
      * Calcula los 4 contadores operativos del Dashboard:
-     * [0] eventosHoy: pedidos que aparecen en agenda (excluyendo apartados) con inicio hoy.
+     * [0] eventosHoy: pedidos aceptados que aparecen en agenda con inicio hoy.
      * [1] proximos7Dias: igual, con inicio entre mañana y los 7 días siguientes inclusive.
-     * [2] apartadosPorPagar: apartados vigentes (no vencidos).
-     * [3] asignacionIncompleta: pedidos activos con asignacionIncompleta == true.
+     * [2] porAprobar: solicitudes de la app que esperan la aprobación de un socio.
+     * [3] asignacionIncompleta: pedidos vigentes con asignacionIncompleta == true.
      *
-     * @return int[] { eventosHoy, proximos7Dias, apartadosPorPagar, asignacionIncompleta }
+     * @return int[] { eventosHoy, proximos7Dias, porAprobar, asignacionIncompleta }
      */
     public static int[] contadores(List<Pedido> pedidos, long ahora) {
         int eventosHoy = 0;
         int proximos7Dias = 0;
-        int apartadosPorPagar = 0;
+        int porAprobar = 0;
         int asignacionIncompleta = 0;
 
         if (pedidos == null) {
@@ -49,8 +49,8 @@ public final class DashboardUtils {
 
             String st = p.getEstado();
 
-            // 1 & 2: Eventos en agenda (no apartados)
-            if (AgendaUtils.apareceEnAgenda(p, ahora) && !Pedido.ESTADO_APARTADO.equals(st)) {
+            // 1 & 2: Eventos en agenda (sin contar solicitudes por aprobar)
+            if (AgendaUtils.apareceEnAgenda(p, ahora) && !Pedido.ESTADO_POR_APROBAR.equals(st)) {
                 long ini = p.getInicioMillis();
                 if (ini >= hoyInicio && ini < mananaInicio) {
                     eventosHoy++;
@@ -59,32 +59,18 @@ public final class DashboardUtils {
                 }
             }
 
-            // 3: Apartados por pagar (vigentes)
-            if (Pedido.ESTADO_APARTADO.equals(st) && p.getVencimientoApartadoMillis() > ahora) {
-                apartadosPorPagar++;
+            // 3: Solicitudes por aprobar vigentes
+            if (Pedido.ESTADO_POR_APROBAR.equals(st) && p.getInicioMillis() > ahora) {
+                porAprobar++;
             }
 
-            // 4: Asignación incompleta en pedidos activos
-            boolean activo = Pedido.ESTADO_CONFIRMADO.equals(st)
-                    || Pedido.ESTADO_PAGADO.equals(st)
-                    || Pedido.ESTADO_EN_REVISION.equals(st);
-            if (activo && p.isAsignacionIncompleta()) {
+            // 4: Asignación incompleta en pedidos vigentes
+            if (EstadosPedido.ocupaRecursos(st) && p.isAsignacionIncompleta()) {
                 asignacionIncompleta++;
             }
         }
 
-        return new int[]{eventosHoy, proximos7Dias, apartadosPorPagar, asignacionIncompleta};
-    }
-
-    public static int contarEnRevision(List<Pedido> pedidos) {
-        if (pedidos == null) return 0;
-        int count = 0;
-        for (Pedido p : pedidos) {
-            if (p != null && Pedido.ESTADO_EN_REVISION.equals(p.getEstado())) {
-                count++;
-            }
-        }
-        return count;
+        return new int[]{eventosHoy, proximos7Dias, porAprobar, asignacionIncompleta};
     }
 
     /** Índice del día actual dentro de la semana, con el lunes como 0 y el domingo como 6. */
@@ -97,7 +83,7 @@ public final class DashboardUtils {
     /**
      * Cuenta los eventos programados para cada día de la semana actual (lunes a domingo).
      * Solo cuenta pedidos que aparecen en la agenda, por lo que excluye cancelados,
-     * rechazados y apartados vencidos.
+     * rechazados y solicitudes vencidas.
      */
     public static int[] eventosPorDiaSemana(List<Pedido> pedidos, long ahora) {
         int[] conteo = new int[7];
@@ -138,7 +124,7 @@ public final class DashboardUtils {
 
     /**
      * Paquetes con más pedidos cuyo evento ocurre a partir de {@code desdeMillis}.
-     * Excluye cancelados, rechazados y apartados vencidos.
+     * Excluye cancelados, rechazados y solicitudes vencidas.
      */
     public static List<ConteoPaquete> paquetesMasRentados(List<Pedido> pedidos, long desdeMillis, long ahora, int limite) {
         java.util.Map<String, Integer> conteo = new java.util.LinkedHashMap<>();
@@ -160,16 +146,16 @@ public final class DashboardUtils {
         return lista.size() > limite ? new java.util.ArrayList<>(lista.subList(0, limite)) : lista;
     }
 
-    /** Apartados vigentes ordenados por su vencimiento más cercano. */
-    public static List<Pedido> apartadosVigentes(List<Pedido> pedidos, long ahora) {
+    /** Solicitudes por aprobar vigentes, la del evento más próximo primero. */
+    public static List<Pedido> solicitudesPorAprobar(List<Pedido> pedidos, long ahora) {
         List<Pedido> lista = new java.util.ArrayList<>();
         if (pedidos == null) return lista;
         for (Pedido p : pedidos) {
-            if (p != null && Pedido.ESTADO_APARTADO.equals(p.getEstado()) && p.getVencimientoApartadoMillis() > ahora) {
+            if (p != null && Pedido.ESTADO_POR_APROBAR.equals(p.getEstado()) && p.getInicioMillis() > ahora) {
                 lista.add(p);
             }
         }
-        java.util.Collections.sort(lista, (a, b) -> Long.compare(a.getVencimientoApartadoMillis(), b.getVencimientoApartadoMillis()));
+        java.util.Collections.sort(lista, (a, b) -> Long.compare(a.getInicioMillis(), b.getInicioMillis()));
         return lista;
     }
 }

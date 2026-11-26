@@ -108,13 +108,13 @@
                             tools:text="+$500.00 por hora extra" />
 
                         <TextView
-                            android:id="@+id/tvAnticipoDetalle"
+                            android:id="@+id/tvPagoInfoDetalle"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:textColor="?attr/colorOnSurfaceVariant"
                             android:textAppearance="?attr/textAppearanceBodyLarge"
-                            tools:text="Anticipo: 30% ($1,050.00)" />
+                            tools:text="Pagas al negocio en efectivo o por transferencia." />
 
                     </LinearLayout>
 
@@ -135,7 +135,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/paquete_detalle_cancelaciones_titulo"
+                            android:text="@string/paquete_detalle_como_funciona_titulo"
                             android:textColor="?attr/colorOnSurface"
                             android:textAppearance="?attr/textAppearanceTitleMedium" />
 
@@ -143,7 +143,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/spacing_small"
-                            android:text="@string/cancelacion_politica_100"
+                            android:text="@string/paquete_como_funciona_1"
                             android:textColor="?attr/colorOnSurfaceVariant"
                             android:textAppearance="?attr/textAppearanceBodyLarge" />
 
@@ -151,7 +151,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:text="@string/cancelacion_politica_50"
+                            android:text="@string/paquete_como_funciona_2"
                             android:textColor="?attr/colorOnSurfaceVariant"
                             android:textAppearance="?attr/textAppearanceBodyLarge" />
 
@@ -159,7 +159,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:text="@string/cancelacion_politica_0"
+                            android:text="@string/paquete_como_funciona_3"
                             android:textColor="?attr/colorOnSurfaceVariant"
                             android:textAppearance="?attr/textAppearanceBodyLarge" />
 

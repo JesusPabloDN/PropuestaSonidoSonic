@@ -55,7 +55,7 @@
                 android:paddingEnd="@dimen/spacing_small"
                 android:paddingBottom="2dp"
                 android:textAppearance="?attr/textAppearanceLabelMedium"
-                tools:text="Apartado" />
+                tools:text="Por aprobar" />
 
         </LinearLayout>
 
@@ -108,9 +108,9 @@
             android:layout_marginTop="@dimen/spacing_tiny"
             android:textColor="?attr/colorOnSurface"
             android:textAppearance="?attr/textAppearanceTitleMedium"
-            tools:text="Anticipo pendiente: $1,050.00" />
+            tools:text="Monto a pagar: $3,500.00" />
 
-        <!-- Cuenta regresiva de vencimiento (para apartados) -->
+        <!-- Tiempo para que venza una solicitud por aprobar -->
         <TextView
             android:id="@+id/tvVencimiento"
             android:layout_width="match_parent"

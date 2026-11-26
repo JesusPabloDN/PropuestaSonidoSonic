@@ -83,7 +83,7 @@ public class AgendaFragment extends Fragment implements CalendarioAdapter.OnDiaC
         public void run() {
             if (isAdded()) {
                 if (pedidoRepository != null) {
-                    pedidoRepository.liberarApartadosVencidos();
+                    pedidoRepository.actualizarEstadosPorTiempo();
                 }
                 actualizarTodo();
                 refreshHandler.postDelayed(this, INTERVALO_REFRESCO_MS);
@@ -324,7 +324,7 @@ public class AgendaFragment extends Fragment implements CalendarioAdapter.OnDiaC
     public void onResume() {
         super.onResume();
         if (pedidoRepository != null) {
-            pedidoRepository.liberarApartadosVencidos();
+            pedidoRepository.actualizarEstadosPorTiempo();
         }
         actualizarTodo();
         refreshHandler.postDelayed(refreshRunnable, INTERVALO_REFRESCO_MS);

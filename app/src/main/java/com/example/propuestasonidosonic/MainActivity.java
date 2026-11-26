@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvDrawerSeccionCuentaNegocio;
     private LinearLayout drawerItemPerfil;
     private LinearLayout drawerItemPoliticas;
+    private LinearLayout drawerItemImpresora;
     private TextView tvDrawerSeccionInformacion;
     private LinearLayout drawerItemAyuda;
     private LinearLayout drawerItemAcercaDe;
@@ -104,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
         tvDrawerSeccionCuentaNegocio = findViewById(R.id.tvDrawerSeccionCuentaNegocio);
         drawerItemPerfil = findViewById(R.id.drawerItemPerfil);
         drawerItemPoliticas = findViewById(R.id.drawerItemPoliticas);
+        drawerItemImpresora = findViewById(R.id.drawerItemImpresora);
         tvDrawerSeccionInformacion = findViewById(R.id.tvDrawerSeccionInformacion);
         drawerItemAyuda = findViewById(R.id.drawerItemAyuda);
         drawerItemAcercaDe = findViewById(R.id.drawerItemAcercaDe);
@@ -260,6 +262,7 @@ public class MainActivity extends AppCompatActivity {
         // Pantallas compartidas y secundarias: ocultar bottom navigation
         if (destinationId == R.id.perfilFragment || destinationId == R.id.ayudaFragment ||
             destinationId == R.id.acercaDeFragment || destinationId == R.id.politicasFragment ||
+            destinationId == R.id.impresoraFragment ||
             destinationId == R.id.usuariosFragment || destinationId == R.id.clientesFragment) {
             bottomNavigationView.setVisibility(View.GONE);
             return;
@@ -310,6 +313,7 @@ public class MainActivity extends AppCompatActivity {
         resaltarItem(drawerItemClientes, destinationId == R.id.clientesFragment);
         resaltarItem(drawerItemPerfil, destinationId == R.id.perfilFragment);
         resaltarItem(drawerItemPoliticas, destinationId == R.id.politicasFragment);
+        resaltarItem(drawerItemImpresora, destinationId == R.id.impresoraFragment);
         resaltarItem(drawerItemAyuda, destinationId == R.id.ayudaFragment);
         resaltarItem(drawerItemAcercaDe, destinationId == R.id.acercaDeFragment);
     }
@@ -370,6 +374,7 @@ public class MainActivity extends AppCompatActivity {
                 tvDrawerSeccionCuentaNegocio.setVisibility(esSocio ? View.VISIBLE : View.GONE);
                 drawerItemPerfil.setVisibility(View.VISIBLE);
                 drawerItemPoliticas.setVisibility(esSocio ? View.VISIBLE : View.GONE);
+                drawerItemImpresora.setVisibility(esSocio ? View.VISIBLE : View.GONE);
                 tvDrawerSeccionInformacion.setVisibility(View.VISIBLE);
                 drawerItemAyuda.setVisibility(View.VISIBLE);
                 drawerItemAcercaDe.setVisibility(View.VISIBLE);
@@ -399,6 +404,7 @@ public class MainActivity extends AppCompatActivity {
                 tvDrawerSeccionCuentaNegocio.setVisibility(View.GONE);
                 drawerItemPerfil.setVisibility(View.GONE);
                 drawerItemPoliticas.setVisibility(View.GONE);
+                drawerItemImpresora.setVisibility(View.GONE);
                 bottomNavigationView.getMenu().clear();
                 irAlLoginSiNoHaySesion();
             }
@@ -413,6 +419,7 @@ public class MainActivity extends AppCompatActivity {
         drawerItemClientes.setOnClickListener(v -> navegarDesdeDrawer(R.id.clientesFragment));
         drawerItemPerfil.setOnClickListener(v -> navegarDesdeDrawer(R.id.perfilFragment));
         drawerItemPoliticas.setOnClickListener(v -> navegarDesdeDrawer(R.id.politicasFragment));
+        drawerItemImpresora.setOnClickListener(v -> navegarDesdeDrawer(R.id.impresoraFragment));
         drawerItemAyuda.setOnClickListener(v -> navegarDesdeDrawer(R.id.ayudaFragment));
         drawerItemAcercaDe.setOnClickListener(v -> navegarDesdeDrawer(R.id.acercaDeFragment));
 
@@ -465,7 +472,8 @@ public class MainActivity extends AppCompatActivity {
                     if (currentId == R.id.perfilFragment ||
                         currentId == R.id.ayudaFragment ||
                         currentId == R.id.acercaDeFragment ||
-                        currentId == R.id.politicasFragment) {
+                        currentId == R.id.politicasFragment ||
+                        currentId == R.id.impresoraFragment) {
                         if (navController.popBackStack()) {
                             return;
                         }
@@ -533,4 +541,4 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
     }
-}
+}

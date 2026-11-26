@@ -187,9 +187,6 @@
             <action
                 android:id="@+id/action_clientePedidos_to_detalle"
                 app:destination="@id/clientePedidoDetalleFragment" />
-            <action
-                android:id="@+id/action_clientePedidos_to_pagoAnticipo"
-                app:destination="@id/pagoAnticipoFragment" />
         </fragment>
 
         <fragment
@@ -200,9 +197,6 @@
             <argument
                 android:name="pedidoId"
                 app:argType="string" />
-            <action
-                android:id="@+id/action_clientePedidoDetalle_to_pagoAnticipo"
-                app:destination="@id/pagoAnticipoFragment" />
         </fragment>
 
         <fragment
@@ -227,30 +221,10 @@
                 android:name="paqueteId"
                 app:argType="string" />
             <action
-                android:id="@+id/action_reservar_to_pagoAnticipo"
-                app:destination="@id/pagoAnticipoFragment"
+                android:id="@+id/action_reservar_to_clientePedidoDetalle"
+                app:destination="@id/clientePedidoDetalleFragment"
                 app:popUpTo="@id/reservarFragment"
                 app:popUpToInclusive="true" />
-        </fragment>
-
-        <fragment
-            android:id="@+id/pagoAnticipoFragment"
-            android:name="com.example.propuestasonidosonic.ui.cliente.PagoAnticipoFragment"
-            android:label="@string/titulo_pago_anticipo"
-            tools:layout="@layout/fragment_pago_anticipo">
-            <argument
-                android:name="pedidoId"
-                app:argType="string" />
-            <action
-                android:id="@+id/action_pagoAnticipo_to_clienteHome"
-                app:destination="@id/clienteHomeFragment"
-                app:popUpTo="@id/clienteHomeFragment"
-                app:popUpToInclusive="false" />
-            <action
-                android:id="@+id/action_pagoAnticipo_to_clientePedidos"
-                app:destination="@id/nav_cliente_pedidos"
-                app:popUpTo="@id/clienteHomeFragment"
-                app:popUpToInclusive="false" />
         </fragment>
 
     </navigation>
@@ -312,5 +286,11 @@
         android:name="com.example.propuestasonidosonic.ui.socio.PoliticasFragment"
         android:label="@string/titulo_politicas_negocio"
         tools:layout="@layout/fragment_politicas" />
+
+    <fragment
+        android:id="@+id/impresoraFragment"
+        android:name="com.example.propuestasonidosonic.ui.socio.ImpresoraFragment"
+        android:label="@string/titulo_impresora"
+        tools:layout="@layout/fragment_impresora" />
 
 </navigation>

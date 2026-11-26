@@ -183,12 +183,4 @@ public class ClientePedidosFragment extends Fragment implements PedidoClienteAda
         args.putString("pedidoId", pedido.getId());
         Navigation.findNavController(requireView()).navigate(R.id.action_clientePedidos_to_detalle, args);
     }
-
-    @Override
-    public void onPagarAnticipoClick(Pedido pedido) {
-        if (pedido == null || !isAdded()) return;
-        Bundle args = new Bundle();
-        args.putString("pedidoId", pedido.getId());
-        Navigation.findNavController(requireView()).navigate(R.id.action_clientePedidos_to_pagoAnticipo, args);
-    }
 }

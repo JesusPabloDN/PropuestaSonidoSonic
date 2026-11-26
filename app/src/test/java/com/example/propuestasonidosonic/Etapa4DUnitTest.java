@@ -24,7 +24,6 @@ public class Etapa4DUnitTest {
         p.setEstado(estado);
         p.setInicioMillis(inicioMillis);
         p.setFinMillis(finMillis);
-        p.setVencimientoApartadoMillis(vencimientoMillis);
         p.setNombreEvento("Evento " + id);
         p.setPaqueteNombre("Paquete Prueba");
         p.setClienteNombre("Cliente Prueba");
@@ -37,23 +36,21 @@ public class Etapa4DUnitTest {
 
         // Estados que siempre aparecen
         Pedido pConfirmado = crearPedido("1", Pedido.ESTADO_CONFIRMADO, ahora, ahora + 3600_000L, 0);
-        Pedido pPagado = crearPedido("2", Pedido.ESTADO_PAGADO, ahora, ahora + 3600_000L, 0);
-        Pedido pEnRevision = crearPedido("3", Pedido.ESTADO_EN_REVISION, ahora, ahora + 3600_000L, 0);
-        Pedido pCompletado = crearPedido("4", Pedido.ESTADO_COMPLETADO, ahora, ahora + 3600_000L, 0);
+        Pedido pPorCobrar = crearPedido("2", Pedido.ESTADO_POR_COBRAR, ahora, ahora + 3600_000L, 0);
+        Pedido pFinalizado = crearPedido("4", Pedido.ESTADO_FINALIZADO, ahora, ahora + 3600_000L, 0);
 
         assertTrue("Confirmado debe aparecer", AgendaUtils.apareceEnAgenda(pConfirmado, ahora));
-        assertTrue("Pagado debe aparecer", AgendaUtils.apareceEnAgenda(pPagado, ahora));
-        assertTrue("En revisión debe aparecer", AgendaUtils.apareceEnAgenda(pEnRevision, ahora));
-        assertTrue("Completado debe aparecer", AgendaUtils.apareceEnAgenda(pCompletado, ahora));
+        assertTrue("Por cobrar debe aparecer", AgendaUtils.apareceEnAgenda(pPorCobrar, ahora));
+        assertTrue("Finalizado debe aparecer", AgendaUtils.apareceEnAgenda(pFinalizado, ahora));
 
-        // APARTADO vigente vs vencido según parámetro 'ahora'
-        Pedido pApartadoVigente = crearPedido("5", Pedido.ESTADO_APARTADO, ahora + 86400_000L, ahora + 90000_000L, ahora + 3600_000L);
-        Pedido pApartadoVencido = crearPedido("6", Pedido.ESTADO_APARTADO, ahora + 86400_000L, ahora + 90000_000L, ahora - 60_000L);
-        Pedido pApartadoJustoVencido = crearPedido("7", Pedido.ESTADO_APARTADO, ahora + 86400_000L, ahora + 90000_000L, ahora);
+        // POR_APROBAR aparece mientras su evento no haya empezado
+        Pedido pPorAprobarVigente = crearPedido("5", Pedido.ESTADO_POR_APROBAR, ahora + 86400_000L, ahora + 90000_000L, 0);
+        Pedido pPorAprobarPasado = crearPedido("6", Pedido.ESTADO_POR_APROBAR, ahora - 60_000L, ahora + 3600_000L, 0);
+        Pedido pPorAprobarJusto = crearPedido("7", Pedido.ESTADO_POR_APROBAR, ahora, ahora + 3600_000L, 0);
 
-        assertTrue("Apartado con vencimiento > ahora debe aparecer", AgendaUtils.apareceEnAgenda(pApartadoVigente, ahora));
-        assertFalse("Apartado con vencimiento < ahora NO debe aparecer", AgendaUtils.apareceEnAgenda(pApartadoVencido, ahora));
-        assertFalse("Apartado con vencimiento == ahora NO debe aparecer", AgendaUtils.apareceEnAgenda(pApartadoJustoVencido, ahora));
+        assertTrue("Solicitud con evento futuro debe aparecer", AgendaUtils.apareceEnAgenda(pPorAprobarVigente, ahora));
+        assertFalse("Solicitud cuyo evento ya empezó NO debe aparecer", AgendaUtils.apareceEnAgenda(pPorAprobarPasado, ahora));
+        assertFalse("Solicitud con inicio == ahora NO debe aparecer", AgendaUtils.apareceEnAgenda(pPorAprobarJusto, ahora));
 
         // Estados excluidos
         Pedido pCancelado = crearPedido("8", Pedido.ESTADO_CANCELADO, ahora, ahora + 3600_000L, 0);
@@ -132,16 +129,16 @@ public class Etapa4DUnitTest {
     public void test04_marcadoresDia() {
         long ini = TiempoUtils.construir(2026, 9, 12, 10 * 60);
         Pedido c1 = crearPedido("C1", Pedido.ESTADO_CONFIRMADO, ini, ini + 3600_000L, 0);
-        Pedido c2 = crearPedido("C2", Pedido.ESTADO_COMPLETADO, ini, ini + 3600_000L, 0);
-        Pedido c3 = crearPedido("C3", Pedido.ESTADO_PAGADO, ini, ini + 3600_000L, 0);
-        Pedido a1 = crearPedido("A1", Pedido.ESTADO_APARTADO, ini, ini + 3600_000L, ini + 7200_000L);
-        Pedido a2 = crearPedido("A2", Pedido.ESTADO_APARTADO, ini, ini + 3600_000L, ini + 7200_000L);
+        Pedido c2 = crearPedido("C2", Pedido.ESTADO_FINALIZADO, ini, ini + 3600_000L, 0);
+        Pedido c3 = crearPedido("C3", Pedido.ESTADO_POR_COBRAR, ini, ini + 3600_000L, 0);
+        Pedido a1 = crearPedido("A1", Pedido.ESTADO_POR_APROBAR, ini, ini + 3600_000L, 0);
+        Pedido a2 = crearPedido("A2", Pedido.ESTADO_POR_APROBAR, ini, ini + 3600_000L, 0);
 
         List<Pedido> diaMix = Arrays.asList(c1, c2, c3, a1, a2);
         int[] marcadores = AgendaUtils.marcadoresDia(diaMix);
 
-        assertEquals("Confirmados/completados/pagados deben ser 3", 3, marcadores[0]);
-        assertEquals("Apartados deben ser 2", 2, marcadores[1]);
+        assertEquals("Confirmados/por cobrar/finalizados deben ser 3", 3, marcadores[0]);
+        assertEquals("Solicitudes por aprobar deben ser 2", 2, marcadores[1]);
 
         int[] vacio = AgendaUtils.marcadoresDia(new ArrayList<>());
         assertEquals(0, vacio[0]);

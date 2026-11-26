@@ -4,13 +4,8 @@ import com.example.propuestasonidosonic.util.Config;
 
 public class PoliticasNegocio {
 
-    private final int porcentajeAnticipo;
-    private final int minutosApartadoApp;
-    private final int[] opcionesHorasApartadoManual;
     private final int horasRevision;
-    private final int diasReembolsoTotal;
-    private final int horasTramoParcial;
-    private final int porcentajeReembolsoParcial;
+    private final int solicitudesPorAprobarMax;
     private final int bufferMontajeMin;
     private final int bufferDesmontajeMin;
     private final int maxEventosSimultaneos;
@@ -21,22 +16,13 @@ public class PoliticasNegocio {
     private final int duracionMaxMin;
     private final boolean preferirAsistentes;
 
-    public PoliticasNegocio(int porcentajeAnticipo, int minutosApartadoApp,
-                            int[] opcionesHorasApartadoManual, int horasRevision,
-                            int diasReembolsoTotal, int horasTramoParcial,
-                            int porcentajeReembolsoParcial, int bufferMontajeMin,
+    public PoliticasNegocio(int horasRevision, int solicitudesPorAprobarMax, int bufferMontajeMin,
                             int bufferDesmontajeMin, int maxEventosSimultaneos,
                             int primerInicioMin, int ultimoInicioMin,
                             int pasoHorarioMin, int duracionMinMin,
                             int duracionMaxMin, boolean preferirAsistentes) {
-        this.porcentajeAnticipo = porcentajeAnticipo;
-        this.minutosApartadoApp = minutosApartadoApp;
-        this.opcionesHorasApartadoManual = opcionesHorasApartadoManual != null
-                ? opcionesHorasApartadoManual.clone() : new int[0];
         this.horasRevision = horasRevision;
-        this.diasReembolsoTotal = diasReembolsoTotal;
-        this.horasTramoParcial = horasTramoParcial;
-        this.porcentajeReembolsoParcial = porcentajeReembolsoParcial;
+        this.solicitudesPorAprobarMax = solicitudesPorAprobarMax;
         this.bufferMontajeMin = bufferMontajeMin;
         this.bufferDesmontajeMin = bufferDesmontajeMin;
         this.maxEventosSimultaneos = maxEventosSimultaneos;
@@ -50,13 +36,8 @@ public class PoliticasNegocio {
 
     public static PoliticasNegocio actual() {
         return new PoliticasNegocio(
-                (int) Math.round(Config.ANTICIPO_PORCENTAJE * 100),
-                Config.APARTADO_APP_MIN,
-                Config.APARTADO_MANUAL_OPCIONES_HORAS,
                 Config.ANTICIPACION_REVISION_HORAS,
-                Config.REEMBOLSO_TOTAL_DIAS,
-                Config.REEMBOLSO_PARCIAL_HORAS,
-                (int) Math.round(Config.REEMBOLSO_PARCIAL_PORCENTAJE * 100),
+                Config.SOLICITUDES_POR_APROBAR_MAX,
                 Config.BUFFER_MONTAJE_MIN_DEFAULT,
                 Config.BUFFER_DESMONTAJE_MIN_DEFAULT,
                 Config.MAX_EVENTOS_SIMULTANEOS,
@@ -69,36 +50,12 @@ public class PoliticasNegocio {
         );
     }
 
-    public int getPorcentajeAnticipo() {
-        return porcentajeAnticipo;
-    }
-
-    public int getMinutosApartadoApp() {
-        return minutosApartadoApp;
-    }
-
-    public int[] getOpcionesHorasApartadoManual() {
-        return opcionesHorasApartadoManual.clone();
-    }
-
     public int getHorasRevision() {
         return horasRevision;
     }
 
-    public int diasReembolsoTotal() {
-        return diasReembolsoTotal;
-    }
-
-    public int getDiasReembolsoTotal() {
-        return diasReembolsoTotal;
-    }
-
-    public int getHorasTramoParcial() {
-        return horasTramoParcial;
-    }
-
-    public int getPorcentajeReembolsoParcial() {
-        return porcentajeReembolsoParcial;
+    public int getSolicitudesPorAprobarMax() {
+        return solicitudesPorAprobarMax;
     }
 
     public int getBufferMontajeMin() {

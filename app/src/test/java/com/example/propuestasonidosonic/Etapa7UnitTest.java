@@ -10,7 +10,6 @@ import com.example.propuestasonidosonic.domain.PerfilUtils;
 import com.example.propuestasonidosonic.domain.PoliticasNegocio;
 import com.example.propuestasonidosonic.model.CategoriaEquipo;
 import com.example.propuestasonidosonic.model.Equipo;
-import com.example.propuestasonidosonic.model.Pago;
 import com.example.propuestasonidosonic.model.Pedido;
 import com.example.propuestasonidosonic.model.Usuario;
 import com.example.propuestasonidosonic.util.Config;
@@ -258,12 +257,8 @@ public class Etapa7UnitTest {
     public void testPoliticasNegocioReflejaConfig() {
         PoliticasNegocio p = PoliticasNegocio.actual();
         assertNotNull(p);
-        assertEquals(30, p.getPorcentajeAnticipo());
-        assertEquals(30, p.getMinutosApartadoApp());
         assertEquals(48, p.getHorasRevision());
-        assertEquals(7, p.getDiasReembolsoTotal());
-        assertEquals(72, p.getHorasTramoParcial());
-        assertEquals(50, p.getPorcentajeReembolsoParcial());
+        assertEquals(Config.SOLICITUDES_POR_APROBAR_MAX, p.getSolicitudesPorAprobarMax());
         assertEquals(Config.MAX_EVENTOS_SIMULTANEOS, p.getMaxEventosSimultaneos());
         assertEquals(Config.PRIMER_INICIO_MIN, p.getPrimerInicioMin());
         assertEquals(Config.ULTIMO_INICIO_MIN, p.getUltimoInicioMin());
@@ -273,10 +268,6 @@ public class Etapa7UnitTest {
         assertEquals(Config.PREFERIR_ASISTENTES, p.isPreferirAsistentes());
         assertEquals(Config.BUFFER_MONTAJE_MIN_DEFAULT, p.getBufferMontajeMin());
         assertEquals(Config.BUFFER_DESMONTAJE_MIN_DEFAULT, p.getBufferDesmontajeMin());
-
-        int[] opcionesManual = p.getOpcionesHorasApartadoManual();
-        assertNotNull(opcionesManual);
-        assertEquals(Config.APARTADO_MANUAL_OPCIONES_HORAS.length, opcionesManual.length);
     }
 
     // 5. ActividadRecienteUtils.ultimoPedido
@@ -323,8 +314,8 @@ public class Etapa7UnitTest {
 
         // Pedidos excluidos por estado
         Pedido pedApartado = new Pedido();
-        pedApartado.setId("apartado");
-        pedApartado.setEstado(Pedido.ESTADO_APARTADO);
+        pedApartado.setId("por_aprobar");
+        pedApartado.setEstado(Pedido.ESTADO_POR_APROBAR);
         pedApartado.setInicioMillis(110_000L);
         pedApartado.setFinMillis(150_000L);
 
@@ -348,7 +339,7 @@ public class Etapa7UnitTest {
 
         Pedido pedCompletado = new Pedido();
         pedCompletado.setId("completado");
-        pedCompletado.setEstado(Pedido.ESTADO_COMPLETADO);
+        pedCompletado.setEstado(Pedido.ESTADO_FINALIZADO);
         pedCompletado.setInicioMillis(110_000L);
         pedCompletado.setFinMillis(150_000L);
 
@@ -365,14 +356,14 @@ public class Etapa7UnitTest {
         // Evento en curso (inicio <= ahora && fin > ahora)
         Pedido pedEnCurso = new Pedido();
         pedEnCurso.setId("en_curso");
-        pedEnCurso.setEstado(Pedido.ESTADO_PAGADO);
+        pedEnCurso.setEstado(Pedido.ESTADO_CONFIRMADO);
         pedEnCurso.setInicioMillis(95_000L);
         pedEnCurso.setFinMillis(120_000L);
 
         // Evento futuro cercano
         Pedido pedFuturoCercano = new Pedido();
         pedFuturoCercano.setId("futuro_cercano");
-        pedFuturoCercano.setEstado(Pedido.ESTADO_EN_REVISION);
+        pedFuturoCercano.setEstado(Pedido.ESTADO_CONFIRMADO);
         pedFuturoCercano.setInicioMillis(130_000L);
         pedFuturoCercano.setFinMillis(160_000L);
 
@@ -396,23 +387,35 @@ public class Etapa7UnitTest {
         assertEquals("futuro_cercano", prox2.getId());
     }
 
-    // 7. ultimoPago y ultimoEquipoAgregado
+    // 7. ultimoPagoConfirmado y ultimoEquipoAgregado
     @Test
-    public void testUltimoPago() {
-        assertNull(ActividadRecienteUtils.ultimoPago(null));
-        assertNull(ActividadRecienteUtils.ultimoPago(Collections.emptyList()));
+    public void testUltimoPagoConfirmado() {
+        assertNull(ActividadRecienteUtils.ultimoPagoConfirmado(null));
+        assertNull(ActividadRecienteUtils.ultimoPagoConfirmado(Collections.emptyList()));
 
-        Pago pagoAnticipo = new Pago("pg1", "ped1", "cli1", 1000.0, Pago.TIPO_ANTICIPO, "Efectivo", 5000L);
-        Pago pagoLiquidacion = new Pago("pg2", "ped1", "cli1", 2000.0, Pago.TIPO_LIQUIDACION, "Tarjeta", 8000L);
-        Pago pagoReembolso = new Pago("pg3", "ped2", "cli2", 1000.0, Pago.TIPO_REEMBOLSO, "Transferencia", 12000L);
-        Pago pagoAbono = new Pago("pg4", "ped3", "cli3", 500.0, Pago.TIPO_ABONO, "Efectivo", 7000L);
+        Pedido pagado1 = new Pedido();
+        pagado1.setId("ped1");
+        pagado1.setPagoConfirmado(true);
+        pagado1.setMetodoPago(Pedido.METODO_EFECTIVO);
+        pagado1.setFechaPagoMillis(5000L);
 
-        List<Pago> pagos = Arrays.asList(pagoAnticipo, pagoReembolso, pagoLiquidacion, pagoAbono);
-        Pago ult = ActividadRecienteUtils.ultimoPago(pagos);
+        Pedido pagado2 = new Pedido();
+        pagado2.setId("ped2");
+        pagado2.setPagoConfirmado(true);
+        pagado2.setMetodoPago(Pedido.METODO_TRANSFERENCIA);
+        pagado2.setFechaPagoMillis(12000L);
+
+        // Sin pago confirmado: no cuenta aunque se haya actualizado después
+        Pedido pendiente = new Pedido();
+        pendiente.setId("ped3");
+        pendiente.setFechaPagoMillis(20000L);
+
+        Pedido ult = ActividadRecienteUtils.ultimoPagoConfirmado(Arrays.asList(pagado1, pendiente, pagado2));
         assertNotNull(ult);
-        // Debe ser el reembolso con fecha 12000L
-        assertEquals("pg3", ult.getId());
-        assertEquals(Pago.TIPO_REEMBOLSO, ult.getTipo());
+        assertEquals("ped2", ult.getId());
+        assertEquals(Pedido.METODO_TRANSFERENCIA, ult.getMetodoPago());
+
+        assertNull(ActividadRecienteUtils.ultimoPagoConfirmado(Collections.singletonList(pendiente)));
     }
 
     @Test

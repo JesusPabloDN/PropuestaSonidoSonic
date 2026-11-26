@@ -20,11 +20,9 @@ import com.example.propuestasonidosonic.R;
 import com.example.propuestasonidosonic.SonidoSonicApp;
 import com.example.propuestasonidosonic.adapter.PedidoAdapter;
 import com.example.propuestasonidosonic.data.AppContainer;
-import com.example.propuestasonidosonic.data.PagoRepository;
 import com.example.propuestasonidosonic.data.PedidoRepository;
 import com.example.propuestasonidosonic.data.UsuarioRepository;
 import com.example.propuestasonidosonic.domain.ClienteUtils;
-import com.example.propuestasonidosonic.model.Pago;
 import com.example.propuestasonidosonic.model.Pedido;
 import com.example.propuestasonidosonic.model.Usuario;
 import com.example.propuestasonidosonic.util.FormatUtils;
@@ -53,11 +51,9 @@ public class ClienteDetalleFragment extends Fragment {
     private PedidoAdapter pedidoAdapter;
 
     private PedidoRepository pedidoRepository;
-    private PagoRepository pagoRepository;
     private UsuarioRepository usuarioRepository;
 
     private List<Pedido> todosLosPedidos = new ArrayList<>();
-    private List<Pago> todosLosPagos = new ArrayList<>();
     private List<Usuario> todosLosUsuarios = new ArrayList<>();
 
     @Nullable
@@ -77,7 +73,6 @@ public class ClienteDetalleFragment extends Fragment {
 
         AppContainer appContainer = SonidoSonicApp.getApp(requireContext()).getAppContainer();
         pedidoRepository = appContainer.getPedidoRepository();
-        pagoRepository = appContainer.getPagoRepository();
         usuarioRepository = appContainer.getUsuarioRepository();
 
         tvClienteDetalleNombre = view.findViewById(R.id.tvClienteDetalleNombre);
@@ -113,13 +108,6 @@ public class ClienteDetalleFragment extends Fragment {
             });
         }
 
-        if (pagoRepository != null) {
-            pagoRepository.getTodosLosPagos().observe(getViewLifecycleOwner(), pagos -> {
-                todosLosPagos = pagos != null ? new ArrayList<>(pagos) : new ArrayList<>();
-                actualizarUI();
-            });
-        }
-
         if (usuarioRepository != null) {
             usuarioRepository.getUsuarios().observe(getViewLifecycleOwner(), usuarios -> {
                 todosLosUsuarios = usuarios != null ? new ArrayList<>(usuarios) : new ArrayList<>();
@@ -131,7 +119,7 @@ public class ClienteDetalleFragment extends Fragment {
     private void actualizarUI() {
         if (!isAdded()) return;
 
-        List<ClienteUtils.ResumenCliente> resumenes = ClienteUtils.resumenes(todosLosPedidos, todosLosPagos, todosLosUsuarios);
+        List<ClienteUtils.ResumenCliente> resumenes = ClienteUtils.resumenes(todosLosPedidos, todosLosUsuarios);
         ClienteUtils.ResumenCliente cliente = null;
         for (ClienteUtils.ResumenCliente r : resumenes) {
             if (r.getClave().equals(clienteKey)) {

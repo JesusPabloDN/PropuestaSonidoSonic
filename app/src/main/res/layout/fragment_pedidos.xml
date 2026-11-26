@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:tabGravity="fill"
-            app:tabMode="fixed"
+            app:tabMode="auto"
             app:tabIndicatorFullWidth="true" />
 
         <FrameLayout
@@ -51,7 +51,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/empty_pedidos_por_pagar"
+                    android:text="@string/empty_pedidos_por_aprobar"
                     android:textColor="?attr/colorOnSurfaceVariant"
                     android:textAppearance="?attr/textAppearanceBodyLarge" />
 

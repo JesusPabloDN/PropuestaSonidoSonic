@@ -16,7 +16,7 @@
         android:paddingEnd="@dimen/spacing_large"
         android:paddingBottom="88dp">
 
-        <!-- Tarjeta 1: Reservas y anticipo -->
+        <!-- Tarjeta 1: Solicitudes y aprobación -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
                     android:textAppearance="?attr/textAppearanceTitleMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/politicas_seccion_reservas_anticipo"
+                    android:text="@string/politicas_seccion_reservas"
                     android:textColor="?attr/colorOnSurface" />
 
                 <TextView
@@ -42,13 +42,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_small"
                     android:textColor="?attr/colorOnSurface"
-                    tools:text="Anticipo del 30%..." />
+                    tools:text="Las reservas que hace un cliente..." />
 
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Tarjeta 2: Cancelaciones y reembolsos -->
+        <!-- Tarjeta 2: Cancelaciones -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
                     android:textAppearance="?attr/textAppearanceTitleMedium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/politicas_seccion_cancelaciones_reembolsos"
+                    android:text="@string/politicas_seccion_cancelaciones"
                     android:textColor="?attr/colorOnSurface" />
 
                 <TextView

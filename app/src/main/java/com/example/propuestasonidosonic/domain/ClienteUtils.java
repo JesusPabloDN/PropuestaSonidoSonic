@@ -1,6 +1,5 @@
 package com.example.propuestasonidosonic.domain;
 
-import com.example.propuestasonidosonic.model.Pago;
 import com.example.propuestasonidosonic.model.Pedido;
 import com.example.propuestasonidosonic.model.Usuario;
 
@@ -138,8 +137,7 @@ public final class ClienteUtils {
         String correo = null;
         String clienteId = null;
         int pedidosValidos = 0;
-        double ingresos = 0.0;
-        double reembolsos = 0.0;
+        double totalPagado = 0.0;
         double saldoPendiente = 0.0;
         long ultimoEventoMillis = 0L;
         long inicioMasReciente = -1L;
@@ -147,7 +145,7 @@ public final class ClienteUtils {
         final Set<String> pedidoIds = new HashSet<>();
     }
 
-    public static List<ResumenCliente> resumenes(List<Pedido> pedidos, List<Pago> pagos, List<Usuario> usuarios) {
+    public static List<ResumenCliente> resumenes(List<Pedido> pedidos, List<Usuario> usuarios) {
         Map<String, ClienteAcumulador> mapa = new HashMap<>();
 
         // 1. Mapear usuarios cliente para vincular correo y clienteId
@@ -206,16 +204,13 @@ public final class ClienteUtils {
                     }
                 }
 
-                // Pedidos válidos para totales
-                String st = p.getEstado();
-                boolean esValido = Pedido.ESTADO_CONFIRMADO.equals(st)
-                        || Pedido.ESTADO_PAGADO.equals(st)
-                        || Pedido.ESTADO_EN_REVISION.equals(st)
-                        || Pedido.ESTADO_COMPLETADO.equals(st);
-
-                if (esValido) {
+                // Pedidos aceptados para totales: lo pagado (confirmado por un socio) y lo que falta por pagar
+                if (EstadosPedido.esAceptado(p.getEstado())) {
                     ac.pedidosValidos++;
-                    ac.saldoPendiente += p.getSaldoPendiente();
+                    ac.saldoPendiente += EstadosPedido.montoPendiente(p);
+                }
+                if (p.isPagoConfirmado()) {
+                    ac.totalPagado += p.getTotal();
                 }
             }
         }
@@ -259,47 +254,10 @@ public final class ClienteUtils {
             }
         }
 
-        // 5. Mapear pagos de cada pedido a su cliente correspondiente
-        Map<String, ClienteAcumulador> pedidoIdToCliente = new HashMap<>();
-        for (ClienteAcumulador ac : mapa.values()) {
-            for (String pid : ac.pedidoIds) {
-                pedidoIdToCliente.put(pid, ac);
-            }
-        }
-
-        if (pagos != null) {
-            for (Pago pago : pagos) {
-                if (pago == null) continue;
-                ClienteAcumulador ac = null;
-                if (pago.getPedidoId() != null) {
-                    ac = pedidoIdToCliente.get(pago.getPedidoId());
-                }
-                if (ac == null && pago.getClienteId() != null) {
-                    String userKey = "id:" + pago.getClienteId();
-                    ac = mapa.get(userKey);
-                    if (ac == null) {
-                        Usuario u = usuariosPorId.get(pago.getClienteId());
-                        if (u != null) {
-                            String k = clave(u.getId(), u.getTelefono(), u.getNombre());
-                            ac = mapa.get(k);
-                        }
-                    }
-                }
-                if (ac != null) {
-                    String tipo = pago.getTipo();
-                    if (Pago.TIPO_ANTICIPO.equals(tipo) || Pago.TIPO_ABONO.equals(tipo) || Pago.TIPO_TOTAL.equals(tipo)) {
-                        ac.ingresos += pago.getMonto();
-                    } else if (Pago.TIPO_REEMBOLSO.equals(tipo)) {
-                        ac.reembolsos += pago.getMonto();
-                    }
-                }
-            }
-        }
-
         // 6. Construir lista final
         List<ResumenCliente> lista = new ArrayList<>();
         for (ClienteAcumulador ac : mapa.values()) {
-            double neto = MoneyUtils.redondear2(ac.ingresos - ac.reembolsos);
+            double neto = MoneyUtils.redondear2(ac.totalPagado);
             double saldo = MoneyUtils.redondear2(ac.saldoPendiente);
             lista.add(new ResumenCliente(
                     ac.clave,

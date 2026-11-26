@@ -17,7 +17,6 @@ public class NuevoPedidoViewModel extends ViewModel {
     private String direccion = "";
     private String notas = "";
     private String origen = Pedido.ORIGEN_LLAMADA;
-    private int horasApartado = 24;
 
     public Paquete getPaqueteSeleccionado() {
         return paqueteSeleccionado;
@@ -99,11 +98,5 @@ public class NuevoPedidoViewModel extends ViewModel {
         this.origen = origen;
     }
 
-    public int getHorasApartado() {
-        return horasApartado;
-    }
 
-    public void setHorasApartado(int horasApartado) {
-        this.horasApartado = horasApartado;
-    }
 }

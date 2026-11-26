@@ -33,9 +33,7 @@ public final class AsistenteUtils {
         for (Pedido p : pedidos) {
             if (p == null) continue;
             String estado = p.getEstado();
-            if (Pedido.ESTADO_CONFIRMADO.equals(estado)
-                    || Pedido.ESTADO_PAGADO.equals(estado)
-                    || Pedido.ESTADO_COMPLETADO.equals(estado)) {
+            if (EstadosPedido.esAceptado(estado)) {
                 if (p.getOperadorIds() != null && p.getOperadorIds().contains(asistenteId)) {
                     resultado.add(p);
                 }
@@ -60,7 +58,7 @@ public final class AsistenteUtils {
 
         for (Pedido p : pedidos) {
             if (p == null) continue;
-            if (finBloqueoMillis(p) > ahora && !Pedido.ESTADO_COMPLETADO.equals(p.getEstado())) {
+            if (finBloqueoMillis(p) > ahora && !EstadosPedido.esRealizado(p.getEstado())) {
                 resultado.add(p);
             }
         }
@@ -79,7 +77,7 @@ public final class AsistenteUtils {
 
         for (Pedido p : pedidos) {
             if (p == null) continue;
-            if (finBloqueoMillis(p) <= ahora || Pedido.ESTADO_COMPLETADO.equals(p.getEstado())) {
+            if (finBloqueoMillis(p) <= ahora || EstadosPedido.esRealizado(p.getEstado())) {
                 resultado.add(p);
             }
         }

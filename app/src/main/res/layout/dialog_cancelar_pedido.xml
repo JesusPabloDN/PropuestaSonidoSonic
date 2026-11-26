@@ -42,18 +42,6 @@
 
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
-    <!-- Resumen del reembolso calculado -->
-    <TextView
-        android:id="@+id/tvReembolsoCalculado"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/spacing_medium"
-        android:background="@drawable/bg_aviso"
-        android:padding="@dimen/spacing_medium"
-        android:textColor="?attr/colorOnSurface"
-        android:textAppearance="?attr/textAppearanceTitleMedium"
-        tools:text="Reembolso a realizar: $1,050.00" />
-
     <!-- Motivo de cancelación -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilMotivoCancelacion"

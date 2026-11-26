@@ -183,7 +183,7 @@ public class EventoAgendaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             tvNombreEvento.setText(pedido.getNombreEvento() != null ? pedido.getNombreEvento() : "");
 
             // Badge de estado
-            pintarBadgeEstado(ctx, pedido.getEstado());
+            BadgeUtils.pintarEstadoPedido(tvEstadoBadge, pedido.getEstado());
 
             // Paquete · Cliente
             String paquete = pedido.getPaqueteNombre() != null ? pedido.getPaqueteNombre() : "";
@@ -221,61 +221,6 @@ public class EventoAgendaAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     listener.onEventoClick(pedido);
                 }
             });
-        }
-
-        private void pintarBadgeEstado(Context ctx, String estado) {
-            if (estado == null) estado = Pedido.ESTADO_APARTADO;
-
-            int colorTexto;
-            int colorFondo;
-            int textoRes;
-
-            switch (estado) {
-                case Pedido.ESTADO_APARTADO:
-                    textoRes = R.string.badge_apartado;
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoPendienteContainer);
-                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendienteContainer);
-                    break;
-                case Pedido.ESTADO_EN_REVISION:
-                    textoRes = R.string.badge_en_revision;
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoPendienteContainer);
-                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendienteContainer);
-                    break;
-                case Pedido.ESTADO_CONFIRMADO:
-                    textoRes = R.string.badge_confirmado;
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDisponibleContainer);
-                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponibleContainer);
-                    break;
-                case Pedido.ESTADO_PAGADO:
-                    textoRes = R.string.badge_pagado;
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDisponibleContainer);
-                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponibleContainer);
-                    break;
-                case Pedido.ESTADO_COMPLETADO:
-                    textoRes = R.string.badge_completado;
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoRentadoContainer);
-                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoRentadoContainer);
-                    break;
-                case Pedido.ESTADO_CANCELADO:
-                    textoRes = R.string.badge_cancelado;
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDanadoContainer);
-                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanadoContainer);
-                    break;
-                case Pedido.ESTADO_RECHAZADO:
-                    textoRes = R.string.badge_rechazado;
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDanadoContainer);
-                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanadoContainer);
-                    break;
-                case Pedido.ESTADO_VENCIDO:
-                default:
-                    textoRes = R.string.badge_vencido;
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDanadoContainer);
-                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanadoContainer);
-                    break;
-            }
-
-            tvEstadoBadge.setText(textoRes);
-            BadgeUtils.pintar(tvEstadoBadge, colorTexto, colorFondo);
         }
     }
 }

@@ -6,7 +6,6 @@ import com.example.propuestasonidosonic.data.Callback;
 import com.example.propuestasonidosonic.data.memory.InMemoryDiaOperativoRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryEquipoRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryEventoRepository;
-import com.example.propuestasonidosonic.data.memory.InMemoryPagoRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryPaqueteRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryPedidoRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryUsuarioRepository;
@@ -18,7 +17,6 @@ import com.example.propuestasonidosonic.model.ComponentePaquete;
 import com.example.propuestasonidosonic.model.DiaOperativo;
 import com.example.propuestasonidosonic.model.Equipo;
 import com.example.propuestasonidosonic.model.Evento;
-import com.example.propuestasonidosonic.model.Pago;
 import com.example.propuestasonidosonic.model.Paquete;
 import com.example.propuestasonidosonic.model.Pedido;
 import com.example.propuestasonidosonic.model.Usuario;
@@ -70,7 +68,6 @@ public class Etapa5BUnitTest {
     private InMemoryPaqueteRepository paqueteRepo;
     private InMemoryUsuarioRepository usuarioRepo;
     private InMemoryDiaOperativoRepository diaRepo;
-    private InMemoryPagoRepository pagoRepo;
     private InMemoryEventoRepository eventoRepo;
     private InMemoryPedidoRepository pedidoRepo;
 
@@ -87,7 +84,6 @@ public class Etapa5BUnitTest {
         paqueteRepo = new InMemoryPaqueteRepository(equipoRepo);
         usuarioRepo = new InMemoryUsuarioRepository(null);
         diaRepo = new InMemoryDiaOperativoRepository();
-        pagoRepo = new InMemoryPagoRepository(reloj);
         eventoRepo = new InMemoryEventoRepository();
 
         equipoRepo.setEventoRepository(eventoRepo);
@@ -97,7 +93,6 @@ public class Etapa5BUnitTest {
                 paqueteRepo,
                 usuarioRepo,
                 diaRepo,
-                pagoRepo,
                 eventoRepo,
                 reloj
         );
@@ -171,27 +166,26 @@ public class Etapa5BUnitTest {
     }
 
     // 2. esVisible/activos/historial:
-    //    apartado vigente y confirmados futuros son activos;
+    //    solicitud por aprobar vigente y confirmados futuros son activos;
     //    confirmado cuyo bloqueo ya terminó va al historial;
     //    cancelado y rechazado van al historial;
-    //    vencido y apartado vencido no aparecen en ninguna;
+    //    vencido y solicitud cuyo evento ya empezó no aparecen en ninguna;
     //    orden ascendente en activos y descendente en historial.
     @Test
     public void test02_esVisible_activos_historial() {
-        // A. Apartado vigente (vence en 20 min) -> visible y activo
+        // A. Solicitud por aprobar con evento en 3 días -> visible y activa
         Pedido pApartadoVigente = new Pedido();
         pApartadoVigente.setId("p-ap-vig");
-        pApartadoVigente.setEstado(Pedido.ESTADO_APARTADO);
-        pApartadoVigente.setVencimientoApartadoMillis(ahoraFijo + 20 * 60_000L);
+        pApartadoVigente.setEstado(Pedido.ESTADO_POR_APROBAR);
         pApartadoVigente.setInicioMillis(ahoraFijo + 72 * 3600_000L);
         pApartadoVigente.setFinMillis(ahoraFijo + 76 * 3600_000L);
 
-        // B. Apartado vencido (venció hace 5 min) -> invisible
+        // B. Solicitud por aprobar cuyo evento ya empezó (está por vencer) -> invisible
         Pedido pApartadoVencido = new Pedido();
         pApartadoVencido.setId("p-ap-venc");
-        pApartadoVencido.setEstado(Pedido.ESTADO_APARTADO);
-        pApartadoVencido.setVencimientoApartadoMillis(ahoraFijo - 5 * 60_000L);
-        pApartadoVencido.setInicioMillis(ahoraFijo + 72 * 3600_000L);
+        pApartadoVencido.setEstado(Pedido.ESTADO_POR_APROBAR);
+        pApartadoVencido.setInicioMillis(ahoraFijo - 5 * 60_000L);
+        pApartadoVencido.setFinMillis(ahoraFijo + 4 * 3600_000L);
 
         // C. Vencido explícito -> invisible
         Pedido pVencido = new Pedido();
@@ -266,45 +260,29 @@ public class Etapa5BUnitTest {
         assertEquals("p-conf-pasado", historial.get(2).getId());
     }
 
-    // 3. puedeCancelar:
-    //    cierto para apartado vigente, confirmado, pagado y en revisión antes de iniciar;
-    //    falso al iniciar el evento; falso para realizado, cancelado y rechazado.
+    // 3. puedeCancelar: cierto para solicitud por aprobar y confirmado antes de iniciar;
+    //    falso al iniciar el evento; falso para por cobrar, finalizado, cancelado, rechazado y vencido.
     @Test
     public void test03_puedeCancelar() {
         long futuro = ahoraFijo + 10 * 3600_000L;
         long pasado = ahoraFijo - 1000L;
 
-        // Apartado vigente futuro
-        Pedido pAp = new Pedido();
-        pAp.setEstado(Pedido.ESTADO_APARTADO);
-        pAp.setInicioMillis(futuro);
-        pAp.setVencimientoApartadoMillis(ahoraFijo + 10_000L);
-        assertTrue(PedidosClienteUtils.puedeCancelar(pAp, ahoraFijo));
+        Pedido pSolicitud = new Pedido();
+        pSolicitud.setEstado(Pedido.ESTADO_POR_APROBAR);
+        pSolicitud.setInicioMillis(futuro);
+        assertTrue(PedidosClienteUtils.puedeCancelar(pSolicitud, ahoraFijo));
 
-        // Apartado con vencimiento expirado
-        Pedido pApVenc = new Pedido();
-        pApVenc.setEstado(Pedido.ESTADO_APARTADO);
-        pApVenc.setInicioMillis(futuro);
-        pApVenc.setVencimientoApartadoMillis(ahoraFijo - 1000L);
-        assertFalse(PedidosClienteUtils.puedeCancelar(pApVenc, ahoraFijo));
-
-        // Confirmado futuro
         Pedido pConf = new Pedido();
         pConf.setEstado(Pedido.ESTADO_CONFIRMADO);
         pConf.setInicioMillis(futuro);
         assertTrue(PedidosClienteUtils.puedeCancelar(pConf, ahoraFijo));
 
-        // Pagado futuro
-        Pedido pPag = new Pedido();
-        pPag.setEstado(Pedido.ESTADO_PAGADO);
-        pPag.setInicioMillis(futuro);
-        assertTrue(PedidosClienteUtils.puedeCancelar(pPag, ahoraFijo));
-
-        // En revisión futuro
-        Pedido pRev = new Pedido();
-        pRev.setEstado(Pedido.ESTADO_EN_REVISION);
-        pRev.setInicioMillis(futuro);
-        assertTrue(PedidosClienteUtils.puedeCancelar(pRev, ahoraFijo));
+        // Pagado por adelantado: también se puede cancelar (la devolución se acuerda fuera de la app)
+        Pedido pPagado = new Pedido();
+        pPagado.setEstado(Pedido.ESTADO_CONFIRMADO);
+        pPagado.setPagoConfirmado(true);
+        pPagado.setInicioMillis(futuro);
+        assertTrue(PedidosClienteUtils.puedeCancelar(pPagado, ahoraFijo));
 
         // Evento ya iniciado (inicio <= ahora)
         Pedido pIniciado = new Pedido();
@@ -317,61 +295,28 @@ public class Etapa5BUnitTest {
         pPasado.setInicioMillis(pasado);
         assertFalse(PedidosClienteUtils.puedeCancelar(pPasado, ahoraFijo));
 
-        // Completado, Cancelado, Rechazado
-        Pedido pComp = new Pedido();
-        pComp.setEstado(Pedido.ESTADO_COMPLETADO);
-        pComp.setInicioMillis(futuro);
-        assertFalse(PedidosClienteUtils.puedeCancelar(pComp, ahoraFijo));
-
-        Pedido pCanc = new Pedido();
-        pCanc.setEstado(Pedido.ESTADO_CANCELADO);
-        pCanc.setInicioMillis(futuro);
-        assertFalse(PedidosClienteUtils.puedeCancelar(pCanc, ahoraFijo));
-
-        Pedido pRech = new Pedido();
-        pRech.setEstado(Pedido.ESTADO_RECHAZADO);
-        pRech.setInicioMillis(futuro);
-        assertFalse(PedidosClienteUtils.puedeCancelar(pRech, ahoraFijo));
+        for (String estado : Arrays.asList(Pedido.ESTADO_POR_COBRAR, Pedido.ESTADO_FINALIZADO,
+                Pedido.ESTADO_CANCELADO, Pedido.ESTADO_RECHAZADO, Pedido.ESTADO_VENCIDO)) {
+            Pedido p = new Pedido();
+            p.setEstado(estado);
+            p.setInicioMillis(futuro);
+            assertFalse("No se cancela en estado " + estado, PedidosClienteUtils.puedeCancelar(p, ahoraFijo));
+        }
+        assertFalse(PedidosClienteUtils.puedeCancelar(null, ahoraFijo));
     }
 
-    // 4. puedePagarAnticipo: solo apartado vigente
+    // 5. etiquetaEstado para el cliente
     @Test
-    public void test04_puedePagarAnticipo() {
-        Pedido pApVig = new Pedido();
-        pApVig.setEstado(Pedido.ESTADO_APARTADO);
-        pApVig.setVencimientoApartadoMillis(ahoraFijo + 15 * 60_000L);
-        assertTrue(PedidosClienteUtils.puedePagarAnticipo(pApVig, ahoraFijo));
-
-        Pedido pApVenc = new Pedido();
-        pApVenc.setEstado(Pedido.ESTADO_APARTADO);
-        pApVenc.setVencimientoApartadoMillis(ahoraFijo - 1000L);
-        assertFalse(PedidosClienteUtils.puedePagarAnticipo(pApVenc, ahoraFijo));
-
-        Pedido pConf = new Pedido();
-        pConf.setEstado(Pedido.ESTADO_CONFIRMADO);
-        assertFalse(PedidosClienteUtils.puedePagarAnticipo(pConf, ahoraFijo));
-
-        assertFalse(PedidosClienteUtils.puedePagarAnticipo(null, ahoraFijo));
-    }
-
-    // 5. etiquetaEstado y textoVencimiento
-    @Test
-    public void test05_etiquetaEstado_y_textoVencimiento() {
-        assertEquals("Pendiente de pago", PedidosClienteUtils.etiquetaEstado(Pedido.ESTADO_APARTADO));
+    public void test05_etiquetaEstado() {
+        assertEquals("Por aprobar", PedidosClienteUtils.etiquetaEstado(Pedido.ESTADO_POR_APROBAR));
         assertEquals("Confirmado", PedidosClienteUtils.etiquetaEstado(Pedido.ESTADO_CONFIRMADO));
-        assertEquals("Confirmado", PedidosClienteUtils.etiquetaEstado(Pedido.ESTADO_PAGADO));
-        assertEquals("En revisión", PedidosClienteUtils.etiquetaEstado(Pedido.ESTADO_EN_REVISION));
-        assertEquals("Realizado", PedidosClienteUtils.etiquetaEstado(Pedido.ESTADO_COMPLETADO));
+        assertEquals("Pago pendiente", PedidosClienteUtils.etiquetaEstado(Pedido.ESTADO_POR_COBRAR));
+        assertEquals("Realizado", PedidosClienteUtils.etiquetaEstado(Pedido.ESTADO_FINALIZADO));
         assertEquals("Cancelado", PedidosClienteUtils.etiquetaEstado(Pedido.ESTADO_CANCELADO));
         assertEquals("No aprobado", PedidosClienteUtils.etiquetaEstado(Pedido.ESTADO_RECHAZADO));
+        assertEquals("Vencido", PedidosClienteUtils.etiquetaEstado(Pedido.ESTADO_VENCIDO));
         assertEquals("ESTADO_INVENTADO", PedidosClienteUtils.etiquetaEstado("ESTADO_INVENTADO"));
         assertEquals("", PedidosClienteUtils.etiquetaEstado(null));
-
-        // textoVencimiento: 10s -> "Vence en 1 min"; 12 min -> "Vence en 12 min"; pasado/igual -> "Vencida"
-        assertEquals("Vence en 1 min", PedidosClienteUtils.textoVencimiento(ahoraFijo + 10_000L, ahoraFijo));
-        assertEquals("Vence en 12 min", PedidosClienteUtils.textoVencimiento(ahoraFijo + 12 * 60_000L, ahoraFijo));
-        assertEquals("Vencida", PedidosClienteUtils.textoVencimiento(ahoraFijo, ahoraFijo));
-        assertEquals("Vencida", PedidosClienteUtils.textoVencimiento(ahoraFijo - 5000L, ahoraFijo));
     }
 
     // 6. urlWhatsApp: acepta '747 123 4567' y '+52 (747) 123-4567', codifica espacios y acentos, teléfono corto -> vacío
@@ -400,190 +345,88 @@ public class Etapa5BUnitTest {
                 ContactoUtils.mensajeConsulta(1001, "Boda de Ana"));
     }
 
-    // 7. Repositorio: el cliente cancela un pedido CONFIRMADO con más de 7 días:
-    //    evento queda CANCELADO, unidades liberadas y reembolso del 100% con folio;
-    //    entre 72h y 7 días: 50%; con menos de 72h: 0% y no se crea Pago de reembolso.
+    private Pedido solicitar(String nombre, String clienteId, long inicio) {
+        SolicitudReserva sol = new SolicitudReserva("paq-basico", inicio, 240, Pedido.ORIGEN_APP,
+                nombre, clienteId, "Cliente " + clienteId, "7471111111", "Av. Central 1234, Col. Centro", "");
+        AtomicReference<Pedido> ref = new AtomicReference<>();
+        pedidoRepo.crearReserva(sol, new Callback<Pedido>() {
+            @Override public void onSuccess(Pedido r) { ref.set(r); }
+            @Override public void onError(String error) { fail("Error crearReserva: " + error); }
+        });
+        assertNotNull(ref.get());
+        return ref.get();
+    }
+
+    // 7. Repositorio: el cliente cancela un pedido confirmado: queda CANCELADO, el evento se cancela,
+    //    se liberan las unidades y no hay reembolsos que calcular.
     @Test
-    public void test07_repositorio_cancelarConfirmado_politicaReembolso() {
-        // Caso A: Más de 7 días (8 días) -> Reembolso 100%
+    public void test07_repositorio_cancelarConfirmado_liberaEventoYUnidades() {
         long ini8d = ahoraFijo + 8 * 24 * 3600_000L;
-        SolicitudReserva solA = new SolicitudReserva("paq-basico", ini8d, 240, Pedido.ORIGEN_APP,
-                "Boda 8 días", "cli-7a", "Cliente 7A", "7471111111", "Av. Central 1234, Col. Centro", "", null);
-        AtomicReference<Pedido> pedARef = new AtomicReference<>();
-        pedidoRepo.crearReserva(solA, new Callback<Pedido>() {
-            @Override public void onSuccess(Pedido r) { pedARef.set(r); }
-            @Override public void onError(String error) { fail("Error solA: " + error); }
-        });
-        pedidoRepo.registrarAnticipo(pedARef.get().getId(), pedARef.get().getAnticipoRequerido(),
-                Pedido.METODO_TARJETA, noop());
+        Pedido p = solicitar("Boda 8 días", "cli-7a", ini8d);
+        pedidoRepo.aprobarPedido(p.getId(), noop());
 
-        Pedido pAConfirmado = pedidoRepo.getPedidoPorId(pedARef.get().getId());
-        assertEquals(Pedido.ESTADO_CONFIRMADO, pAConfirmado.getEstado());
-        double anticipoA = pAConfirmado.getAnticipoPagado();
-        String eventoIdA = pAConfirmado.getEventoId();
-        assertNotNull(eventoIdA);
-
-        AtomicReference<Pedido> cancelARef = new AtomicReference<>();
-        pedidoRepo.cancelarReserva(pAConfirmado.getId(), Pedido.CANCELA_CLIENTE, "Ya no lo necesito", new Callback<Pedido>() {
-            @Override public void onSuccess(Pedido r) { cancelARef.set(r); }
-            @Override public void onError(String error) { fail("Error cancel A: " + error); }
-        });
-
-        assertEquals(Pedido.ESTADO_CANCELADO, cancelARef.get().getEstado());
-        assertEquals(anticipoA, cancelARef.get().getReembolsoMonto(), 0.001);
-        // Evento cancelado y unidades liberadas
-        AtomicReference<Evento> evARef = new AtomicReference<>();
-        eventoRepo.getEventoPorId(eventoIdA, new Callback<Evento>() {
-            @Override public void onSuccess(Evento r) { evARef.set(r); }
-            @Override public void onError(String error) { fail("Error al obtener evento: " + error); }
-        });
-        assertNotNull(evARef.get());
-        assertEquals(Evento.ESTADO_CANCELADO, evARef.get().getEstado());
-        assertTrue(cancelARef.get().getEquipoIds().isEmpty());
-
-        // Verificamos el Pago de reembolso
-        List<Pago> pagosA = pagoRepo.getPagosPorPedido(pAConfirmado.getId()).getValue();
-        assertEquals(2, pagosA.size()); // Anticipo + Reembolso
-        Pago pagoReembolsoA = pagosA.get(1);
-        assertEquals(Pago.TIPO_REEMBOLSO, pagoReembolsoA.getTipo());
-        assertEquals(anticipoA, pagoReembolsoA.getMonto(), 0.001);
-        assertNotNull(pagoReembolsoA.getFolio());
-
-        // Caso B: Entre 72 h y 7 días (4 días = 96 h) -> Reembolso 50%
-        long ini4d = ahoraFijo + 4 * 24 * 3600_000L;
-        SolicitudReserva solB = new SolicitudReserva("paq-basico", ini4d, 240, Pedido.ORIGEN_APP,
-                "Boda 4 días", "cli-7b", "Cliente 7B", "7472222222", "Av. Central 5678, Col. Centro", "", null);
-        AtomicReference<Pedido> pedBRef = new AtomicReference<>();
-        pedidoRepo.crearReserva(solB, new Callback<Pedido>() {
-            @Override public void onSuccess(Pedido r) { pedBRef.set(r); }
-            @Override public void onError(String error) { fail("Error solB: " + error); }
-        });
-        pedidoRepo.registrarAnticipo(pedBRef.get().getId(), pedBRef.get().getAnticipoRequerido(),
-                Pedido.METODO_TARJETA, noop());
-
-        Pedido pBConfirmado = pedidoRepo.getPedidoPorId(pedBRef.get().getId());
-        double esperado50 = Math.round(pBConfirmado.getAnticipoPagado() * 0.5 * 100.0) / 100.0;
-
-        AtomicReference<Pedido> cancelBRef = new AtomicReference<>();
-        pedidoRepo.cancelarReserva(pBConfirmado.getId(), Pedido.CANCELA_CLIENTE, "Cambio", new Callback<Pedido>() {
-            @Override public void onSuccess(Pedido r) { cancelBRef.set(r); }
-            @Override public void onError(String error) { fail("Error cancel B: " + error); }
-        });
-
-        assertEquals(esperado50, cancelBRef.get().getReembolsoMonto(), 0.001);
-        List<Pago> pagosB = pagoRepo.getPagosPorPedido(pBConfirmado.getId()).getValue();
-        assertEquals(2, pagosB.size());
-        assertEquals(esperado50, pagosB.get(1).getMonto(), 0.001);
-
-        // Caso C: Menos de 72 h (48 h) -> Reembolso 0% y NO se crea Pago
-        long ini48h = ahoraFijo + 48 * 3600_000L;
-        SolicitudReserva solC = new SolicitudReserva("paq-basico", ini48h, 240, Pedido.ORIGEN_APP,
-                "Boda 48h", "cli-7c", "Cliente 7C", "7473333333", "Av. Central 9012, Col. Centro", "", null);
-        AtomicReference<Pedido> pedCRef = new AtomicReference<>();
-        pedidoRepo.crearReserva(solC, new Callback<Pedido>() {
-            @Override public void onSuccess(Pedido r) { pedCRef.set(r); }
-            @Override public void onError(String error) { fail("Error solC: " + error); }
-        });
-        pedidoRepo.registrarAnticipo(pedCRef.get().getId(), pedCRef.get().getAnticipoRequerido(),
-                Pedido.METODO_TARJETA, noop());
-
-        Pedido pCConfirmado = pedidoRepo.getPedidoPorId(pedCRef.get().getId());
-        AtomicReference<Pedido> cancelCRef = new AtomicReference<>();
-        pedidoRepo.cancelarReserva(pCConfirmado.getId(), Pedido.CANCELA_CLIENTE, "Tarde", new Callback<Pedido>() {
-            @Override public void onSuccess(Pedido r) { cancelCRef.set(r); }
-            @Override public void onError(String error) { fail("Error cancel C: " + error); }
-        });
-
-        assertEquals(0.0, cancelCRef.get().getReembolsoMonto(), 0.001);
-        List<Pago> pagosC = pagoRepo.getPagosPorPedido(pCConfirmado.getId()).getValue();
-        // Solo debe estar el anticipo, NO hay pago de reembolso
-        assertEquals(1, pagosC.size());
-        assertEquals(Pago.TIPO_ANTICIPO, pagosC.get(0).getTipo());
-    }
-
-    // 8. Repositorio: el cliente cancela un pedido EN_REVISION a menos de 72 h:
-    //    reembolso del 100%. calcularReembolsoPrevio devuelve el mismo monto que cancelarReserva en cada caso.
-    @Test
-    public void test08_repositorio_cancelarEnRevision_reembolso100_y_calcularReembolsoPrevio() {
-        // Evento a menos de 48 h (24 h) -> entra EN_REVISION tras pagar anticipo
-        long ini24h = ahoraFijo + 24 * 3600_000L;
-        SolicitudReserva sol = new SolicitudReserva("paq-basico", ini24h, 240, Pedido.ORIGEN_APP,
-                "Urgente en revisión", "cli-rev", "Cliente Rev", "7471111111", "Av. Insurgentes 123, Piso 4", "", null);
-
-        AtomicReference<Pedido> pedRef = new AtomicReference<>();
-        pedidoRepo.crearReserva(sol, new Callback<Pedido>() {
-            @Override public void onSuccess(Pedido r) { pedRef.set(r); }
-            @Override public void onError(String error) { fail("Error sol: " + error); }
-        });
-
-        pedidoRepo.registrarAnticipo(pedRef.get().getId(), pedRef.get().getAnticipoRequerido(),
-                Pedido.METODO_TARJETA, noop());
-
-        Pedido pEnRevision = pedidoRepo.getPedidoPorId(pedRef.get().getId());
-        assertEquals(Pedido.ESTADO_EN_REVISION, pEnRevision.getEstado());
-        double pagado = pEnRevision.getAnticipoPagado();
-        assertTrue(pagado > 0);
-
-        // calcularReembolsoPrevio debe indicar 100% para cliente en pedido EN_REVISION aunque falten < 72h
-        double reembolsoPrevio = pedidoRepo.calcularReembolsoPrevio(pEnRevision.getId(), Pedido.CANCELA_CLIENTE);
-        assertEquals(pagado, reembolsoPrevio, 0.001);
+        Pedido confirmado = pedidoRepo.getPedidoPorId(p.getId());
+        assertEquals(Pedido.ESTADO_CONFIRMADO, confirmado.getEstado());
+        String eventoId = confirmado.getEventoId();
+        assertNotNull(eventoId);
 
         AtomicReference<Pedido> cancelRef = new AtomicReference<>();
-        pedidoRepo.cancelarReserva(pEnRevision.getId(), Pedido.CANCELA_CLIENTE, "Prefiero cancelar", new Callback<Pedido>() {
-            @Override public void onSuccess(Pedido r) { cancelRef.set(r); }
-            @Override public void onError(String error) { fail("Error cancelar: " + error); }
-        });
-
-        assertEquals(Pedido.ESTADO_CANCELADO, cancelRef.get().getEstado());
-        assertEquals(reembolsoPrevio, cancelRef.get().getReembolsoMonto(), 0.001);
-
-        List<Pago> pagos = pagoRepo.getPagosPorPedido(pEnRevision.getId()).getValue();
-        assertEquals(2, pagos.size());
-        assertEquals(Pago.TIPO_REEMBOLSO, pagos.get(1).getTipo());
-        assertEquals(pagado, pagos.get(1).getMonto(), 0.001);
-    }
-
-    // 9. Repositorio: el cliente cancela un APARTADO sin pagos: queda CANCELADO, sin Pago de reembolso,
-    //    y puede volver a reservar de inmediato (la regla de un apartado a la vez deja de bloquearlo).
-    @Test
-    public void test09_repositorio_cancelarApartadoSinPago_liberaInmediatamente() {
-        long ini = ahoraFijo + 72 * 3600_000L;
-        SolicitudReserva sol = new SolicitudReserva("paq-basico", ini, 240, Pedido.ORIGEN_APP,
-                "Apartado sin pago", "cli-ap-canc", "Cliente Ap", "7471111111", "Calle Morelos 123, Col. Centro", "", null);
-
-        AtomicReference<Pedido> pedRef = new AtomicReference<>();
-        pedidoRepo.crearReserva(sol, new Callback<Pedido>() {
-            @Override public void onSuccess(Pedido r) { pedRef.set(r); }
-            @Override public void onError(String error) { fail("Error sol: " + error); }
-        });
-
-        Pedido pApartado = pedRef.get();
-        assertEquals(Pedido.ESTADO_APARTADO, pApartado.getEstado());
-
-        // Cancelar apartado sin pagar
-        AtomicReference<Pedido> cancelRef = new AtomicReference<>();
-        pedidoRepo.cancelarReserva(pApartado.getId(), Pedido.CANCELA_CLIENTE, "", new Callback<Pedido>() {
+        pedidoRepo.cancelarReserva(p.getId(), Pedido.CANCELA_CLIENTE, "Ya no lo necesito", new Callback<Pedido>() {
             @Override public void onSuccess(Pedido r) { cancelRef.set(r); }
             @Override public void onError(String error) { fail("Error cancel: " + error); }
         });
 
         assertEquals(Pedido.ESTADO_CANCELADO, cancelRef.get().getEstado());
-        assertEquals(0.0, cancelRef.get().getReembolsoMonto(), 0.001);
+        assertEquals("Ya no lo necesito", cancelRef.get().getMotivoCancelacion());
+        assertTrue(cancelRef.get().getEquipoIds().isEmpty());
 
-        List<Pago> pagos = pagoRepo.getPagosPorPedido(pApartado.getId()).getValue();
-        assertTrue(pagos == null || pagos.isEmpty());
-
-        // Ahora el mismo cliente puede reservar de inmediato sin esperar a los 30 min
-        SolicitudReserva solNueva = new SolicitudReserva("paq-basico", ini, 240, Pedido.ORIGEN_APP,
-                "Nueva Reserva Inmediata", "cli-ap-canc", "Cliente Ap", "7471111111", "Calle Morelos 123, Col. Centro", "", null);
-        AtomicReference<Pedido> pedNuevoRef = new AtomicReference<>();
-        pedidoRepo.crearReserva(solNueva, new Callback<Pedido>() {
-            @Override public void onSuccess(Pedido r) { pedNuevoRef.set(r); }
-            @Override public void onError(String error) { fail("Debe permitir reservar de nuevo: " + error); }
+        AtomicReference<Evento> evRef = new AtomicReference<>();
+        eventoRepo.getEventoPorId(eventoId, new Callback<Evento>() {
+            @Override public void onSuccess(Evento r) { evRef.set(r); }
+            @Override public void onError(String error) { fail("Error al obtener evento: " + error); }
         });
+        assertNotNull(evRef.get());
+        assertEquals(Evento.ESTADO_CANCELADO, evRef.get().getEstado());
+    }
 
-        assertNotNull(pedNuevoRef.get());
-        assertEquals(Pedido.ESTADO_APARTADO, pedNuevoRef.get().getEstado());
+    // 8. Repositorio: el cliente retira una solicitud por aprobar y puede enviar otra de inmediato.
+    @Test
+    public void test08_repositorio_retirarSolicitud_permiteOtra() {
+        long ini = ahoraFijo + 72 * 3600_000L;
+        Pedido p = solicitar("Solicitud", "cli-ap-canc", ini);
+        assertEquals(Pedido.ESTADO_POR_APROBAR, p.getEstado());
+
+        AtomicReference<Pedido> cancelRef = new AtomicReference<>();
+        pedidoRepo.cancelarReserva(p.getId(), Pedido.CANCELA_CLIENTE, "", new Callback<Pedido>() {
+            @Override public void onSuccess(Pedido r) { cancelRef.set(r); }
+            @Override public void onError(String error) { fail("Error cancel: " + error); }
+        });
+        assertEquals(Pedido.ESTADO_CANCELADO, cancelRef.get().getEstado());
+        assertTrue(pedidoRepo.evaluarDisponibilidad("paq-basico", ini, 240, null).isViable());
+
+        Pedido nueva = solicitar("Nueva Solicitud", "cli-ap-canc", ini);
+        assertEquals(Pedido.ESTADO_POR_APROBAR, nueva.getEstado());
+    }
+
+    // 9. Repositorio: el cliente ve su pedido como pagado cuando un socio confirma el pago,
+    //    y una vez realizado el evento pasa al historial.
+    @Test
+    public void test09_repositorio_pedidoPagadoYRealizado() {
+        long ini = ahoraFijo + 30 * 3600_000L;
+        Pedido p = solicitar("Fiesta", "cli-pago", ini);
+        pedidoRepo.aprobarPedido(p.getId(), noop());
+        pedidoRepo.confirmarPago(p.getId(), Pedido.METODO_TRANSFERENCIA, "u-socio", "Carlos Socio", noop());
+
+        List<Pedido> delCliente = PedidosClienteUtils.delCliente(pedidoRepo.obtenerTodos(), "cli-pago");
+        assertEquals(1, PedidosClienteUtils.activos(delCliente, reloj.ahora()).size());
+        assertTrue(delCliente.get(0).isPagoConfirmado());
+
+        reloj.setAhora(ini + 10 * 3600_000L);
+        pedidoRepo.actualizarEstadosPorTiempo();
+        delCliente = PedidosClienteUtils.delCliente(pedidoRepo.obtenerTodos(), "cli-pago");
+        assertEquals(Pedido.ESTADO_FINALIZADO, delCliente.get(0).getEstado());
+        assertTrue(PedidosClienteUtils.activos(delCliente, reloj.ahora()).isEmpty());
+        assertEquals(1, PedidosClienteUtils.historial(delCliente, reloj.ahora()).size());
     }
 
     // 10. Repositorio: cancelar como cliente con motivo vacío funciona y guarda 'Cancelado por el cliente';
@@ -594,7 +437,7 @@ public class Etapa5BUnitTest {
 
         // Caso Cliente: motivo vacío -> guarda "Cancelado por el cliente"
         SolicitudReserva solCli = new SolicitudReserva("paq-basico", ini, 240, Pedido.ORIGEN_APP,
-                "Reserva Cliente", "cli-motivo", "Cliente M", "7471111111", "Calle Guerrero 123, Col. Centro", "", null);
+                "Reserva Cliente", "cli-motivo", "Cliente M", "7471111111", "Calle Guerrero 123, Col. Centro", "");
         AtomicReference<Pedido> pCliRef = new AtomicReference<>();
         pedidoRepo.crearReserva(solCli, new Callback<Pedido>() {
             @Override public void onSuccess(Pedido r) { pCliRef.set(r); }
@@ -612,7 +455,7 @@ public class Etapa5BUnitTest {
 
         // Caso Socio: motivo vacío -> falla
         SolicitudReserva solSocio = new SolicitudReserva("paq-basico", ini + 24 * 3600_000L, 240, Pedido.ORIGEN_PRESENCIAL,
-                "Reserva Socio", "cli-socio", "Cliente S", "7472222222", "Calle Guerrero 456, Col. Centro", "", 24);
+                "Reserva Socio", "cli-socio", "Cliente S", "7472222222", "Calle Guerrero 456, Col. Centro", "");
         AtomicReference<Pedido> pSocioRef = new AtomicReference<>();
         pedidoRepo.crearReserva(solSocio, new Callback<Pedido>() {
             @Override public void onSuccess(Pedido r) { pSocioRef.set(r); }
@@ -627,12 +470,12 @@ public class Etapa5BUnitTest {
         assertTrue(falloMotivoSocio.get());
     }
 
-    // 11. Repositorio: un pedido ya CANCELADO, RECHAZADO o COMPLETADO no se puede cancelar.
+    // 11. Repositorio: un pedido ya CANCELADO o FINALIZADO no se puede cancelar.
     @Test
     public void test11_repositorio_pedidosNoCancelables() {
         long ini = ahoraFijo + 72 * 3600_000L;
         SolicitudReserva sol = new SolicitudReserva("paq-basico", ini, 240, Pedido.ORIGEN_APP,
-                "Reserva Para Cancelar", "cli-nocanc", "Cliente NC", "7471111111", "Calle Zaragoza 123, Col. Centro", "", null);
+                "Reserva Para Cancelar", "cli-nocanc", "Cliente NC", "7471111111", "Calle Zaragoza 123, Col. Centro", "");
         AtomicReference<Pedido> pedRef = new AtomicReference<>();
         pedidoRepo.crearReserva(sol, new Callback<Pedido>() {
             @Override public void onSuccess(Pedido r) { pedRef.set(r); }
@@ -654,7 +497,7 @@ public class Etapa5BUnitTest {
         // Pedido COMPLETADO
         Pedido pComp = new Pedido();
         pComp.setId("p-comp-nocanc");
-        pComp.setEstado(Pedido.ESTADO_COMPLETADO);
+        pComp.setEstado(Pedido.ESTADO_FINALIZADO);
         pComp.setClienteId("cli-nocanc");
         pedidoRepo.obtenerTodos().add(pComp);
 

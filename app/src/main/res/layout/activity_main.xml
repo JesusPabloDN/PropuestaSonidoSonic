@@ -301,6 +301,40 @@
 
                 </LinearLayout>
 
+                <!-- Opción: Impresora de tickets (visible solo para Socio) -->
+                <LinearLayout
+                    android:id="@+id/drawerItemImpresora"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_drawer_item"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/drawer_item_height"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/drawer_item_padding"
+                    android:paddingEnd="@dimen/drawer_item_padding"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/ivDrawerImpresoraIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="@string/menu_impresora"
+                        android:src="@drawable/ic_print_24"
+                        app:tint="?attr/colorOnSurfaceVariant" />
+
+                    <TextView
+                        android:id="@+id/tvDrawerImpresoraLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_medium"
+                        android:text="@string/menu_impresora"
+                        android:textAppearance="?attr/textAppearanceLabelLarge"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
+
+                </LinearLayout>
+
                 <!-- SECCIÓN INFORMACIÓN -->
                 <TextView
                     android:id="@+id/tvDrawerSeccionInformacion"
@@ -470,4 +504,4 @@
 
     </LinearLayout>
 
-</androidx.drawerlayout.widget.DrawerLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

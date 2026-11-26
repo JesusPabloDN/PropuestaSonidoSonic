@@ -4,19 +4,17 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.propuestasonidosonic.R;
+import com.example.propuestasonidosonic.domain.EstadosPedido;
 import com.example.propuestasonidosonic.domain.PedidosClienteUtils;
 import com.example.propuestasonidosonic.model.Pedido;
 import com.example.propuestasonidosonic.util.BadgeUtils;
 import com.example.propuestasonidosonic.util.FormatUtils;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.color.MaterialColors;
 
 import java.util.ArrayList;
@@ -26,7 +24,6 @@ public class PedidoClienteAdapter extends RecyclerView.Adapter<PedidoClienteAdap
 
     public interface OnPedidoClienteClickListener {
         void onPedidoClick(Pedido pedido);
-        void onPagarAnticipoClick(Pedido pedido);
     }
 
     private final List<Pedido> items = new ArrayList<>();
@@ -76,10 +73,7 @@ public class PedidoClienteAdapter extends RecyclerView.Adapter<PedidoClienteAdap
         private final TextView tvFechaHorario;
         private final TextView tvPaquete;
         private final TextView tvTotal;
-        private final TextView tvSaldoPendiente;
-        private final LinearLayout layoutApartado;
-        private final TextView tvVenceEn;
-        private final MaterialButton btnPagarAnticipo;
+        private final TextView tvPagoInfo;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -89,10 +83,7 @@ public class PedidoClienteAdapter extends RecyclerView.Adapter<PedidoClienteAdap
             tvFechaHorario = itemView.findViewById(R.id.tvFechaHorario);
             tvPaquete = itemView.findViewById(R.id.tvPaquete);
             tvTotal = itemView.findViewById(R.id.tvTotal);
-            tvSaldoPendiente = itemView.findViewById(R.id.tvSaldoPendiente);
-            layoutApartado = itemView.findViewById(R.id.layoutApartado);
-            tvVenceEn = itemView.findViewById(R.id.tvVenceEn);
-            btnPagarAnticipo = itemView.findViewById(R.id.btnPagarAnticipo);
+            tvPagoInfo = itemView.findViewById(R.id.tvPagoInfo);
         }
 
         public void bind(Pedido pedido, OnPedidoClienteClickListener listener, long ahora) {
@@ -104,8 +95,8 @@ public class PedidoClienteAdapter extends RecyclerView.Adapter<PedidoClienteAdap
             // Estado y Badge
             String estado = pedido.getEstado();
             String etiqueta = PedidosClienteUtils.etiquetaEstado(estado);
+            BadgeUtils.pintarEstadoPedido(tvEstadoBadge, estado);
             tvEstadoBadge.setText(etiqueta);
-            pintarBadge(ctx, estado);
 
             // Fecha y Horario
             if (pedido.getInicioMillis() > 0 && pedido.getFinMillis() > 0) {
@@ -128,30 +119,18 @@ public class PedidoClienteAdapter extends RecyclerView.Adapter<PedidoClienteAdap
             // Total
             tvTotal.setText(FormatUtils.formatoMoneda(pedido.getTotal()));
 
-            // Saldo por pagar si aplica
-            boolean esConfirmadoORevision = Pedido.ESTADO_CONFIRMADO.equals(estado)
-                    || Pedido.ESTADO_PAGADO.equals(estado)
-                    || Pedido.ESTADO_EN_REVISION.equals(estado);
-            if (esConfirmadoORevision && pedido.getSaldoPendiente() > 0) {
-                tvSaldoPendiente.setVisibility(View.VISIBLE);
-                tvSaldoPendiente.setText(ctx.getString(R.string.saldo_por_pagar_formato,
-                        FormatUtils.formatoMoneda(pedido.getSaldoPendiente())));
+            // Estado del pago: el cliente paga directamente al negocio
+            if (pedido.isPagoConfirmado()) {
+                tvPagoInfo.setVisibility(View.VISIBLE);
+                tvPagoInfo.setText(R.string.estado_pago_pagado);
+                tvPagoInfo.setTextColor(BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponible));
+            } else if (EstadosPedido.esAceptado(estado)) {
+                tvPagoInfo.setVisibility(View.VISIBLE);
+                tvPagoInfo.setText(R.string.estado_pago_pendiente_corto);
+                tvPagoInfo.setTextColor(MaterialColors.getColor(tvPagoInfo,
+                        com.google.android.material.R.attr.colorOnSurfaceVariant));
             } else {
-                tvSaldoPendiente.setVisibility(View.GONE);
-            }
-
-            // Apartado info (vence en y pagar anticipo)
-            if (PedidosClienteUtils.puedePagarAnticipo(pedido, ahora)) {
-                layoutApartado.setVisibility(View.VISIBLE);
-                tvVenceEn.setText(PedidosClienteUtils.textoVencimiento(pedido.getVencimientoApartadoMillis(), ahora));
-                tvVenceEn.setTextColor(BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendiente));
-                btnPagarAnticipo.setOnClickListener(v -> {
-                    if (listener != null) {
-                        listener.onPagarAnticipoClick(pedido);
-                    }
-                });
-            } else {
-                layoutApartado.setVisibility(View.GONE);
+                tvPagoInfo.setVisibility(View.GONE);
             }
 
             // Clic en la tarjeta
@@ -160,40 +139,6 @@ public class PedidoClienteAdapter extends RecyclerView.Adapter<PedidoClienteAdap
                     listener.onPedidoClick(pedido);
                 }
             });
-        }
-
-        private void pintarBadge(Context ctx, String estado) {
-            if (estado == null) estado = "";
-            int colorTexto;
-            int colorFondo;
-
-            switch (estado) {
-                case Pedido.ESTADO_APARTADO:
-                case Pedido.ESTADO_EN_REVISION:
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoPendienteContainer);
-                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendienteContainer);
-                    break;
-                case Pedido.ESTADO_CONFIRMADO:
-                case Pedido.ESTADO_PAGADO:
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDisponibleContainer);
-                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponibleContainer);
-                    break;
-                case Pedido.ESTADO_COMPLETADO:
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoRentadoContainer);
-                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoRentadoContainer);
-                    break;
-                case Pedido.ESTADO_CANCELADO:
-                case Pedido.ESTADO_RECHAZADO:
-                    colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDanadoContainer);
-                    colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanadoContainer);
-                    break;
-                default:
-                    colorTexto = MaterialColors.getColor(tvEstadoBadge, com.google.android.material.R.attr.colorOnSurfaceVariant);
-                    colorFondo = MaterialColors.getColor(tvEstadoBadge, com.google.android.material.R.attr.colorSurfaceContainerHighest);
-                    break;
-            }
-
-            BadgeUtils.pintar(tvEstadoBadge, colorTexto, colorFondo);
         }
     }
 }

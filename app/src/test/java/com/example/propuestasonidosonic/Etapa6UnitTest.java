@@ -6,7 +6,6 @@ import com.example.propuestasonidosonic.data.Callback;
 import com.example.propuestasonidosonic.data.memory.InMemoryDiaOperativoRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryEquipoRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryEventoRepository;
-import com.example.propuestasonidosonic.data.memory.InMemoryPagoRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryPaqueteRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryPedidoRepository;
 import com.example.propuestasonidosonic.data.memory.InMemoryUsuarioRepository;
@@ -73,7 +72,6 @@ public class Etapa6UnitTest {
     private InMemoryPaqueteRepository paqueteRepo;
     private InMemoryUsuarioRepository usuarioRepo;
     private InMemoryDiaOperativoRepository diaRepo;
-    private InMemoryPagoRepository pagoRepo;
     private InMemoryEventoRepository eventoRepo;
     private InMemoryPedidoRepository pedidoRepo;
 
@@ -90,7 +88,6 @@ public class Etapa6UnitTest {
         paqueteRepo = new InMemoryPaqueteRepository(equipoRepo);
         usuarioRepo = new InMemoryUsuarioRepository(null);
         diaRepo = new InMemoryDiaOperativoRepository();
-        pagoRepo = new InMemoryPagoRepository(reloj);
         eventoRepo = new InMemoryEventoRepository();
 
         equipoRepo.setEventoRepository(eventoRepo);
@@ -100,7 +97,6 @@ public class Etapa6UnitTest {
                 paqueteRepo,
                 usuarioRepo,
                 diaRepo,
-                pagoRepo,
                 eventoRepo,
                 reloj
         );
@@ -160,22 +156,22 @@ public class Etapa6UnitTest {
 
         Pedido pPag = new Pedido();
         pPag.setId("p2");
-        pPag.setEstado(Pedido.ESTADO_PAGADO);
+        pPag.setEstado(Pedido.ESTADO_POR_COBRAR);
         pPag.setOperadorIds(Arrays.asList("u-asist1", "u-socio"));
 
         Pedido pComp = new Pedido();
         pComp.setId("p3");
-        pComp.setEstado(Pedido.ESTADO_COMPLETADO);
+        pComp.setEstado(Pedido.ESTADO_FINALIZADO);
         pComp.setOperadorIds(Collections.singletonList("u-asist1"));
 
         Pedido pApar = new Pedido();
         pApar.setId("p4");
-        pApar.setEstado(Pedido.ESTADO_APARTADO);
+        pApar.setEstado(Pedido.ESTADO_POR_APROBAR);
         pApar.setOperadorIds(Collections.singletonList("u-asist1"));
 
         Pedido pRev = new Pedido();
         pRev.setId("p5");
-        pRev.setEstado(Pedido.ESTADO_EN_REVISION);
+        pRev.setEstado(Pedido.ESTADO_POR_APROBAR);
         pRev.setOperadorIds(Collections.singletonList("u-asist1"));
 
         Pedido pCanc = new Pedido();
@@ -241,10 +237,10 @@ public class Etapa6UnitTest {
         p3.setBloqueoInicioMillis(ahoraFijo - 5 * 3600_000L);
         p3.setBloqueoFinMillis(ahoraFijo); // finBloqueo == ahora
 
-        // Pedido 4: futuro pero COMPLETADO -> va a pasados
+        // Pedido 4: futuro pero FINALIZADO -> va a pasados
         Pedido p4 = new Pedido();
         p4.setId("p4");
-        p4.setEstado(Pedido.ESTADO_COMPLETADO);
+        p4.setEstado(Pedido.ESTADO_FINALIZADO);
         p4.setInicioMillis(ahoraFijo + 24 * 3600_000L);
         p4.setFinMillis(ahoraFijo + 28 * 3600_000L);
         p4.setBloqueoInicioMillis(ahoraFijo + 22 * 3600_000L);
@@ -651,7 +647,7 @@ public class Etapa6UnitTest {
         // Vuelve a marcar y creamos la reserva
         diaRepo.establecerDisponibilidadAsistente(clave27, "u-asist1", true, noop());
         SolicitudReserva sol = new SolicitudReserva("paq-basico", ini27, 240, Pedido.ORIGEN_APP,
-                "Boda Asistente", "cli-asist", "Cliente Asist", "7471234567", "Av. Principal 1234, Centro", "", null);
+                "Boda Asistente", "cli-asist", "Cliente Asist", "7471234567", "Av. Principal 1234, Centro", "");
 
         AtomicReference<Pedido> pedRef = new AtomicReference<>();
         pedidoRepo.crearReserva(sol, new Callback<Pedido>() {
@@ -662,9 +658,8 @@ public class Etapa6UnitTest {
         assertNotNull(pedRef.get());
         assertTrue(pedRef.get().getOperadorIds().contains("u-asist1"));
 
-        // Al registrar anticipo pasa a CONFIRMADO
-        pedidoRepo.registrarAnticipo(pedRef.get().getId(), pedRef.get().getAnticipoRequerido(),
-                Pedido.METODO_TARJETA, noop());
+        // Al aprobar la solicitud pasa a CONFIRMADO
+        confirmar(pedRef.get().getId(), noop());
         Pedido pConfirmado = pedidoRepo.getPedidoPorId(pedRef.get().getId());
         assertEquals(Pedido.ESTADO_CONFIRMADO, pConfirmado.getEstado());
 
@@ -713,5 +708,15 @@ public class Etapa6UnitTest {
         assertNotNull(obtenidoRef.get().getChecklist());
         assertEquals(2, obtenidoRef.get().getChecklist().size());
         assertEquals("Sin detalles", obtenidoRef.get().getChecklist().get(0).getObservacion());
+    }
+
+    /** Antes se confirmaba pagando el anticipo; ahora un socio aprueba la solicitud (los pedidos del socio ya nacen confirmados). */
+    private void confirmar(String pedidoId, Callback<Pedido> callback) {
+        Pedido actual = pedidoRepo.getPedidoPorId(pedidoId);
+        if (actual != null && Pedido.ESTADO_POR_APROBAR.equals(actual.getEstado())) {
+            pedidoRepo.aprobarPedido(pedidoId, callback);
+        } else if (callback != null) {
+            if (actual != null) callback.onSuccess(actual); else callback.onError("Pedido no encontrado");
+        }
     }
 }

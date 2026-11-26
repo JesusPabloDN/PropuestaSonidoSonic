@@ -41,30 +41,13 @@ public class PoliticasFragment extends Fragment {
         TextView tvPersonal = view.findViewById(R.id.tvPoliticasPersonalDesc);
         TextView tvPagos = view.findViewById(R.id.tvPoliticasPagosDesc);
 
-        // 1. Reservas y anticipo
-        int[] opcionesHoras = politicas.getOpcionesHorasApartadoManual();
-        StringBuilder sbOpciones = new StringBuilder();
-        if (opcionesHoras != null) {
-            for (int i = 0; i < opcionesHoras.length; i++) {
-                if (i > 0) {
-                    sbOpciones.append(i == opcionesHoras.length - 1 ? " y " : ", ");
-                }
-                sbOpciones.append(opcionesHoras[i]);
-            }
-        }
-        String reservasTexto = getString(R.string.politicas_reservas_anticipo_desc,
-                politicas.getPorcentajeAnticipo(),
-                politicas.getMinutosApartadoApp(),
-                sbOpciones.toString(),
-                politicas.getHorasRevision());
-        tvReservas.setText(reservasTexto);
+        // 1. Solicitudes y aprobación
+        tvReservas.setText(getString(R.string.politicas_reservas_aprobacion_desc,
+                politicas.getHorasRevision(),
+                politicas.getSolicitudesPorAprobarMax()));
 
-        // 2. Cancelaciones y reembolsos
-        String cancelacionesTexto = getString(R.string.politicas_cancelaciones_reembolsos_desc,
-                politicas.getDiasReembolsoTotal(),
-                politicas.getPorcentajeReembolsoParcial(),
-                politicas.getHorasTramoParcial());
-        tvCancelaciones.setText(cancelacionesTexto);
+        // 2. Cancelaciones (sin reembolsos: los pagos se reciben fuera de la app)
+        tvCancelaciones.setText(R.string.politicas_cancelaciones_desc);
 
         // 3. Operación
         int primerMin = politicas.getPrimerInicioMin();

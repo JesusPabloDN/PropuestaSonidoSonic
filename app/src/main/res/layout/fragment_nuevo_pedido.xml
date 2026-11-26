@@ -198,15 +198,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="?attr/colorOnSurface"
                     android:textAppearance="?attr/textAppearanceTitleLarge"
-                    tools:text="Total: $3,500.00" />
-
-                <TextView
-                    android:id="@+id/tvResumenAnticipo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textAppearance="?attr/textAppearanceTitleMedium"
-                    tools:text="Anticipo requerido (30%): $1,050.00" />
+                    tools:text="Monto a pagar: $3,500.00" />
 
             </LinearLayout>
 
@@ -342,31 +334,22 @@
 
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
-        <!-- 8. Retener el apartado por -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilRetenerHoras"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        <!-- 8. Registrar pedido (queda confirmado de inmediato) -->
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_large"
-            android:hint="@string/label_retener_apartado">
+            android:layout_marginBottom="@dimen/spacing_medium"
+            android:text="@string/aviso_pedido_socio_confirmado"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textAppearance="?attr/textAppearanceBodyMedium" />
 
-            <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                android:id="@+id/actvRetenerHoras"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="none" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- 9. Botón Apartar -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnApartar"
+            android:id="@+id/btnRegistrarPedido"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_large"
             android:minHeight="@dimen/button_height"
-            android:text="@string/btn_apartar" />
+            android:text="@string/btn_registrar_pedido" />
 
     </LinearLayout>
 

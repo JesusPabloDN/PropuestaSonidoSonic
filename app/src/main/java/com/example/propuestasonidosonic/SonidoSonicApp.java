@@ -19,7 +19,7 @@ public class SonidoSonicApp extends Application {
         @Override
         public void run() {
             if (appContainer != null && appContainer.getPedidoRepository() != null) {
-                appContainer.getPedidoRepository().liberarApartadosVencidos();
+                appContainer.getPedidoRepository().actualizarEstadosPorTiempo();
             }
             cleanupHandler.postDelayed(this, 60_000L);
         }

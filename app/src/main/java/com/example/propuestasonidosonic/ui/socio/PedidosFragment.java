@@ -20,6 +20,7 @@ import com.example.propuestasonidosonic.R;
 import com.example.propuestasonidosonic.SonidoSonicApp;
 import com.example.propuestasonidosonic.adapter.PedidoAdapter;
 import com.example.propuestasonidosonic.data.PedidoRepository;
+import com.example.propuestasonidosonic.domain.EstadosPedido;
 import com.example.propuestasonidosonic.model.Pedido;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
@@ -51,7 +52,7 @@ public class PedidosFragment extends Fragment implements PedidoAdapter.OnPedidoC
         @Override
         public void run() {
             if (isAdded() && pedidoRepository != null) {
-                pedidoRepository.liberarApartadosVencidos();
+                pedidoRepository.actualizarEstadosPorTiempo();
                 aplicarFiltroYActualizar();
                 refreshHandler.postDelayed(this, INTERVALO_REFRESCO_MS);
             }
@@ -92,8 +93,9 @@ public class PedidosFragment extends Fragment implements PedidoAdapter.OnPedidoC
 
     private void configurarTabs() {
         tabsPedidos.removeAllTabs();
-        tabsPedidos.addTab(tabsPedidos.newTab().setText(R.string.tab_pedidos_por_pagar));
+        tabsPedidos.addTab(tabsPedidos.newTab().setText(R.string.tab_pedidos_por_aprobar));
         tabsPedidos.addTab(tabsPedidos.newTab().setText(R.string.tab_pedidos_confirmados));
+        tabsPedidos.addTab(tabsPedidos.newTab().setText(R.string.tab_pedidos_por_cobrar));
         tabsPedidos.addTab(tabsPedidos.newTab().setText(R.string.tab_pedidos_historial));
 
         TabLayout.Tab tab = tabsPedidos.getTabAt(tabSeleccionada);
@@ -143,45 +145,38 @@ public class PedidosFragment extends Fragment implements PedidoAdapter.OnPedidoC
 
         List<Pedido> filtrados = new ArrayList<>();
 
-        if (tabSeleccionada == PedidoAdapter.TAB_POR_PAGAR) {
-            tvEmptyMensaje.setText(R.string.empty_pedidos_por_pagar);
+        if (tabSeleccionada == PedidoAdapter.TAB_POR_APROBAR) {
+            tvEmptyMensaje.setText(R.string.empty_pedidos_por_aprobar);
             for (Pedido p : todosLosPedidos) {
-                if (Pedido.ESTADO_APARTADO.equals(p.getEstado())) {
+                if (Pedido.ESTADO_POR_APROBAR.equals(p.getEstado())) {
                     filtrados.add(p);
                 }
             }
-            // Ordenar por vencimiento (el que vence primero arriba)
-            Collections.sort(filtrados, new Comparator<Pedido>() {
-                @Override
-                public int compare(Pedido o1, Pedido o2) {
-                    return Long.compare(o1.getVencimientoApartadoMillis(), o2.getVencimientoApartadoMillis());
-                }
-            });
+            // La que vence primero (evento más próximo) arriba
+            Collections.sort(filtrados, Comparator.comparingLong(Pedido::getInicioMillis));
         } else if (tabSeleccionada == PedidoAdapter.TAB_CONFIRMADOS) {
             tvEmptyMensaje.setText(R.string.empty_pedidos_confirmados);
             for (Pedido p : todosLosPedidos) {
-                String st = p.getEstado();
-                if (Pedido.ESTADO_CONFIRMADO.equals(st)
-                        || Pedido.ESTADO_PAGADO.equals(st)
-                        || Pedido.ESTADO_EN_REVISION.equals(st)) {
+                if (Pedido.ESTADO_CONFIRMADO.equals(p.getEstado())) {
                     filtrados.add(p);
                 }
             }
             // Ordenar por fecha del evento (el más próximo arriba)
-            Collections.sort(filtrados, new Comparator<Pedido>() {
-                @Override
-                public int compare(Pedido o1, Pedido o2) {
-                    return Long.compare(o1.getInicioMillis(), o2.getInicioMillis());
+            Collections.sort(filtrados, Comparator.comparingLong(Pedido::getInicioMillis));
+        } else if (tabSeleccionada == PedidoAdapter.TAB_POR_COBRAR) {
+            tvEmptyMensaje.setText(R.string.empty_pedidos_por_cobrar);
+            for (Pedido p : todosLosPedidos) {
+                if (Pedido.ESTADO_POR_COBRAR.equals(p.getEstado())) {
+                    filtrados.add(p);
                 }
-            });
+            }
+            // El cobro más antiguo arriba
+            Collections.sort(filtrados, Comparator.comparingLong(Pedido::getInicioMillis));
         } else {
             tvEmptyMensaje.setText(R.string.empty_pedidos_historial);
             for (Pedido p : todosLosPedidos) {
                 String st = p.getEstado();
-                if (Pedido.ESTADO_COMPLETADO.equals(st)
-                        || Pedido.ESTADO_CANCELADO.equals(st)
-                        || Pedido.ESTADO_RECHAZADO.equals(st)
-                        || Pedido.ESTADO_VENCIDO.equals(st)) {
+                if (Pedido.ESTADO_FINALIZADO.equals(st) || EstadosPedido.esDescartado(st)) {
                     filtrados.add(p);
                 }
             }
@@ -217,7 +212,7 @@ public class PedidosFragment extends Fragment implements PedidoAdapter.OnPedidoC
     public void onResume() {
         super.onResume();
         if (pedidoRepository != null) {
-            pedidoRepository.liberarApartadosVencidos();
+            pedidoRepository.actualizarEstadosPorTiempo();
             aplicarFiltroYActualizar();
         }
         refreshHandler.postDelayed(refreshRunnable, INTERVALO_REFRESCO_MS);

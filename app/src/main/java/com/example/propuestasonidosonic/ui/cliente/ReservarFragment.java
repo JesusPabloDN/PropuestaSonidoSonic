@@ -67,9 +67,8 @@ public class ReservarFragment extends Fragment implements SelectorHorarioHelper.
     private TextInputEditText etNotas;
 
     private TextView tvTotalResumen;
-    private TextView tvAnticipoResumen;
     private TextView tvAvisoUrgente;
-    private MaterialButton btnApartarYPagar;
+    private MaterialButton btnEnviarSolicitud;
 
     private SelectorHorarioHelper selectorHorarioHelper;
     private final List<Integer> opcionesDuracionMin = new ArrayList<>();
@@ -101,7 +100,7 @@ public class ReservarFragment extends Fragment implements SelectorHorarioHelper.
         configurarSelectorHorario();
         configurarCamposCliente();
         configurarTextWatchers();
-        configurarBotonApartar();
+        configurarBotonEnviar();
         actualizarResumen();
     }
 
@@ -123,9 +122,8 @@ public class ReservarFragment extends Fragment implements SelectorHorarioHelper.
         etNotas = view.findViewById(R.id.etNotas);
 
         tvTotalResumen = view.findViewById(R.id.tvTotalResumen);
-        tvAnticipoResumen = view.findViewById(R.id.tvAnticipoResumen);
         tvAvisoUrgente = view.findViewById(R.id.tvAvisoUrgente);
-        btnApartarYPagar = view.findViewById(R.id.btnApartarYPagar);
+        btnEnviarSolicitud = view.findViewById(R.id.btnEnviarSolicitud);
     }
 
     private void configurarPaquete() {
@@ -259,10 +257,7 @@ public class ReservarFragment extends Fragment implements SelectorHorarioHelper.
         if (paquete == null) return;
 
         double total = MotorDisponibilidad.calcularTotal(paquete, viewModel.getDuracionMin());
-        double anticipo = MotorDisponibilidad.calcularAnticipo(total);
-
-        tvTotalResumen.setText(getString(R.string.label_resumen_total, FormatUtils.formatoMoneda(total)));
-        tvAnticipoResumen.setText(getString(R.string.paquete_detalle_anticipo_formato, FormatUtils.formatoMoneda(anticipo)));
+        tvTotalResumen.setText(getString(R.string.label_monto_a_pagar, FormatUtils.formatoMoneda(total)));
 
         Long horarioInicio = viewModel.getHorarioInicioMillis();
         long ahora = System.currentTimeMillis();
@@ -296,18 +291,18 @@ public class ReservarFragment extends Fragment implements SelectorHorarioHelper.
             valido = false;
         }
 
-        btnApartarYPagar.setEnabled(valido);
+        btnEnviarSolicitud.setEnabled(valido);
         return valido;
     }
 
-    private void configurarBotonApartar() {
-        btnApartarYPagar.setOnClickListener(v -> apartarYPagar());
+    private void configurarBotonEnviar() {
+        btnEnviarSolicitud.setOnClickListener(v -> enviarSolicitud());
     }
 
-    private void apartarYPagar() {
+    private void enviarSolicitud() {
         if (!validarFormulario()) return;
 
-        btnApartarYPagar.setEnabled(false);
+        btnEnviarSolicitud.setEnabled(false);
 
         Usuario usuario = sessionManager.getUsuarioActual();
         String clienteId = usuario != null ? usuario.getId() : "";
@@ -327,27 +322,29 @@ public class ReservarFragment extends Fragment implements SelectorHorarioHelper.
                 clienteNombre,
                 tel,
                 dir,
-                notas,
-                null // horasApartado null para app (30 min automático)
+                notas
         );
 
         pedidoRepository.crearReserva(solicitud, new Callback<Pedido>() {
             @Override
             public void onSuccess(Pedido result) {
                 if (!isAdded()) return;
+                // La solicitud queda "Por aprobar" hasta que un socio la acepte
+                Snackbar.make(requireActivity().findViewById(android.R.id.content),
+                        R.string.msg_solicitud_enviada, Snackbar.LENGTH_LONG).show();
                 Bundle args = new Bundle();
                 args.putString("pedidoId", result.getId());
                 NavOptions navOptions = new NavOptions.Builder()
                         .setPopUpTo(R.id.reservarFragment, true)
                         .build();
                 Navigation.findNavController(requireView())
-                        .navigate(R.id.action_reservar_to_pagoAnticipo, args, navOptions);
+                        .navigate(R.id.action_reservar_to_clientePedidoDetalle, args, navOptions);
             }
 
             @Override
             public void onError(String error) {
                 if (!isAdded()) return;
-                btnApartarYPagar.setEnabled(true);
+                btnEnviarSolicitud.setEnabled(true);
                 String mensaje = ReservaClienteUtils.mensajeAmigable(error);
                 Snackbar.make(requireView(), mensaje, Snackbar.LENGTH_LONG).show();
             }

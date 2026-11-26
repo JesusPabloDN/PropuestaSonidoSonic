@@ -205,23 +205,14 @@
                         android:layout_height="wrap_content"
                         android:textColor="?attr/colorOnSurface"
                         android:textAppearance="?attr/textAppearanceTitleLarge"
-                        tools:text="Total: $3,500.00" />
+                        tools:text="Monto a pagar: $3,500.00" />
 
                     <TextView
-                        android:id="@+id/tvAnticipoResumen"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textAppearance="?attr/textAppearanceTitleMedium"
-                        tools:text="Anticipo (30%): $1,050.00" />
-
-                    <TextView
-                        android:id="@+id/tvAvisoApartado"
+                        android:id="@+id/tvAvisoAprobacion"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="@string/aviso_apartado_30min"
+                        android:text="@string/aviso_solicitud_aprobacion"
                         android:textColor="?attr/colorOnSurfaceVariant"
                         android:textAppearance="?attr/textAppearanceBodyMedium" />
 
@@ -263,11 +254,11 @@
             android:padding="@dimen/spacing_medium">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnApartarYPagar"
+                android:id="@+id/btnEnviarSolicitud"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/touch_target_min"
                 android:enabled="false"
-                android:text="@string/btn_apartar_y_pagar" />
+                android:text="@string/btn_enviar_solicitud" />
 
         </LinearLayout>
 

@@ -116,7 +116,6 @@ public class Etapa4AMotorTest {
         r.setComponentes(componentes);
         r.setOperadorIds(operadorIds);
         r.setEstado(estado);
-        r.setVencimientoApartadoMillis(vencimiento);
         return r;
     }
 
@@ -398,21 +397,21 @@ public class Etapa4AMotorTest {
     public void test09_bloqueoPorEstado() {
         Pedido p = new Pedido();
 
-        // APARTADO vigente vs vencido
-        p.setEstado(Pedido.ESTADO_APARTADO);
-        p.setVencimientoApartadoMillis(ahoraFijo + 10_000L);
+        // POR_APROBAR aparta recursos mientras el evento no empieza
+        p.setEstado(Pedido.ESTADO_POR_APROBAR);
+        p.setInicioMillis(ahoraFijo + 10_000L);
         assertTrue(MotorDisponibilidad.bloquea(p, ahoraFijo));
 
-        p.setVencimientoApartadoMillis(ahoraFijo - 10_000L);
-        assertFalse("Apartado vencido no bloquea", MotorDisponibilidad.bloquea(p, ahoraFijo));
+        p.setInicioMillis(ahoraFijo - 10_000L);
+        assertFalse("Solicitud cuyo evento ya empezó no bloquea", MotorDisponibilidad.bloquea(p, ahoraFijo));
 
-        // PAGADO, CONFIRMADO, EN_REVISION bloquean
-        p.setEstado(Pedido.ESTADO_PAGADO);
-        assertTrue(MotorDisponibilidad.bloquea(p, ahoraFijo));
+        // CONFIRMADO bloquea; POR_COBRAR y FINALIZADO ya se realizaron y no bloquean
         p.setEstado(Pedido.ESTADO_CONFIRMADO);
         assertTrue(MotorDisponibilidad.bloquea(p, ahoraFijo));
-        p.setEstado(Pedido.ESTADO_EN_REVISION);
-        assertTrue(MotorDisponibilidad.bloquea(p, ahoraFijo));
+        p.setEstado(Pedido.ESTADO_POR_COBRAR);
+        assertFalse(MotorDisponibilidad.bloquea(p, ahoraFijo));
+        p.setEstado(Pedido.ESTADO_FINALIZADO);
+        assertFalse(MotorDisponibilidad.bloquea(p, ahoraFijo));
 
         // CANCELADO, RECHAZADO, VENCIDO no bloquean
         p.setEstado(Pedido.ESTADO_CANCELADO);
@@ -585,7 +584,7 @@ public class Etapa4AMotorTest {
     }
 
     @Test
-    public void test15_calculoTotalYAnticipo() {
+    public void test15_calculoTotal() {
         Paquete pkg = new Paquete();
         pkg.setPrecio(3500.0);
         pkg.setDuracionBaseHoras(4);
@@ -594,9 +593,6 @@ public class Etapa4AMotorTest {
         // 5.5 horas = 330 min (1.5 horas extra -> redondea hacia arriba a 2 horas extra -> 200)
         double total = MotorDisponibilidad.calcularTotal(pkg, 330);
         assertEquals(3700.0, total, 0.001);
-
-        double anticipo = MotorDisponibilidad.calcularAnticipo(total);
-        assertEquals(1110.00, anticipo, 0.001);
     }
 
     @Test
@@ -665,7 +661,7 @@ public class Etapa4AMotorTest {
 
         // Origen APP
         SolicitudReserva solApp = new SolicitudReserva("paq-1", ini, 240, Pedido.ORIGEN_APP,
-                "Boda Carlos", "cli-1", "Carlos Gomez", "5551234567", "Av Insurgentes 1234", "Notas", null);
+                "Boda Carlos", "cli-1", "Carlos Gomez", "5551234567", "Av Insurgentes 1234", "Notas");
 
         AtomicReference<Pedido> refApp = new AtomicReference<>();
         repo.crearReserva(solApp, new Callback<Pedido>() {
@@ -675,17 +671,17 @@ public class Etapa4AMotorTest {
 
         assertNotNull(refApp.get());
         Pedido pApp = refApp.get();
-        assertEquals(Pedido.ESTADO_APARTADO, pApp.getEstado());
-        assertEquals(ahoraFijo + Config.APARTADO_APP_MIN * 60_000L, pApp.getVencimientoApartadoMillis());
+        // Desde la app la solicitud espera la aprobación de un socio
+        assertEquals(Pedido.ESTADO_POR_APROBAR, pApp.getEstado());
+        assertFalse(pApp.isPagoConfirmado());
         assertEquals(1, pApp.getOperadorIds().size());
         assertEquals(2000.0, pApp.getTotal(), 0.001);
-        assertEquals(600.0, pApp.getAnticipoRequerido(), 0.001);
         assertEquals(1001, pApp.getNumero());
 
         // Origen LLAMADA (para otro día para no chocar)
         long iniOtroDia = TiempoUtils.sumarMinutos(ini, 24 * 60);
         SolicitudReserva solLlamada = new SolicitudReserva("paq-1", iniOtroDia, 240, Pedido.ORIGEN_LLAMADA,
-                "XV Ana", null, "Ana Lopez", "5559876543", "Calle Hidalgo 5678", "", null);
+                "XV Ana", null, "Ana Lopez", "5559876543", "Calle Hidalgo 5678", "");
 
         AtomicReference<Pedido> refLlamada = new AtomicReference<>();
         repo.crearReserva(solLlamada, new Callback<Pedido>() {
@@ -695,7 +691,8 @@ public class Etapa4AMotorTest {
 
         assertNotNull(refLlamada.get());
         Pedido pLlamada = refLlamada.get();
-        assertEquals(ahoraFijo + Config.APARTADO_MANUAL_HORAS * 3600_000L, pLlamada.getVencimientoApartadoMillis());
+        // Registrado por un socio: queda confirmado de inmediato
+        assertEquals(Pedido.ESTADO_CONFIRMADO, pLlamada.getEstado());
         assertEquals(1002, pLlamada.getNumero());
     }
 
@@ -710,7 +707,7 @@ public class Etapa4AMotorTest {
 
         long ini = TiempoUtils.construir(anioEvento, mesEvento0, diaEvento, 12 * 60);
         SolicitudReserva sol1 = new SolicitudReserva("paq-1", ini, 240, Pedido.ORIGEN_APP,
-                "Evento 1", "cli-1", "Cliente 1", "5551234567", "Direccion valida 123", "", null);
+                "Evento 1", "cli-1", "Cliente 1", "5551234567", "Direccion valida 123", "");
 
         AtomicBoolean ok1 = new AtomicBoolean(false);
         repo.crearReserva(sol1, new Callback<Pedido>() {
@@ -721,7 +718,7 @@ public class Etapa4AMotorTest {
 
         // Segunda reserva en el mismo horario con 1 solo operador disponible en el repo
         SolicitudReserva sol2 = new SolicitudReserva("paq-1", ini, 240, Pedido.ORIGEN_APP,
-                "Evento 2", "cli-2", "Cliente 2", "5551234567", "Direccion valida 123", "", null);
+                "Evento 2", "cli-2", "Cliente 2", "5551234567", "Direccion valida 123", "");
 
         AtomicReference<String> error2 = new AtomicReference<>();
         repo.crearReserva(sol2, new Callback<Pedido>() {
@@ -744,7 +741,7 @@ public class Etapa4AMotorTest {
 
         long ini = TiempoUtils.construir(anioEvento, mesEvento0, diaEvento, 12 * 60);
         SolicitudReserva sol1 = new SolicitudReserva("paq-1", ini, 240, Pedido.ORIGEN_APP,
-                "Evento 1", "cli-1", "Cliente 1", "5551234567", "Direccion valida 123", "", null);
+                "Evento 1", "cli-1", "Cliente 1", "5551234567", "Direccion valida 123", "");
 
         AtomicReference<Pedido> ref1 = new AtomicReference<>();
         repo.crearReserva(sol1, new Callback<Pedido>() {
@@ -766,7 +763,7 @@ public class Etapa4AMotorTest {
 
         // Ahora la segunda reserva en el mismo horario sí se puede crear
         SolicitudReserva sol2 = new SolicitudReserva("paq-1", ini, 240, Pedido.ORIGEN_APP,
-                "Evento 2", "cli-2", "Cliente 2", "5551234567", "Direccion valida 123", "", null);
+                "Evento 2", "cli-2", "Cliente 2", "5551234567", "Direccion valida 123", "");
         AtomicReference<Pedido> ref2 = new AtomicReference<>();
         repo.crearReserva(sol2, new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) { ref2.set(result); }
@@ -774,11 +771,11 @@ public class Etapa4AMotorTest {
         });
 
         assertNotNull("Segunda reserva ahora debe tener éxito", ref2.get());
-        assertEquals(Pedido.ESTADO_APARTADO, ref2.get().getEstado());
+        assertEquals(Pedido.ESTADO_POR_APROBAR, ref2.get().getEstado());
     }
 
     @Test
-    public void test20_repo_liberarApartadosVencidos() {
+    public void test20_repo_solicitudSinAprobarVence() {
         RelojFalso reloj = new RelojFalso(ahoraFijo);
         ComponentePaquete comp = new ComponentePaquete(
                 com.example.propuestasonidosonic.util.ModeloUtils.clave(CategoriaEquipo.BOCINAS, "Bocina 15"),
@@ -788,7 +785,7 @@ public class Etapa4AMotorTest {
 
         long ini = TiempoUtils.construir(anioEvento, mesEvento0, diaEvento, 12 * 60);
         SolicitudReserva sol = new SolicitudReserva("paq-1", ini, 240, Pedido.ORIGEN_APP,
-                "Evento 1", "cli-1", "Cliente 1", "5551234567", "Direccion valida 123", "", null);
+                "Evento 1", "cli-1", "Cliente 1", "5551234567", "Direccion valida 123", "");
 
         AtomicReference<Pedido> ref = new AtomicReference<>();
         repo.crearReserva(sol, new Callback<Pedido>() {
@@ -799,10 +796,10 @@ public class Etapa4AMotorTest {
         assertNotNull(ref.get());
         String id = ref.get().getId();
 
-        // Avanzar el reloj 31 minutos (más allá de APARTADO_APP_MIN = 30)
-        reloj.avanzar(31 * 60_000L);
+        // Nadie la aprueba y llega la hora de inicio del evento
+        reloj.avanzar(ini - ahoraFijo + 60_000L);
 
-        int liberados = repo.liberarApartadosVencidos();
+        int liberados = repo.actualizarEstadosPorTiempo();
         assertEquals(1, liberados);
         assertEquals(Pedido.ESTADO_VENCIDO, repo.getPedidoPorId(id).getEstado());
 
@@ -813,7 +810,7 @@ public class Etapa4AMotorTest {
             @Override public void onError(String mensaje) { errorCancel.set(mensaje); }
         });
         assertNotNull("No se debe permitir cancelar una reserva vencida", errorCancel.get());
-        assertEquals("Esta reserva ya no se puede cancelar", errorCancel.get());
+        assertEquals("Este pedido ya no se puede cancelar", errorCancel.get());
     }
 
     @Test
@@ -828,7 +825,7 @@ public class Etapa4AMotorTest {
 
         // 1. Teléfono corto
         SolicitudReserva solTelCorto = new SolicitudReserva("paq-1", ini, 240, Pedido.ORIGEN_WHATSAPP,
-                "Evento", null, "Cliente", "12345", "Direccion valida 123", "", null);
+                "Evento", null, "Cliente", "12345", "Direccion valida 123", "");
         AtomicReference<String> errTel = new AtomicReference<>();
         repo.crearReserva(solTelCorto, new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) {}
@@ -839,7 +836,7 @@ public class Etapa4AMotorTest {
 
         // 2. Dirección corta (< 10 caracteres)
         SolicitudReserva solDirCorta = new SolicitudReserva("paq-1", ini, 240, Pedido.ORIGEN_WHATSAPP,
-                "Evento", null, "Cliente", "5551234567", "Corta", "", null);
+                "Evento", null, "Cliente", "5551234567", "Corta", "");
         AtomicReference<String> errDir = new AtomicReference<>();
         repo.crearReserva(solDirCorta, new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) {}
@@ -850,7 +847,7 @@ public class Etapa4AMotorTest {
 
         // 3. ORIGEN_APP sin clienteId
         SolicitudReserva solSinCliente = new SolicitudReserva("paq-1", ini, 240, Pedido.ORIGEN_APP,
-                "Evento", null, "Cliente", "5551234567", "Direccion valida 123", "", null);
+                "Evento", null, "Cliente", "5551234567", "Direccion valida 123", "");
         AtomicReference<String> errCli = new AtomicReference<>();
         repo.crearReserva(solSinCliente, new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) {}
@@ -861,7 +858,7 @@ public class Etapa4AMotorTest {
 
         // 4. Nombre de evento vacío
         SolicitudReserva solSinNombreEv = new SolicitudReserva("paq-1", ini, 240, Pedido.ORIGEN_WHATSAPP,
-                "", null, "Cliente", "5551234567", "Direccion valida 123", "", null);
+                "", null, "Cliente", "5551234567", "Direccion valida 123", "");
         AtomicReference<String> errEv = new AtomicReference<>();
         repo.crearReserva(solSinNombreEv, new Callback<Pedido>() {
             @Override public void onSuccess(Pedido result) {}

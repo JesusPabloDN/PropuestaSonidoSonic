@@ -20,20 +20,19 @@ import com.example.propuestasonidosonic.ui.comun.SelectorHorarioHelper;
 import com.example.propuestasonidosonic.SonidoSonicApp;
 import com.example.propuestasonidosonic.data.Callback;
 import com.example.propuestasonidosonic.data.EquipoRepository;
-import com.example.propuestasonidosonic.data.PagoRepository;
 import com.example.propuestasonidosonic.data.PedidoRepository;
+import com.example.propuestasonidosonic.data.SessionManager;
 import com.example.propuestasonidosonic.data.UsuarioRepository;
 import com.example.propuestasonidosonic.domain.ClienteUtils;
-import com.example.propuestasonidosonic.domain.ReciboUtils;
+import com.example.propuestasonidosonic.domain.EstadosPedido;
 import com.example.propuestasonidosonic.model.ComponentePaquete;
 import com.example.propuestasonidosonic.model.Equipo;
-import com.example.propuestasonidosonic.model.Pago;
 import com.example.propuestasonidosonic.model.Pedido;
 import com.example.propuestasonidosonic.model.Usuario;
 import com.example.propuestasonidosonic.util.BadgeUtils;
 import com.example.propuestasonidosonic.util.CompartirRecibo;
 import com.example.propuestasonidosonic.util.FormatUtils;
-import com.example.propuestasonidosonic.util.ReciboPdf;
+import com.example.propuestasonidosonic.util.TicketPdf;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.card.MaterialCardView;
@@ -64,7 +63,7 @@ public class PedidoDetalleFragment extends Fragment {
     private PedidoRepository pedidoRepository;
     private UsuarioRepository usuarioRepository;
     private EquipoRepository equipoRepository;
-    private PagoRepository pagoRepository;
+    private SessionManager sessionManager;
     private EventoRepository eventoRepository;
 
     private TextView tvChecklistResumen;
@@ -104,26 +103,19 @@ public class PedidoDetalleFragment extends Fragment {
     private TextView tvEquipoAsignadoLista;
 
     private TextView tvTotal;
-    private TextView tvAnticipoRequerido;
-    private TextView tvAnticipoPagado;
-    private TextView tvSaldoPendiente;
-    private TextView tvReembolsoMonto;
+    private TextView tvEstadoPago;
+    private TextView tvDetallePago;
+    private MaterialButton btnVerTicket;
 
     private MaterialCardView cardCancelacion;
     private TextView tvCancelacionTitulo;
     private TextView tvCanceladoPor;
     private TextView tvMotivoCancelacion;
 
-    private TextView tvHistorialVacio;
-    private android.widget.LinearLayout layoutPagosContainer;
-
     private View layoutAcciones;
-    private MaterialButton btnCobrarSaldo;
-    private MaterialButton btnRegistrarAnticipo;
+    private MaterialButton btnConfirmarPago;
     private MaterialButton btnReprogramar;
     private MaterialButton btnCancelar;
-
-    private List<Pago> ultimosPagos = new ArrayList<>();
 
     @Nullable
     @Override
@@ -139,7 +131,7 @@ public class PedidoDetalleFragment extends Fragment {
         pedidoRepository = SonidoSonicApp.getApp(requireContext()).getAppContainer().getPedidoRepository();
         usuarioRepository = SonidoSonicApp.getApp(requireContext()).getAppContainer().getUsuarioRepository();
         equipoRepository = SonidoSonicApp.getApp(requireContext()).getAppContainer().getEquipoRepository();
-        pagoRepository = SonidoSonicApp.getApp(requireContext()).getAppContainer().getPagoRepository();
+        sessionManager = SonidoSonicApp.getApp(requireContext()).getAppContainer().getSessionManager();
         eventoRepository = SonidoSonicApp.getApp(requireContext()).getAppContainer().getEventoRepository();
 
         if (getArguments() != null) {
@@ -187,13 +179,9 @@ public class PedidoDetalleFragment extends Fragment {
         tvChecklistObservacionesLista = view.findViewById(R.id.tvChecklistObservacionesLista);
 
         tvTotal = view.findViewById(R.id.tvTotal);
-        tvAnticipoRequerido = view.findViewById(R.id.tvAnticipoRequerido);
-        tvAnticipoPagado = view.findViewById(R.id.tvAnticipoPagado);
-        tvSaldoPendiente = view.findViewById(R.id.tvSaldoPendiente);
-        tvReembolsoMonto = view.findViewById(R.id.tvReembolsoMonto);
-
-        tvHistorialVacio = view.findViewById(R.id.tvHistorialVacio);
-        layoutPagosContainer = view.findViewById(R.id.layoutPagosContainer);
+        tvEstadoPago = view.findViewById(R.id.tvEstadoPago);
+        tvDetallePago = view.findViewById(R.id.tvDetallePago);
+        btnVerTicket = view.findViewById(R.id.btnVerTicket);
 
         cardRevision = view.findViewById(R.id.cardRevision);
         tvRevisionTitulo = view.findViewById(R.id.tvRevisionTitulo);
@@ -207,8 +195,7 @@ public class PedidoDetalleFragment extends Fragment {
         tvMotivoCancelacion = view.findViewById(R.id.tvMotivoCancelacion);
 
         layoutAcciones = view.findViewById(R.id.layoutAcciones);
-        btnCobrarSaldo = view.findViewById(R.id.btnCobrarSaldo);
-        btnRegistrarAnticipo = view.findViewById(R.id.btnRegistrarAnticipo);
+        btnConfirmarPago = view.findViewById(R.id.btnConfirmarPago);
         btnReprogramar = view.findViewById(R.id.btnReprogramar);
         btnCancelar = view.findViewById(R.id.btnCancelar);
     }
@@ -217,15 +204,6 @@ public class PedidoDetalleFragment extends Fragment {
         pedidoRepository.getPedidos().observe(getViewLifecycleOwner(), pedidos -> {
             cargarPedido();
         });
-        if (pagoRepository != null) {
-            pagoRepository.getPagosPorPedido(pedidoId).observe(getViewLifecycleOwner(), pagos -> {
-                ultimosPagos = pagos != null ? new ArrayList<>(pagos) : new ArrayList<>();
-                Pedido p = pedidoRepository.getPedidoPorId(pedidoId);
-                if (p != null) {
-                    actualizarHistorialPagos(p, ultimosPagos);
-                }
-            });
-        }
     }
 
     private void cargarPedido() {
@@ -240,26 +218,20 @@ public class PedidoDetalleFragment extends Fragment {
 
         Context ctx = requireContext();
 
-        // 0. Alerta de Revisión
-        if (Pedido.ESTADO_EN_REVISION.equals(pedido.getEstado())) {
+        // 0. Solicitud por aprobar
+        if (Pedido.ESTADO_POR_APROBAR.equals(pedido.getEstado())) {
             cardRevision.setVisibility(View.VISIBLE);
             // Tarjeta neutra del tema; el acento ambar va solo en el titulo (rol de acento sobre superficie)
             tvRevisionTitulo.setTextColor(BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendiente));
 
-            String motivoLegible = getString(R.string.motivo_revision_urgente);
-            if (pedido.getMotivosRevision() != null && !pedido.getMotivosRevision().isEmpty()) {
-                StringBuilder sb = new StringBuilder();
+            StringBuilder motivo = new StringBuilder(getString(R.string.msg_solicitud_por_aprobar));
+            if (pedido.getMotivosRevision() != null) {
                 for (String m : pedido.getMotivosRevision()) {
-                    if (sb.length() > 0) sb.append(", ");
-                    if (Pedido.MOTIVO_URGENTE.equals(m)) {
-                        sb.append(getString(R.string.motivo_revision_urgente));
-                    } else {
-                        sb.append(m);
-                    }
+                    motivo.append("\n• ").append(Pedido.MOTIVO_URGENTE.equals(m)
+                            ? getString(R.string.motivo_revision_urgente) : m);
                 }
-                motivoLegible = sb.toString();
             }
-            tvRevisionMotivo.setText(motivoLegible);
+            tvRevisionMotivo.setText(motivo.toString());
 
             btnAprobarPedido.setOnClickListener(v -> mostrarDialogoAprobar(pedido));
             btnRechazarPedido.setOnClickListener(v -> mostrarDialogoRechazar(pedido));
@@ -270,22 +242,21 @@ public class PedidoDetalleFragment extends Fragment {
         // 1. Encabezado
         tvNombreEvento.setText(pedido.getNombreEvento());
         tvFolio.setText(ctx.getString(R.string.folio_formato, pedido.getNumero()));
-        pintarBadgeEstado(ctx, pedido.getEstado());
+        BadgeUtils.pintarEstadoPedido(tvEstadoBadge, pedido.getEstado());
 
-        if (pedido.estaLiquidado() && !Pedido.ESTADO_CANCELADO.equals(pedido.getEstado())) {
+        if (pedido.isPagoConfirmado()) {
             tvLiquidadoBadge.setVisibility(View.VISIBLE);
-            BadgeUtils.pintar(tvLiquidadoBadge,
-                    BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDisponibleContainer),
-                    BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponibleContainer));
+            BadgeUtils.pintarPagado(tvLiquidadoBadge);
         } else {
             tvLiquidadoBadge.setVisibility(View.GONE);
         }
 
-        if (Pedido.ESTADO_APARTADO.equals(pedido.getEstado())) {
-            long restanteMs = pedido.getVencimientoApartadoMillis() - System.currentTimeMillis();
+        if (Pedido.ESTADO_POR_APROBAR.equals(pedido.getEstado())) {
+            // La solicitud vence si nadie la aprueba antes de que empiece el evento
+            long restanteMs = pedido.getInicioMillis() - System.currentTimeMillis();
             tvVencimiento.setVisibility(View.VISIBLE);
             tvVencimiento.setText(ctx.getString(R.string.vence_en_formato, FormatUtils.tiempoRestante(restanteMs)));
-            if (restanteMs < 2 * 3600_000L) {
+            if (restanteMs < 24 * 3600_000L) {
                 tvVencimiento.setTextColor(BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanado));
             } else {
                 tvVencimiento.setTextColor(MaterialColors.getColor(tvVencimiento,
@@ -360,10 +331,8 @@ public class PedidoDetalleFragment extends Fragment {
 
         // 5b. Equipo Asignado
         boolean tieneEvento = pedido.getEventoId() != null
-                || Pedido.ESTADO_CONFIRMADO.equals(pedido.getEstado())
-                || Pedido.ESTADO_PAGADO.equals(pedido.getEstado())
-                || Pedido.ESTADO_EN_REVISION.equals(pedido.getEstado())
-                || Pedido.ESTADO_COMPLETADO.equals(pedido.getEstado());
+                || EstadosPedido.ocupaRecursos(pedido.getEstado())
+                || EstadosPedido.esRealizado(pedido.getEstado());
 
         if (!tieneEvento) {
             cardEquipoAsignado.setVisibility(View.GONE);
@@ -469,33 +438,40 @@ public class PedidoDetalleFragment extends Fragment {
             }
         }
 
-        // 6. Dinero
-        tvTotal.setText("Total: " + FormatUtils.formatoMoneda(pedido.getTotal()));
-        tvAnticipoRequerido.setText(getString(R.string.label_resumen_anticipo,
-                FormatUtils.formatoMoneda(pedido.getAnticipoRequerido())));
-
-        if (pedido.getAnticipoPagado() > 0) {
-            String metodo = pedido.getMetodoAnticipo() != null ? pedido.getMetodoAnticipo() : "Efectivo";
-            String fechaPago = FormatUtils.formatoFecha(pedido.getFechaAnticipo());
-            tvAnticipoPagado.setText(getString(R.string.label_anticipo_cubierto,
-                    FormatUtils.formatoMoneda(pedido.getAnticipoPagado()), metodo, fechaPago));
+        // 6. Dinero: lo que el cliente debe pagar y si un socio ya confirmó el pago
+        tvTotal.setText(getString(R.string.label_monto_a_pagar, FormatUtils.formatoMoneda(pedido.getTotal())));
+        if (pedido.isPagoConfirmado()) {
+            tvEstadoPago.setText(R.string.estado_pago_recibido);
+            tvEstadoPago.setTextColor(BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponible));
+            String quien = pedido.getPagoConfirmadoPorNombre() != null && !pedido.getPagoConfirmadoPorNombre().isEmpty()
+                    ? pedido.getPagoConfirmadoPorNombre() : getString(R.string.rol_socio);
+            tvDetallePago.setText(getString(R.string.detalle_pago_confirmado,
+                    EstadosPedido.etiquetaMetodo(pedido.getMetodoPago()),
+                    FormatUtils.fechaHoraCorta(pedido.getFechaPagoMillis()),
+                    quien));
+            tvDetallePago.setVisibility(View.VISIBLE);
+            btnVerTicket.setVisibility(View.VISIBLE);
+            btnVerTicket.setOnClickListener(v -> compartirTicket(pedidoRepository.getPedidoPorId(pedidoId)));
         } else {
-            tvAnticipoPagado.setText(R.string.label_sin_anticipo);
+            btnVerTicket.setVisibility(View.GONE);
+            if (EstadosPedido.esAceptado(pedido.getEstado())) {
+                tvEstadoPago.setText(R.string.estado_pago_pendiente);
+                tvEstadoPago.setTextColor(Pedido.ESTADO_POR_COBRAR.equals(pedido.getEstado())
+                        ? BadgeUtils.colorError(ctx)
+                        : MaterialColors.getColor(tvEstadoPago, com.google.android.material.R.attr.colorOnSurface));
+                tvDetallePago.setText(Pedido.ESTADO_POR_COBRAR.equals(pedido.getEstado())
+                        ? R.string.detalle_pago_por_cobrar : R.string.detalle_pago_pendiente);
+                tvDetallePago.setVisibility(View.VISIBLE);
+            } else if (Pedido.ESTADO_POR_APROBAR.equals(pedido.getEstado())) {
+                tvEstadoPago.setText(R.string.estado_pago_sin_aprobar);
+                tvEstadoPago.setTextColor(MaterialColors.getColor(tvEstadoPago, com.google.android.material.R.attr.colorOnSurfaceVariant));
+                tvDetallePago.setVisibility(View.GONE);
+            } else {
+                tvEstadoPago.setText(R.string.estado_pago_no_aplica);
+                tvEstadoPago.setTextColor(MaterialColors.getColor(tvEstadoPago, com.google.android.material.R.attr.colorOnSurfaceVariant));
+                tvDetallePago.setVisibility(View.GONE);
+            }
         }
-
-        double saldo = pedido.getSaldoPendiente();
-        tvSaldoPendiente.setText(getString(R.string.label_saldo_pendiente, FormatUtils.formatoMoneda(saldo)));
-
-        if (pedido.getReembolsoMonto() > 0) {
-            tvReembolsoMonto.setVisibility(View.VISIBLE);
-            tvReembolsoMonto.setText(getString(R.string.label_reembolso_simulado,
-                    FormatUtils.formatoMoneda(pedido.getReembolsoMonto())));
-        } else {
-            tvReembolsoMonto.setVisibility(View.GONE);
-        }
-
-        // Historial de pagos
-        actualizarHistorialPagos(pedido, ultimosPagos);
 
         // 7. Cancelación y Rechazo
         if (Pedido.ESTADO_CANCELADO.equals(pedido.getEstado())) {
@@ -550,10 +526,6 @@ public class PedidoDetalleFragment extends Fragment {
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_rechazar_pedido, null);
         TextInputLayout tilMotivo = dialogView.findViewById(R.id.tilMotivoRechazo);
         TextInputEditText etMotivo = dialogView.findViewById(R.id.etMotivoRechazo);
-        TextView tvAvisoReembolso = dialogView.findViewById(R.id.tvAvisoReembolso);
-
-        double reembolso = pedido.getAnticipoPagado();
-        tvAvisoReembolso.setText(getString(R.string.aviso_reembolso_rechazo, FormatUtils.formatoMoneda(reembolso)));
 
         AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.dialog_rechazar_pedido_titulo)
@@ -592,250 +564,100 @@ public class PedidoDetalleFragment extends Fragment {
         dialog.show();
     }
 
-    private void actualizarHistorialPagos(Pedido pedido, List<Pago> pagos) {
-        if (!isAdded()) return;
-        List<Pago> lista = new ArrayList<>(pagos != null ? pagos : Collections.emptyList());
-        Collections.sort(lista, (p1, p2) -> Long.compare(p1.getFecha(), p2.getFecha()));
-
-        if (lista.isEmpty()) {
-            tvHistorialVacio.setVisibility(View.VISIBLE);
-            layoutPagosContainer.removeAllViews();
-            return;
-        }
-
-        tvHistorialVacio.setVisibility(View.GONE);
-        layoutPagosContainer.removeAllViews();
-
-        Context ctx = requireContext();
-        LayoutInflater inflater = LayoutInflater.from(ctx);
-
-        for (Pago pago : lista) {
-            View itemView = inflater.inflate(R.layout.item_pago, layoutPagosContainer, false);
-            TextView tvPagoFolio = itemView.findViewById(R.id.tvPagoFolio);
-            TextView tvPagoTipo = itemView.findViewById(R.id.tvPagoTipo);
-            TextView tvPagoFechaMetodo = itemView.findViewById(R.id.tvPagoFechaMetodo);
-            TextView tvPagoMonto = itemView.findViewById(R.id.tvPagoMonto);
-            MaterialButton btnRecibo = itemView.findViewById(R.id.btnRecibo);
-
-            tvPagoFolio.setText(pago.getFolio() != null ? pago.getFolio() : "");
-            tvPagoTipo.setText(ReciboUtils.tituloRecibo(pago.getTipo()).replace("Recibo de ", "").replace("Comprobante de ", ""));
-            String metodo = pago.getMetodo() != null ? pago.getMetodo() : "";
-            tvPagoFechaMetodo.setText(FormatUtils.fechaHoraCorta(pago.getFecha()) + " · " + metodo);
-
-            boolean esReembolso = Pago.TIPO_REEMBOLSO.equals(pago.getTipo());
-            if (esReembolso) {
-                tvPagoMonto.setText("− " + FormatUtils.formatoMoneda(pago.getMonto()));
-                tvPagoMonto.setTextColor(com.example.propuestasonidosonic.util.BadgeUtils.colorError(ctx));
-            } else {
-                tvPagoMonto.setText("+ " + FormatUtils.formatoMoneda(pago.getMonto()));
-                tvPagoMonto.setTextColor(BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponible));
-            }
-
-            btnRecibo.setOnClickListener(v -> compartirReciboPdf(pedido, pago, lista));
-
-            layoutPagosContainer.addView(itemView);
-        }
-    }
-
     private void configurarBotonesAccion(Pedido pedido) {
-        String estado = pedido.getEstado();
-        boolean puedeCobrar = (Pedido.ESTADO_CONFIRMADO.equals(estado)
-                || Pedido.ESTADO_PAGADO.equals(estado)
-                || Pedido.ESTADO_EN_REVISION.equals(estado)
-                || Pedido.ESTADO_COMPLETADO.equals(estado))
-                && pedido.getSaldoPendiente() > 0.005;
+        long ahora = System.currentTimeMillis();
+        boolean confirmarPago = EstadosPedido.puedeConfirmarPago(pedido);
+        boolean reprogramar = EstadosPedido.puedeReprogramarse(pedido, ahora);
+        // Una solicitud por aprobar se rechaza desde su tarjeta; cancelar aplica a pedidos confirmados
+        boolean cancelar = Pedido.ESTADO_CONFIRMADO.equals(pedido.getEstado())
+                && EstadosPedido.puedeCancelarse(pedido, ahora);
 
-        if (Pedido.ESTADO_APARTADO.equals(estado)) {
-            layoutAcciones.setVisibility(View.VISIBLE);
-            btnCobrarSaldo.setVisibility(View.GONE);
-            btnRegistrarAnticipo.setVisibility(View.VISIBLE);
-            btnReprogramar.setVisibility(View.VISIBLE);
-            btnCancelar.setVisibility(View.VISIBLE);
-            btnCancelar.setText(R.string.btn_cancelar_apartado);
+        btnConfirmarPago.setVisibility(confirmarPago ? View.VISIBLE : View.GONE);
+        btnReprogramar.setVisibility(reprogramar ? View.VISIBLE : View.GONE);
+        btnCancelar.setVisibility(cancelar ? View.VISIBLE : View.GONE);
+        layoutAcciones.setVisibility(confirmarPago || reprogramar || cancelar ? View.VISIBLE : View.GONE);
 
-            btnRegistrarAnticipo.setOnClickListener(v -> mostrarDialogoRegistrarAnticipo(pedido));
+        if (confirmarPago) {
+            btnConfirmarPago.setOnClickListener(v -> mostrarDialogoConfirmarPago(pedido));
+        }
+        if (reprogramar) {
             btnReprogramar.setOnClickListener(v -> mostrarDialogoReprogramar(pedido));
-            btnCancelar.setOnClickListener(v -> mostrarDialogoCancelar(pedido));
-        } else if (Pedido.ESTADO_EN_REVISION.equals(estado)) {
-            layoutAcciones.setVisibility(View.VISIBLE);
-            btnRegistrarAnticipo.setVisibility(View.GONE);
-            btnReprogramar.setVisibility(View.GONE); // En revisión se oculta reprogramar
-            btnCobrarSaldo.setVisibility(puedeCobrar ? View.VISIBLE : View.GONE);
-            if (puedeCobrar) {
-                btnCobrarSaldo.setOnClickListener(v -> mostrarDialogoCobrarSaldo(pedido));
-            }
-            btnCancelar.setVisibility(View.VISIBLE);
+        }
+        if (cancelar) {
             btnCancelar.setText(R.string.btn_cancelar_pedido);
             btnCancelar.setOnClickListener(v -> mostrarDialogoCancelar(pedido));
-        } else if (Pedido.ESTADO_CONFIRMADO.equals(estado)
-                || Pedido.ESTADO_PAGADO.equals(estado)) {
-            layoutAcciones.setVisibility(View.VISIBLE);
-            btnRegistrarAnticipo.setVisibility(View.GONE);
-            btnCobrarSaldo.setVisibility(puedeCobrar ? View.VISIBLE : View.GONE);
-            if (puedeCobrar) {
-                btnCobrarSaldo.setOnClickListener(v -> mostrarDialogoCobrarSaldo(pedido));
-            }
-            btnReprogramar.setVisibility(View.VISIBLE);
-            btnCancelar.setVisibility(View.VISIBLE);
-            btnCancelar.setText(R.string.btn_cancelar_pedido);
-
-            btnReprogramar.setOnClickListener(v -> mostrarDialogoReprogramar(pedido));
-            btnCancelar.setOnClickListener(v -> mostrarDialogoCancelar(pedido));
-        } else if (Pedido.ESTADO_COMPLETADO.equals(estado)) {
-            btnRegistrarAnticipo.setVisibility(View.GONE);
-            btnReprogramar.setVisibility(View.GONE);
-            btnCancelar.setVisibility(View.GONE);
-            if (puedeCobrar) {
-                layoutAcciones.setVisibility(View.VISIBLE);
-                btnCobrarSaldo.setVisibility(View.VISIBLE);
-                btnCobrarSaldo.setOnClickListener(v -> mostrarDialogoCobrarSaldo(pedido));
-            } else {
-                layoutAcciones.setVisibility(View.GONE);
-                btnCobrarSaldo.setVisibility(View.GONE);
-            }
-        } else {
-            layoutAcciones.setVisibility(View.GONE);
-            btnCobrarSaldo.setVisibility(View.GONE);
-            btnRegistrarAnticipo.setVisibility(View.GONE);
-            btnReprogramar.setVisibility(View.GONE);
-            btnCancelar.setVisibility(View.GONE);
         }
     }
 
-    private void mostrarDialogoCobrarSaldo(Pedido pedido) {
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_cobrar_saldo, null);
-        TextInputLayout tilMonto = dialogView.findViewById(R.id.tilMontoCobro);
-        TextInputEditText etMonto = dialogView.findViewById(R.id.etMontoCobro);
-        MaterialButtonToggleGroup toggleMetodo = dialogView.findViewById(R.id.toggleMetodoPagoCobro);
+    private void mostrarDialogoConfirmarPago(Pedido pedido) {
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_confirmar_pago, null);
+        TextView tvMonto = dialogView.findViewById(R.id.tvMontoConfirmar);
+        TextView tvConcepto = dialogView.findViewById(R.id.tvConceptoConfirmar);
+        TextView tvError = dialogView.findViewById(R.id.tvErrorMetodo);
+        MaterialButtonToggleGroup toggleMetodo = dialogView.findViewById(R.id.toggleMetodoPago);
 
-        double saldo = pedido.getSaldoPendiente();
-        etMonto.setText(String.format(java.util.Locale.US, "%.2f", saldo));
+        tvMonto.setText(FormatUtils.formatoMoneda(pedido.getTotal()));
+        String paquete = pedido.getPaqueteNombre() != null ? pedido.getPaqueteNombre() : "";
+        String evento = pedido.getNombreEvento() != null ? pedido.getNombreEvento() : "";
+        tvConcepto.setText(paquete.isEmpty() ? evento : paquete + " · " + evento);
+        toggleMetodo.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (isChecked) tvError.setVisibility(View.GONE);
+        });
 
         AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.dialog_cobrar_saldo_titulo)
+                .setTitle(R.string.dialog_confirmar_pago_titulo)
                 .setView(dialogView)
-                .setNegativeButton("Cancelar", null)
-                .setPositiveButton(R.string.btn_confirmar_cobro, null)
+                .setNegativeButton(R.string.dialog_cancelar, null)
+                .setPositiveButton(R.string.btn_confirmar_pago_corto, null)
                 .create();
 
-        dialog.setOnShowListener(d -> {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-                String strMonto = etMonto.getText() != null ? etMonto.getText().toString().trim() : "";
-                double monto;
-                try {
-                    monto = Double.parseDouble(strMonto);
-                } catch (NumberFormatException e) {
-                    tilMonto.setError(getString(R.string.err_monto_invalido));
-                    return;
+        dialog.setOnShowListener(d -> dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            int checkedId = toggleMetodo.getCheckedButtonId();
+            String metodo;
+            if (checkedId == R.id.btnMetodoEfectivo) {
+                metodo = Pedido.METODO_EFECTIVO;
+            } else if (checkedId == R.id.btnMetodoTransferencia) {
+                metodo = Pedido.METODO_TRANSFERENCIA;
+            } else {
+                tvError.setVisibility(View.VISIBLE);
+                return;
+            }
+
+            Usuario socio = sessionManager != null ? sessionManager.getUsuarioActual() : null;
+            String socioId = socio != null ? socio.getId() : null;
+            String socioNombre = socio != null ? socio.getNombre() : null;
+
+            pedidoRepository.confirmarPago(pedido.getId(), metodo, socioId, socioNombre, new Callback<Pedido>() {
+                @Override
+                public void onSuccess(Pedido result) {
+                    if (!isAdded()) return;
+                    dialog.dismiss();
+                    cargarPedido();
+                    Snackbar.make(requireView(), R.string.msg_pago_confirmado, Snackbar.LENGTH_LONG)
+                            .setAction(R.string.btn_ticket, snackView -> compartirTicket(result))
+                            .show();
                 }
 
-                if (monto <= 0) {
-                    tilMonto.setError(getString(R.string.err_monto_minimo));
-                    return;
+                @Override
+                public void onError(String error) {
+                    if (!isAdded()) return;
+                    tvError.setText(error != null ? error : getString(R.string.err_confirmar_pago));
+                    tvError.setVisibility(View.VISIBLE);
                 }
-
-                if (monto > saldo + 0.005) {
-                    tilMonto.setError(getString(R.string.err_monto_mayor_saldo));
-                    return;
-                }
-
-                tilMonto.setError(null);
-
-                String metodo = Pedido.METODO_EFECTIVO;
-                int checkedId = toggleMetodo.getCheckedButtonId();
-                if (checkedId == R.id.btnMetodoTransferenciaCobro) {
-                    metodo = Pedido.METODO_TRANSFERENCIA;
-                } else if (checkedId == R.id.btnMetodoTarjetaCobro) {
-                    metodo = Pedido.METODO_TARJETA;
-                }
-
-                pedidoRepository.liquidarSaldo(pedido.getId(), monto, metodo, new Callback<Pago>() {
-                    @Override
-                    public void onSuccess(Pago result) {
-                        if (!isAdded()) return;
-                        dialog.dismiss();
-                        cargarPedido();
-                        Snackbar.make(requireView(), R.string.msg_pago_registrado, Snackbar.LENGTH_LONG)
-                                .setAction(R.string.btn_recibo, snackView -> {
-                                    Pedido pActual = pedidoRepository.getPedidoPorId(pedido.getId());
-                                    compartirReciboPdf(pActual != null ? pActual : pedido, result,
-                                            ultimosPagos != null && !ultimosPagos.isEmpty() ? ultimosPagos : Collections.singletonList(result));
-                                })
-                                .show();
-                    }
-
-                    @Override
-                    public void onError(String error) {
-                        if (!isAdded()) return;
-                        tilMonto.setError(error != null ? error : "Error al procesar el pago");
-                    }
-                });
             });
-        });
+        }));
 
         dialog.show();
     }
 
-    private void compartirReciboPdf(Pedido pedido, Pago pago, List<Pago> pagosDelPedido) {
+    private void compartirTicket(Pedido pedido) {
+        if (!isAdded() || pedido == null) return;
         try {
-            File pdf = ReciboPdf.generar(requireContext(), pedido, pago, pagosDelPedido);
-            CompartirRecibo.compartir(requireContext(), pdf, "Compartir " + ReciboUtils.tituloRecibo(pago.getTipo()));
+            File pdf = TicketPdf.generar(requireContext(), pedido);
+            CompartirRecibo.compartir(requireContext(), pdf, getString(R.string.titulo_compartir_ticket));
         } catch (Exception e) {
             Snackbar.make(requireView(), R.string.err_generar_recibo, Snackbar.LENGTH_SHORT).show();
         }
-    }
-
-    private void mostrarDialogoRegistrarAnticipo(Pedido pedido) {
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_registrar_anticipo, null);
-        TextInputLayout tilMonto = dialogView.findViewById(R.id.tilMontoAnticipo);
-        TextInputEditText etMonto = dialogView.findViewById(R.id.etMontoAnticipo);
-        MaterialButtonToggleGroup toggleMetodo = dialogView.findViewById(R.id.toggleMetodoPago);
-
-        double pendiente = Math.max(0.0, pedido.getAnticipoRequerido() - pedido.getAnticipoPagado());
-        etMonto.setText(String.format(java.util.Locale.US, "%.2f", pendiente));
-
-        new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.dialog_anticipo_titulo)
-                .setView(dialogView)
-                .setNegativeButton("Cancelar", null)
-                .setPositiveButton(R.string.btn_confirmar_anticipo, (dialog, which) -> {
-                    String strMonto = etMonto.getText() != null ? etMonto.getText().toString().trim() : "";
-                    double monto;
-                    try {
-                        monto = Double.parseDouble(strMonto);
-                    } catch (NumberFormatException e) {
-                        Toast.makeText(requireContext(), R.string.err_monto_invalido, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    String metodo = Pedido.METODO_EFECTIVO;
-                    int checkedId = toggleMetodo.getCheckedButtonId();
-                    if (checkedId == R.id.btnMetodoTransferencia) {
-                        metodo = Pedido.METODO_TRANSFERENCIA;
-                    } else if (checkedId == R.id.btnMetodoTarjeta) {
-                        metodo = Pedido.METODO_TARJETA;
-                    }
-
-                    pedidoRepository.registrarAnticipo(pedido.getId(), monto, metodo, new Callback<Pedido>() {
-                        @Override
-                        public void onSuccess(Pedido result) {
-                            if (!isAdded()) return;
-                            Toast.makeText(requireContext(), "Anticipo registrado. Pedido confirmado.", Toast.LENGTH_SHORT).show();
-                            cargarPedido();
-                        }
-
-                        @Override
-                        public void onError(String error) {
-                            if (!isAdded()) return;
-                            new MaterialAlertDialogBuilder(requireContext())
-                                    .setTitle("Error al registrar anticipo")
-                                    .setMessage(error)
-                                    .setPositiveButton("Aceptar", null)
-                                    .show();
-                        }
-                    });
-                })
-                .show();
     }
 
     private void mostrarDialogoReprogramar(Pedido pedido) {
@@ -907,21 +729,9 @@ public class PedidoDetalleFragment extends Fragment {
     private void mostrarDialogoCancelar(Pedido pedido) {
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_cancelar_pedido, null);
         MaterialButtonToggleGroup toggleQuien = dialogView.findViewById(R.id.toggleQuienCancela);
-        TextView tvReembolso = dialogView.findViewById(R.id.tvReembolsoCalculado);
         TextInputEditText etMotivo = dialogView.findViewById(R.id.etMotivoCancelacion);
 
         final String[] quienCancelaHolder = new String[]{Pedido.CANCELA_CLIENTE};
-
-        Runnable actualizarReembolso = () -> {
-            double reembolso = pedidoRepository.calcularReembolsoPrevio(pedido.getId(), quienCancelaHolder[0]);
-            if (reembolso > 0) {
-                tvReembolso.setText(getString(R.string.label_reembolso_calculado, FormatUtils.formatoMoneda(reembolso)));
-            } else {
-                tvReembolso.setText(R.string.label_sin_reembolso);
-            }
-        };
-
-        actualizarReembolso.run();
 
         toggleQuien.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
             if (!isChecked) return;
@@ -930,7 +740,6 @@ public class PedidoDetalleFragment extends Fragment {
             } else {
                 quienCancelaHolder[0] = Pedido.CANCELA_CLIENTE;
             }
-            actualizarReembolso.run();
         });
 
         new MaterialAlertDialogBuilder(requireContext())
@@ -959,60 +768,5 @@ public class PedidoDetalleFragment extends Fragment {
                     });
                 })
                 .show();
-    }
-
-    private void pintarBadgeEstado(Context ctx, String estado) {
-        if (estado == null) estado = Pedido.ESTADO_APARTADO;
-
-        int colorTexto;
-        int colorFondo;
-        int textoRes;
-
-        switch (estado) {
-            case Pedido.ESTADO_APARTADO:
-                textoRes = R.string.badge_apartado;
-                colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoPendienteContainer);
-                colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendienteContainer);
-                break;
-            case Pedido.ESTADO_EN_REVISION:
-                textoRes = R.string.badge_en_revision;
-                colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoPendienteContainer);
-                colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoPendienteContainer);
-                break;
-            case Pedido.ESTADO_CONFIRMADO:
-                textoRes = R.string.badge_confirmado;
-                colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDisponibleContainer);
-                colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponibleContainer);
-                break;
-            case Pedido.ESTADO_PAGADO:
-                textoRes = R.string.badge_pagado;
-                colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDisponibleContainer);
-                colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDisponibleContainer);
-                break;
-            case Pedido.ESTADO_COMPLETADO:
-                textoRes = R.string.badge_completado;
-                colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoRentadoContainer);
-                colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoRentadoContainer);
-                break;
-            case Pedido.ESTADO_CANCELADO:
-                textoRes = R.string.badge_cancelado;
-                colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDanadoContainer);
-                colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanadoContainer);
-                break;
-            case Pedido.ESTADO_RECHAZADO:
-                textoRes = R.string.badge_rechazado;
-                colorTexto = BadgeUtils.colorAtributo(ctx, R.attr.colorOnEstadoDanadoContainer);
-                colorFondo = BadgeUtils.colorAtributo(ctx, R.attr.colorEstadoDanadoContainer);
-                break;
-            case Pedido.ESTADO_VENCIDO:
-            default:
-                textoRes = R.string.badge_vencido;
-                colorTexto = MaterialColors.getColor(tvEstadoBadge, com.google.android.material.R.attr.colorOnSurfaceVariant);
-                colorFondo = MaterialColors.getColor(tvEstadoBadge, com.google.android.material.R.attr.colorSurfaceContainerHighest);
-                break;
-        }
-
-        tvEstadoBadge.setText(textoRes);
-        BadgeUtils.pintar(tvEstadoBadge, colorTexto, colorFondo);
     }
 }
